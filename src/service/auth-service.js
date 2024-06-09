@@ -61,10 +61,10 @@ export async function create(data, next) {
 
 }
 
-/**
+/*
  * sign in a user
  */
-export async function get(data, next) {
+export async function signin(data) {
 
         const isEmailValid = await getUserByEmail(data.email)
 
@@ -80,14 +80,7 @@ export async function get(data, next) {
             throw new Exception("password incorrect", 401)
         }
 
-        // const token = signJWT({
-        //     role: isEmailValid[0].role,
-        //     id: isEmailValid[0].id,
-        // }, '24hr')
-
-        // TODO add session
-
-        return comparePassword;
+        return isEmailValid;
 
 }
 

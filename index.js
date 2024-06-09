@@ -21,7 +21,6 @@ const store = new knexSession({
     sidfieldname:'session_id',
     knex:db,
     createtable:true,
-    disableDbCleanup:true,
     clearInterval:30000,
 
 })
@@ -47,7 +46,6 @@ app.use(
     })
 )
 
-// api/v1
 app.use('/api/v1', router)
 
 app.use(exceptionMiddleware)

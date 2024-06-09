@@ -1,16 +1,21 @@
 import express from 'express'
 import { createProvider } from '../service/provider-service.js';
 import Exception from '../util/exception.js';
+import { auth } from '../middleware/auth-middleware.js';
 
 const router = express.Router()
 
-// create provider
 // TODO rate limiter
 // TODO roles and permission
+
+// create provider
 router.post('/provider/create', async (req, res, next) => {
 
     try {
-        let result = await createProvider(req, res, next)
+
+        const data = req.body
+
+        let result = await createProvider(data)
 
         if(!result){
             throw new Exception("encountered an issue while creating provider", 401)

@@ -1,14 +1,13 @@
 import { createProviderModel } from "../model/provider-model.js";
 
 
-export async function createProvider(req, res, next) {
+export async function createProvider(data) {
 
 
 
     // TODO get user id
     // TODO validate data
     try {
-        const data = req.body;
 
         return await createProviderModel(data)
 

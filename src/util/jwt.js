@@ -1,7 +1,7 @@
-import { config as env }from 'dotenv/config'
+import { config as env }from 'dotenv'
 env({path: '../../.env'})
 
-import jwt, { JwtPayload } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 
 export function signJWT(data, expire) {
     return jwt.sign({payload: data}, process.env.JWT_TOKEN_SECRET, {expiresIn: expire})
