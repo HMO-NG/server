@@ -1,7 +1,7 @@
 import express from 'express'
 import { createProvider } from '../service/provider-service.js';
 import Exception from '../util/exception.js';
-import { auth } from '../middleware/auth-middleware.js';
+import { auth, verifyUserToken, verifyPermission } from '../middleware/auth-middleware.js';
 
 const router = express.Router()
 
@@ -9,7 +9,7 @@ const router = express.Router()
 // TODO roles and permission
 
 // create provider
-router.post('/provider/create', async (req, res, next) => {
+router.post('/provider/create', auth, async (req, res, next) => {
 
     try {
 
@@ -17,13 +17,13 @@ router.post('/provider/create', async (req, res, next) => {
 
         let result = await createProvider(data)
 
-        if(!result){
+        if (!result) {
             throw new Exception("encountered an issue while creating provider", 401)
         }
 
         res.status(200).json({
             message: "provider created successfully",
-            data:  result.id
+            data: result.id
         })
     } catch (error) {
         console.log(error.status)
@@ -33,6 +33,15 @@ router.post('/provider/create', async (req, res, next) => {
 });
 
 // get
+router.get('/provider/get',
+    auth,
+    verifyUserToken,
+    verifyPermission(["user", "author", "admin"]),
+    async (req, res, next) => {
+        res.status(200).json({
+            message: "getting provider coming soon"
+        })
+    })
 // edit
 // delete
 

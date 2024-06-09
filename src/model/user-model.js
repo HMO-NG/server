@@ -46,6 +46,11 @@ export async function createUser(userDetails, referralCode) {
 export async function getUserByEmail(userEmail) {
     return await db('user').select().where('email', userEmail);
 }
+
+// get user by id
+export async function getUserById(id) {
+    return await db('user').select().where('id', id);
+}
 export async function getUserByReferralCode(userReferralCode) {
     return await db('user').select().where('referral_code', userReferralCode);
 }

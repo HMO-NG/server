@@ -40,10 +40,12 @@ router.post('/auth/signin', async (req, res, next) => {
 
     const userService = await signin(data, next)
 
-    const token = signJWT({
+    const token = await signJWT({
         role: userService[0].role,
         id: userService[0].id,
-    }, '24hr')
+    }, '5m')
+
+    // 24hr
 
     if (userService) {
         res.status(200).json({
