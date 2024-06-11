@@ -34,24 +34,31 @@ router.post('/auth/signin', async (req, res, next) => {
 
     try {
 
-    const data = req.body;
+        const data = req.body;
 
-    req.session.remember_me = true;
+        req.session.remember_me = true;
 
-    const userService = await signin(data, next)
+        const { comparePassword, isEmailValid } = await signin(data, next)
 
-    const token = await signJWT({
-        role: userService[0].role,
-        id: userService[0].id,
-    }, '5m')
+        const token = await signJWT({
+            role: isEmailValid[0].role,
+            id: isEmailValid[0].id,
+        }, '24hr')
 
-    // 24hr
+        if (comparePassword) {
+            res.status(200).json({
+                message: `${data.email} login successfully`,
+                token: token,
+                user:
+                {
+                    email: isEmailValid[0].email,
+                    first_name: isEmailValid[0].first_name,
+                    last_name: isEmailValid[0].last_name,
+                    authority: isEmailValid[0].role
 
-    if (userService) {
-        res.status(200).json({
-            message: `${data.email} login successfully`,
-            data: token
-        })
+
+                }
+            })
         }
 
     } catch (error) {

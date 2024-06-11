@@ -22,6 +22,8 @@ export async function create(data, next) {
         // check if email/user already exist
         const doesUserHaveAnEmail = await getUserByEmail(data.email)
 
+        //TODO  phone number should be checked if it exist.
+
         if (doesUserHaveAnEmail.length) {
             // throw an exception
             throw new Exception('email address already in use', 409)
@@ -74,13 +76,13 @@ export async function signin(data) {
 
         const getHashedPassword = isEmailValid[0].password
 
-        const comparePassword = bcrypt.compare(data.password, getHashedPassword)
+        const comparePassword = await bcrypt.compare(data.password, getHashedPassword)
 
         if (!comparePassword) {
             throw new Exception("password incorrect", 401)
         }
 
-        return isEmailValid;
+        return {comparePassword, isEmailValid};
 
 }
 
