@@ -51,6 +51,7 @@ router.post('/auth/signin', async (req, res, next) => {
                 token: token,
                 user:
                 {
+                    user_id:isEmailValid[0].id,
                     email: isEmailValid[0].email,
                     first_name: isEmailValid[0].first_name,
                     last_name: isEmailValid[0].last_name,

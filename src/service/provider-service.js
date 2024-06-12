@@ -1,4 +1,4 @@
-import { createProviderModel } from "../model/provider-model.js";
+import { createProviderModel, getAllProviderModel } from "../model/provider-model.js";
 
 
 export async function createProvider(data) {
@@ -13,9 +13,18 @@ export async function createProvider(data) {
 
     } catch (error) {
         console.log(error)
+
         return error
     }
 
 
 
+}
+
+export async function getAllProvider() {
+    try {
+        return await getAllProviderModel()
+    } catch (error) {
+        return error
+    }
 }

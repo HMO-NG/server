@@ -13,6 +13,7 @@ export async function createProviderModel(providerDetails) {
             email: providerDetails.email,
             address: providerDetails.address,
             phone_number: providerDetails.phone_number,
+            code:providerDetails.code,
             medical_director_name: providerDetails.medical_director_name,
             medical_director_phone_no: providerDetails.medical_director_phone_no,
             created_by: providerDetails.user_id
@@ -25,6 +26,18 @@ export async function createProviderModel(providerDetails) {
         console.log(error)
     }
 
+}
+
+//get all providers
+export async function getAllProviderModel(){
+    try {
+
+        // get all from db
+       return await db("provider").select();
+
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 // get provider by id

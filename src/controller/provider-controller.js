@@ -1,5 +1,5 @@
 import express from 'express'
-import { createProvider } from '../service/provider-service.js';
+import { createProvider, getAllProvider } from '../service/provider-service.js';
 import Exception from '../util/exception.js';
 import { auth, verifyUserToken, verifyPermission } from '../middleware/auth-middleware.js';
 
@@ -32,15 +32,24 @@ router.post('/provider/create', auth, async (req, res, next) => {
     }
 });
 
-// get
+// get all provider
 router.get('/provider/get',
-    auth,
-    verifyUserToken,
-    verifyPermission(["user", "author", "admin"]),
     async (req, res, next) => {
-        res.status(200).json({
-            message: "getting provider coming soon"
-        })
+
+        try {
+            let result = await getAllProvider()
+
+            if (result) {
+                res.status(200).json({
+                    message: "List of all providers",
+                    data: result
+                })
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+
     })
 // edit
 // delete
