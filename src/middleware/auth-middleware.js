@@ -9,7 +9,7 @@ export function auth(req, res, next) {
     //protected route should only be accessed when user is signin
 
     if (!req.session.remember_me) {
-        res.status(403).json({
+        res.status(401).json({
             message: "access denied"
         })
         return
@@ -29,7 +29,7 @@ export async function verifyUserToken(req, res, next) {
         const token = authorizationToken?.split("Bearer ")[1];
 
         if (!token) {
-            return res.status(403).json({
+            return res.status(401).json({
                 message: "no token available"
             });
         }

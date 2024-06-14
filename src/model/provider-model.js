@@ -14,6 +14,7 @@ export async function createProviderModel(providerDetails) {
             address: providerDetails.address,
             phone_number: providerDetails.phone_number,
             code:providerDetails.code,
+            state:providerDetails.state,
             medical_director_name: providerDetails.medical_director_name,
             medical_director_phone_no: providerDetails.medical_director_phone_no,
             created_by: providerDetails.user_id

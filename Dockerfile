@@ -5,7 +5,7 @@ FROM mysql:8.4
 
 # Set environment variables for MySQL configuration
 ENV MYSQL_DATABASE=hci-db
-ENV MYSQL_USER=root
+ENV MYSQL_USER=hmo
 ENV MYSQL_ROOT_PASSWORD=mypassword
 
 # Expose the MySQL port
