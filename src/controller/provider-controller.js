@@ -33,8 +33,7 @@ router.post('/provider/create', auth, async (req, res, next) => {
 });
 
 // get all provider
-router.get('/provider/get',
-    async (req, res, next) => {
+router.get('/provider/get', auth, async (req, res, next) => {
 
         try {
             let result = await getAllProvider()

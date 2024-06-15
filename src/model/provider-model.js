@@ -1,4 +1,4 @@
-import knex from "knex";
+import knex  from "knex";
 import { v4 as uuidv4 } from 'uuid'
 import config from '../knexfile.js'
 let db = knex(config[process.env.NODE_ENV || 'development']);
@@ -34,7 +34,17 @@ export async function getAllProviderModel() {
     try {
 
         // get all from db
-        return await db("provider").select();
+        // return await db("provider").select();
+      return await  db('provider')
+            .select(
+                'provider.id',
+                'provider.name',
+                'provider.state',
+                'provider.code',
+                'user.id',
+                db.raw("concat(user.first_name, ' ', user.last_name) as `entered by`")
+            )
+            .innerJoin('user', 'user.id', 'provider.created_by')
 
     } catch (error) {
         console.log(error)
@@ -44,6 +54,6 @@ export async function getAllProviderModel() {
 // get provider by [provider code,]
 export async function getProviderByQuery(columnName, query) {
 
-    return await db("provider").select().whereILike(columnName,`%${query}%`)
+    return await db("provider").select().whereILike(columnName, `%${query}%`)
 }
 // edit provider by id
