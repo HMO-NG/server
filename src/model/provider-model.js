@@ -13,8 +13,8 @@ export async function createProviderModel(providerDetails) {
             email: providerDetails.email,
             address: providerDetails.address,
             phone_number: providerDetails.phone_number,
-            code:providerDetails.code,
-            state:providerDetails.state,
+            code: providerDetails.code,
+            state: providerDetails.state,
             medical_director_name: providerDetails.medical_director_name,
             medical_director_phone_no: providerDetails.medical_director_phone_no,
             created_by: providerDetails.user_id
@@ -30,16 +30,20 @@ export async function createProviderModel(providerDetails) {
 }
 
 //get all providers
-export async function getAllProviderModel(){
+export async function getAllProviderModel() {
     try {
 
         // get all from db
-       return await db("provider").select();
+        return await db("provider").select();
 
     } catch (error) {
         console.log(error)
     }
 }
 
-// get provider by id
+// get provider by [provider code,]
+export async function getProviderByQuery(columnName, query) {
+
+    return await db("provider").select().whereILike(columnName,`%${query}%`)
+}
 // edit provider by id
