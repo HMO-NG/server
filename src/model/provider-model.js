@@ -1,4 +1,4 @@
-import knex  from "knex";
+import knex from "knex";
 import { v4 as uuidv4 } from 'uuid'
 import config from '../knexfile.js'
 let db = knex(config[process.env.NODE_ENV || 'development']);
@@ -30,21 +30,29 @@ export async function createProviderModel(providerDetails) {
 }
 
 //get all providers
-export async function getAllProviderModel() {
+export async function getAllProviderModel(data) {
     try {
 
         // get all from db
-        // return await db("provider").select();
-      return await  db('provider')
+
+        let result = await db('provider')
             .select(
                 'provider.id',
                 'provider.name',
                 'provider.state',
                 'provider.code',
-                'user.id',
+                'provider.created_at',
+                db.raw("user.id as `user id`"),
                 db.raw("concat(user.first_name, ' ', user.last_name) as `entered by`")
             )
             .innerJoin('user', 'user.id', 'provider.created_by')
+            .limit(`${data.pageSize}`)
+            .offset(`${(data.pageIndex - 1) * data.pageSize}`)
+            .orderBy(`${data.sort.key ? data.sort.key : "created_at"}`, `${data.sort.order}`)
+
+        let total = await db("provider").count()
+
+        return { total, result }
 
     } catch (error) {
         console.log(error)

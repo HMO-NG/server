@@ -33,15 +33,17 @@ router.post('/provider/create', auth, async (req, res, next) => {
 });
 
 // get all provider
-router.get('/provider/get', auth, async (req, res, next) => {
+router.post('/provider/get', auth, async (req, res, next) => {
 
         try {
-            let result = await getAllProvider()
+            const data = req.body
+            let result = await getAllProvider(data)
 
             if (result) {
                 res.status(200).json({
                     message: "List of all providers",
-                    data: result
+                    data: result.result,
+                    total: result.total
                 })
             }
 

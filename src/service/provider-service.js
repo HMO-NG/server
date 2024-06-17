@@ -29,9 +29,9 @@ export async function createProvider(data) {
 
 }
 
-export async function getAllProvider() {
+export async function getAllProvider(data) {
     try {
-        return await getAllProviderModel()
+        return await getAllProviderModel(data)
     } catch (error) {
         return error
     }
