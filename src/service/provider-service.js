@@ -1,4 +1,4 @@
-import { createProviderModel, getAllProviderModel } from "../model/provider-model.js";
+import { createProviderModel, getAllProviderModel, getProviderByIdModel } from "../model/provider-model.js";
 import { NigerianState } from "../util/nigerian-states.js";
 import { generateUniqueProviderCode } from "../util/provider-code.js";
 
@@ -11,9 +11,6 @@ export async function createProvider(data) {
         const result = NigerianState.find(state => state.label === data.state);
 
         const providerCode = await generateUniqueProviderCode(result.value, 5)
-
-        console.log(providerCode)
-        // return state ? state.value : null;
 
         data.code = providerCode
 
@@ -32,6 +29,14 @@ export async function createProvider(data) {
 export async function getAllProvider(data) {
     try {
         return await getAllProviderModel(data)
+    } catch (error) {
+        return error
+    }
+}
+
+export async function getProviderById(id) {
+    try {
+        return await getProviderByIdModel(id)
     } catch (error) {
         return error
     }
