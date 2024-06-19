@@ -1,5 +1,5 @@
-import express from 'express'
-import { createProvider, getAllProvider } from '../service/provider-service.js';
+import express, { json } from 'express'
+import { createProvider, getAllProvider, getProviderById } from '../service/provider-service.js';
 import Exception from '../util/exception.js';
 import { auth, verifyUserToken, verifyPermission } from '../middleware/auth-middleware.js';
 
@@ -35,24 +35,49 @@ router.post('/provider/create', auth, async (req, res, next) => {
 // get all provider
 router.post('/provider/get', auth, async (req, res, next) => {
 
-        try {
-            const data = req.body
-            let result = await getAllProvider(data)
+    try {
+        const data = req.body
+        let result = await getAllProvider(data)
 
-            if (result) {
-                res.status(200).json({
-                    message: "List of all providers",
-                    data: result.result,
-                    total: result.total
-                })
-            }
-
-        } catch (error) {
-            console.log(error)
+        if (result) {
+            res.status(200).json({
+                message: "List of all providers",
+                data: result.result,
+                total: result.total
+            })
         }
 
-    })
+    } catch (error) {
+        console.log(error)
+    }
+
+})
+
+// get provider by id
+router.post('/provider/get/id', auth, async (req, res, next) => {
+
+    try {
+
+
+        const provider = req.body
+
+        let result = await getProviderById(provider.id)
+
+        console.log(provider.id)
+        console.log(result)
+
+        if (result) {
+            res.status(200).json({
+                message: "a single provider",
+                data: result,
+            })
+        }
+    } catch (error) {
+        return error
+    }
+})
 // edit
+
 // delete
 
 export default router;
