@@ -59,6 +59,8 @@ export async function editProviderById(id, data) {
         if (!result) {
             throw new ProviderServiceExpection("provider details update failed", 500)
         }
+
+        return result
 }
 
 export class ProviderServiceExpection extends Exception {

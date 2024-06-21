@@ -77,7 +77,7 @@ router.post('/provider/get/id', auth, async (req, res, next) => {
     }
 })
 // edit
-router.post('/provider/edit', auth, async (req, res, next) => {
+router.put('/provider/edit', auth, async (req, res, next) => {
 
     try {
 
