@@ -86,8 +86,8 @@ export async function getAllProviderModel(data) {
                     'provider.created_at',
                     'provider.modified_at',
                     'provider.modified_at',
-                    db.raw("user.id as `user id`"),
-                    db.raw("concat(user.first_name, ' ', user.last_name) as `entered by`")
+                    db.raw("user.id as `user_id`"),
+                    db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
                 )
                 .innerJoin('user', 'user.id', 'provider.created_by')
                 .limit(`${data.pageSize}`)
@@ -110,8 +110,27 @@ export async function getProviderByQuery(columnName, query) {
     return await db("provider").select().whereILike(columnName, `%${query}%`)
 }
 
-export async function getProviderByIdModel(id){
+//get provoder by id
+export async function getProviderByIdModel(id) {
 
     return await db("provider").select().where("id", id)
+}
+
+// edit provider by id
+export async function editProviderByIdModel(id, data) {
+
+    const updatedData = {
+        name: data.name,
+        email: data.email,
+        address: data.address,
+        phone_number: data.phone_number,
+        medical_director_name: data.medical_director_name,
+        medical_director_phone_no: data.medical_director_phone_no,
+        state: data.state,
+        modified_by: data.user_id,
+        modified_at: new Date()
+    }
+
+    return await db('provider').where('id', id).update(updatedData)
 }
 

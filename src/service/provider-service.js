@@ -1,6 +1,12 @@
-import { createProviderModel, getAllProviderModel, getProviderByIdModel } from "../model/provider-model.js";
+import {
+    createProviderModel,
+    getAllProviderModel,
+    getProviderByIdModel,
+    editProviderByIdModel
+} from "../model/provider-model.js";
 import { NigerianState } from "../util/nigerian-states.js";
 import { generateUniqueProviderCode } from "../util/provider-code.js";
+import Exception from "../util/exception.js"
 
 
 export async function createProvider(data) {
@@ -39,5 +45,24 @@ export async function getProviderById(id) {
         return await getProviderByIdModel(id)
     } catch (error) {
         return error
+    }
+}
+
+export async function editProviderById(id, data) {
+
+        if (!data) {
+            throw new ProviderServiceExpection("provider details to update empty", 400)
+        }
+
+        const result = await editProviderByIdModel(id, data)
+
+        if (!result) {
+            throw new ProviderServiceExpection("provider details update failed", 500)
+        }
+}
+
+export class ProviderServiceExpection extends Exception {
+    constructor(message, status) {
+        super(message, status)
     }
 }

@@ -1,5 +1,5 @@
 import express, { json } from 'express'
-import { createProvider, getAllProvider, getProviderById } from '../service/provider-service.js';
+import { createProvider, editProviderById, getAllProvider, getProviderById } from '../service/provider-service.js';
 import Exception from '../util/exception.js';
 import { auth, verifyUserToken, verifyPermission } from '../middleware/auth-middleware.js';
 
@@ -77,6 +77,24 @@ router.post('/provider/get/id', auth, async (req, res, next) => {
     }
 })
 // edit
+router.post('/provider/edit', auth, async (req, res, next) => {
+
+    try {
+
+        const data = req.body;
+
+        const isDataUpdated = await editProviderById(data.id, data)
+
+        if (isDataUpdated) {
+            res.status(201).json({
+                message: `${data.name} successfully updated`
+            })
+        }
+
+    } catch (error) {
+
+    }
+})
 
 // delete
 
