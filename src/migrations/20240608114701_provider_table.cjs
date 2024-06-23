@@ -10,7 +10,7 @@ exports.up = function (knex) {
         table.string('address');
         table.string('phone_number', 16);
         table.string('state', 16);
-        table.boolean('status').defaultTo(1);
+        table.boolean('is_active').defaultTo(1);
         table.string('code', 16); //LAG/12345
         table.string('medical_director_name', 64);
         table.string('medical_director_phone_no', 16);
