@@ -1,5 +1,5 @@
 import express, { json } from 'express'
-import { createProvider, editProviderById, getAllProvider, getProviderById } from '../service/provider-service.js';
+import { createProvider, editProviderActivationState, editProviderById, getAllProvider, getProviderById } from '../service/provider-service.js';
 import Exception from '../util/exception.js';
 import { auth, verifyUserToken, verifyPermission } from '../middleware/auth-middleware.js';
 
@@ -92,8 +92,30 @@ router.put('/provider/edit', auth, async (req, res, next) => {
         }
 
     } catch (error) {
-
+        console.log(error)
     }
+})
+
+// edit provider status
+router.patch('/provider/status/edit', auth, async (req, res, next) => {
+
+    try {
+
+        const data = req.body;
+
+        const isDataUpdated = await editProviderActivationState(data.id, data)
+
+        if (isDataUpdated) {
+            res.status(201).json({
+                message: `${data.name} activation status updated successfully`
+            })
+        }
+
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+
 })
 
 // delete

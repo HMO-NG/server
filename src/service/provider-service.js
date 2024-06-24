@@ -2,7 +2,8 @@ import {
     createProviderModel,
     getAllProviderModel,
     getProviderByIdModel,
-    editProviderByIdModel
+    editProviderByIdModel,
+    editProviderActivationStateModel
 } from "../model/provider-model.js";
 import { NigerianState } from "../util/nigerian-states.js";
 import { generateUniqueProviderCode } from "../util/provider-code.js";
@@ -61,6 +62,23 @@ export async function editProviderById(id, data) {
         }
 
         return result
+}
+
+export async function editProviderActivationState(id, activateState){
+    if(!id){
+        throw new ProviderServiceExpection("Provider Id needed", 400)
+    }
+    // if(!activateState){
+    //     throw new ProviderServiceExpection("Provider activation stated required", 400)
+    // }
+
+    const result = await editProviderActivationStateModel(id, activateState)
+
+    if(!result){
+        throw new ProviderServiceExpection("updating provider activation status failed", 500)
+    }
+
+    return result;
 }
 
 export class ProviderServiceExpection extends Exception {

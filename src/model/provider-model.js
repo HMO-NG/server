@@ -118,7 +118,7 @@ export async function getProviderByIdModel(id) {
     return await db("provider").select().where("id", id)
 }
 
-// edit provider by id
+// edit (specified provider columns)  by id
 export async function editProviderByIdModel(id, data) {
 
     const updatedData = {
@@ -133,6 +133,17 @@ export async function editProviderByIdModel(id, data) {
         modified_at: new Date()
     }
 
+    return await db('provider').where('id', id).update(updatedData)
+}
+
+//edit provider activation state using the provider id
+export async function editProviderActivationStateModel(id, activateState){
+
+    const updatedData = {
+        is_active: activateState.is_active,
+        modified_by:activateState.user_id,
+        modified_at: new Date()
+    }
     return await db('provider').where('id', id).update(updatedData)
 }
 
