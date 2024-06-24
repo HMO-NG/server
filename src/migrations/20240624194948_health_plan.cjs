@@ -9,6 +9,7 @@ exports.up = function (knex) {
         table.boolean('is_active').defaultTo(1);
         table.string('health_plan_code', 16);
         table.text('description')
+        table.string('band',64)
         table.string('created_by', 36).notNullable().references('id').inTable('user').onDelete('cascade');
         table.timestamp('created_at').notNullable().defaultTo(knex.fn.now())
     })
