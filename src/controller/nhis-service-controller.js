@@ -8,10 +8,24 @@ const router = express.Router()
 router.post('/nhis/services/create', auth, async (req, res, next) => {
 
     try {
-
         const data = req.body
 
-        let result = await createNhisService(data)
+        if (Array.isArray(data)) {
+
+            for (let i = 0; i < data.length; i++) {
+            //   const batch = data.slice(1);
+              try {
+                // await Promise.all(batch.map(item => createNhisServiceModel(item)));
+
+                console.log(`Processed batch ${i}`);
+                await createNhisService(data[i])
+              } catch (error) {
+                console.error(`Error processing batch ${i}`, error);
+              }
+            }
+          }
+
+        // let result = await createNhisService(data)
 
         if (!result) {
             throw new Exception("encountered an issue while creating nhis service", 401)

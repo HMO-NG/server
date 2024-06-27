@@ -11,7 +11,7 @@ export async function createNhisService(data) {
 
     return await createNhisServiceModel(data)
 
-}
+};
 
 class NHISServiceExpection extends Exception {
     constructor(message, status) {
