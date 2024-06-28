@@ -3,7 +3,7 @@
  * @returns { Promise<void> }
  */
 exports.up = function (knex) {
-    return knex.schema.createTable('nhis_service', table => {
+    return knex.schema.createTable('nhis_procedure', table => {
 
         table.specificType('id', 'char(36) primary key');
         table.string('name').notNullable();
@@ -23,5 +23,5 @@ exports.up = function (knex) {
  * @returns { Promise<void> }
  */
 exports.down = function (knex) {
-    return knex.schema.dropTable('nhis_service')
+    return knex.schema.dropTable('nhis_procedure')
 };
