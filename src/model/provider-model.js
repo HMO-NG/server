@@ -29,7 +29,7 @@ export async function createProviderModel(providerDetails) {
 
 }
 
-//get all providers
+//get all providers and can also search
 export async function getAllProviderModel(data) {
     try {
 
