@@ -9,6 +9,8 @@ exports.up = function (knex) {
         table.string('name').notNullable();
         table.string('type', 20);
         table.string('code', 20);
+        table.string('category');
+        table.string('sub_category');
         table.double('price', 10, 2);
         table.string('plan_type', 8).defaultTo('nhis');
         table.string('created_by', 36).notNullable().references('id').inTable('user').onDelete('cascade');
