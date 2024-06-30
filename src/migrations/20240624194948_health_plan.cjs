@@ -3,7 +3,7 @@
  * @returns { Promise<void> }
  */
 exports.up = function (knex) {
-    return knex.schema.createTable('health_plan', table => {
+    return knex.schema.createTable('health_plan_category', table => {
         table.specificType('id', 'char(36) primary key');
         table.string('name').notNullable();
         table.boolean('is_active').defaultTo(1);
