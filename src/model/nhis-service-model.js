@@ -10,11 +10,13 @@ export async function createNhisServiceModel(data) {
         id: uuidv4(),
         name: data.name,
         type: data.type,
+        category: data.category,
+        sub_category: data.sub_category,    
         code: data.code,
         price: data.price,
         created_by: data.user_id
     }
-    return await db("nhis_service").insert(createNhiaService);
+    return await db("nhis_procedure").insert(createNhiaService);
 }
 
 //get all nhis procedures and can search
@@ -40,7 +42,7 @@ export async function getAllAndSearchNhisProcedureModel(data) {
                     db.raw("user.id as `user_id`"),
                     db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
                 )
-                .innerJoin('user', 'user.id', 'provider.created_by')
+                .innerJoin('user', 'user.id', 'nhis_procedure.created_by')
                 .whereILike('name', `%${data.query}%`)
                 .orWhereILike('code', `%${data.query}%`)
                 .orWhereILike('sub_category', `%${data.query}%`)
@@ -54,19 +56,19 @@ export async function getAllAndSearchNhisProcedureModel(data) {
 
         } else {
             result = await db('nhis_procedure')
-            .select(
-                'nhis_procedure.id',
-                'nhis_procedure.name',
-                'nhis_procedure.type',
-                'nhis_procedure.sub_category',
-                'nhis_procedure.code',
-                'nhis_procedure.category',
-                'nhis_procedure.price',
-                'nhis_procedure.plan_type',
-                db.raw("user.id as `user_id`"),
-                db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
-            )
-                .innerJoin('user', 'user.id', 'provider.created_by')
+                .select(
+                    'nhis_procedure.id',
+                    'nhis_procedure.name',
+                    'nhis_procedure.type',
+                    'nhis_procedure.sub_category',
+                    'nhis_procedure.code',
+                    'nhis_procedure.category',
+                    'nhis_procedure.price',
+                    'nhis_procedure.plan_type',
+                    db.raw("user.id as `user_id`"),
+                    db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
+                )
+                .innerJoin('user', 'user.id', 'nhis_procedure.created_by')
                 .limit(`${data.pageSize}`)
                 .offset(`${(data.pageIndex - 1) * data.pageSize}`)
                 .orderBy(`${data.sort.key ? data.sort.key : "code"}`, `${data.sort.order}`)

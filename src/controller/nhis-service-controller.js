@@ -33,14 +33,16 @@ router.post('/nhis/services/search/get', auth, async (req, res, next) => {
 
         const data = req.body
 
-        let result = await getAndSearchNhisService(data)
+        let response = await getAndSearchNhisService(data)
 
-        if (!result) {
+        if (!response) {
             throw new Exception("encountered an issue while get or searching nhis service", 401)
         }
 
         res.status(200).json({
-            message: `results returned successfully`,
+            message: `response returned successfully`,
+            data: response.result,
+            total: response.total
         })
     } catch (error) {
         console.log(error)

@@ -22,7 +22,7 @@ async function doesHealthPlanCodeExist(code) {
     }
 }
 
-export async function generateUniqueHealthPlanCode(length) {
+export async function generateUniqueHealthPlanCategoryCode(length) {
     const isOtpUnique = await doesHealthPlanCodeExist(generateRandomNum(length))
 
     if (isOtpUnique) {
