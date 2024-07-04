@@ -24,7 +24,7 @@ export async function createHealthPlanModel(data) {
 
     const createHealthPlan = {
         id: uuidv4(),
-        plan_name: data.name,
+        plan_name: data.plan_name,
         plan_category: data.plan_category,
         plan_type: data.plan_type,
         allow_dependent: data.allow_dependent,

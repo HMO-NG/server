@@ -5,10 +5,10 @@
 exports.up = function (knex) {
     return knex.schema.createTable('health_plan', table => {
         table.specificType('id', 'char(36) primary key');
-        table.string('plan_name', 100).notNullable().unique();
+        table.string('plan_name', 100).notNullable();
         table.string('plan_type').notNullable();
         table.boolean('allow_dependent').defaultTo(false)
-        table.string('max_dependant', 6).notNullable().unique();
+        table.string('max_dependant', 6).notNullable();
         table.string('plan_age_limit', 6).notNullable();
         table.string('plan_cost', 16).notNullable();
         table.boolean('disabled_plan').defaultTo(0);

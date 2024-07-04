@@ -11,28 +11,6 @@ import Exception from "../util/exception.js";
 
 const router = express.Router()
 
-// create health plan
-router.post('/healthplan/create', auth, async (req, res, next) => {
-
-    try {
-
-        const data = req.body
-        let result = await createHealthPlanCategoryService(data)
-        if (!result) {
-            throw new Exception("encountered an issue while creating health plan", 401)
-        }
-
-        res.status(200).json({
-            message: `${data.name} created successfully`,
-            code: data.health_plan_code
-        })
-    } catch (error) {
-        console.log(error.status)
-        next(error)
-
-    }
-});
-
 // get all health plan category
 router.get('/healthplan/category/get', auth, async (req, res, next) => {
 
@@ -76,6 +54,7 @@ router.post('/healthplan/benefit/create', auth, async (req, res, next) => {
     }
 });
 
+// create health plan
 router.post('/healthplan/create', auth, async (req, res, next) => {
 
     try {
@@ -170,5 +149,27 @@ router.post('/healthplan/view', auth, async (req, res, next) => {
 
     }
 });
+
+router.post('/healthplan/category/create', auth, async (req, res, next) => {
+    try {
+        const data = req.body;
+
+        let response = await createHealthPlanCategoryService(data)
+
+        if (!response) {
+            throw new Exception("encountered an issue while returning health benefit data", 401)
+        }
+
+        res.status(200).json({
+            message: `health plan category returned successfully`,
+            data: response.result,
+            total: response.total
+        })
+
+    } catch (error) {
+        console.log(error.status)
+        next(error)
+    }
+})
 
 export default router;

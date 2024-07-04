@@ -18,7 +18,7 @@ export async function createHealthPlanCategoryService(data) {
     // generate code
     const code = await generateUniqueHealthPlanCategoryCode(5)
 
-    data.health_plan_code = `band/${data.band}/${code}`;
+    data.health_plan_code = `${data.band}/${code}`;
 
     return await createHealthPlanCategoryModel(data)
 
