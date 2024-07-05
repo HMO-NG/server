@@ -1,5 +1,5 @@
 import knex from "knex";
-import {v4 as uuidv4} from 'uuid'
+import { v4 as uuidv4 } from 'uuid'
 import config from '../knexfile.js'
 
 let db = knex(config[process.env.NODE_ENV || 'development']);
@@ -106,7 +106,7 @@ export async function getAndSearchBenefitListModel(data) {
             total = await db("benefit_list").count()
         }
 
-        return {total, result}
+        return { total, result }
 
     } catch (error) {
         console.log(error)
@@ -165,7 +165,7 @@ export async function getAndSearchHealthPlanCategoryModel(data) {
             total = await db("health_plan_category").count()
         }
 
-        return {total, result}
+        return { total, result }
 
     } catch (error) {
         console.log(error)
@@ -185,17 +185,20 @@ export async function getAndSearchHealthPlan(data) {
                 .select(
                     'health_plan.id',
                     'health_plan.plan_name',
-                    'health_plan.plan_category',
                     'health_plan.plan_type',
                     'health_plan.allow_dependent',
                     'health_plan.max_dependant',
                     'health_plan.plan_age_limit',
                     'health_plan.plan_cost',
                     'health_plan.created_at',
+                    db.raw("health_plan_category.name as health_plan_category_name"),
+                    db.raw("health_plan_category.health_plan_code as health_plan_category_code"),
+                    db.raw("health_plan_category.band as health_plan_category_band"),
                     db.raw("user.id as `user_id`"),
                     db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
                 )
                 .innerJoin('user', 'user.id', 'health_plan.created_by')
+                .innerJoin('health_plan_category', 'health_plan.plan_category', 'health_plan_category.id')
                 .whereILike('plan_name', `%${data.query}%`)
                 .orWhereILike('plan_category', `%${data.query}%`)
                 .limit(`${data.pageSize}`)
@@ -203,25 +206,28 @@ export async function getAndSearchHealthPlan(data) {
                 .orderBy(`${data.sort.key ? data.sort.key : "health_plan.created_at"}`, `${data.sort.order}`)
 
 
-            total = await db("health_plan").count()
+            total = await db("health_plan").whereILike('plan_name', `%${data.query}%`)
+                .orWhereILike('plan_category', `%${data.query}%`).count()
 
         } else {
             result = await db('health_plan')
                 .select(
                     'health_plan.id',
                     'health_plan.plan_name',
-                    'health_plan.plan_category',
                     'health_plan.plan_type',
                     'health_plan.allow_dependent',
                     'health_plan.max_dependant',
                     'health_plan.plan_age_limit',
                     'health_plan.plan_cost',
-                    'health_plan.plan_cost',
                     'health_plan.created_at',
+                    db.raw("health_plan_category.name as health_plan_category_name"),
+                    db.raw("health_plan_category.health_plan_code as health_plan_category_code"),
+                    db.raw("health_plan_category.band as health_plan_category_band"),
                     db.raw("user.id as `user_id`"),
                     db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
                 )
                 .innerJoin('user', 'user.id', 'health_plan.created_by')
+                .innerJoin('health_plan_category', 'health_plan.plan_category', 'health_plan_category.id')
                 .limit(`${data.pageSize}`)
                 .offset(`${(data.pageIndex - 1) * data.pageSize}`)
                 .orderBy(`${data.sort.key ? data.sort.key : "created_at"}`, `${data.sort.order}`)
@@ -229,7 +235,7 @@ export async function getAndSearchHealthPlan(data) {
             total = await db("health_plan").count()
         }
 
-        return {total, result}
+        return { total, result }
 
     } catch (error) {
         console.log(error)
