@@ -18,7 +18,11 @@ export async function createHealthPlanCategoryService(data) {
     // generate code
     const code = await generateUniqueHealthPlanCategoryCode(5)
 
-    data.health_plan_code = `${data.band}/${code}`;
+    const removeWhiteSpaceFromBandName = data.band.replace(/\s+/g, '')
+
+    data.health_plan_code = `${removeWhiteSpaceFromBandName}/${code}`;
+
+
 
     return await createHealthPlanCategoryModel(data)
 
@@ -63,10 +67,6 @@ export async function getAndSearchHealthPlanCategoryService(data) {
     if (!data) {
         throw new HealthPlanServiceExpection("plan category can not be empty", 403)
     }
-
-    const planCode = data.health_plan_code
-
-    data.health_plan_code = planCode.replace(/\s+/g, '')
 
     return await getAndSearchHealthPlanCategoryModel(data)
 
