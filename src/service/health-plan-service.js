@@ -64,6 +64,10 @@ export async function getAndSearchHealthPlanCategoryService(data) {
         throw new HealthPlanServiceExpection("plan category can not be empty", 403)
     }
 
+    const planCode = data.health_plan_code
+
+    data.health_plan_code = planCode.replace(/\s+/g, '')
+
     return await getAndSearchHealthPlanCategoryModel(data)
 
 }

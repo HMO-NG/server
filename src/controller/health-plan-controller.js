@@ -161,7 +161,7 @@ router.post('/healthplan/category/create', auth, async (req, res, next) => {
         }
 
         res.status(200).json({
-            message: `health plan category returned successfully`,
+            message: `${data.name} created successfully`,
             data: response.result,
             total: response.total
         })
