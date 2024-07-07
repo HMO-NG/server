@@ -3,7 +3,10 @@ import {
     getAndSearchBenefitListModel,
     createBenefitModel,
     getAllHealthPlanCategoryModel,
-    getAndSearchHealthPlanCategoryModel, createHealthPlanModel, getAndSearchHealthPlan
+    getAndSearchHealthPlanCategoryModel,
+    createHealthPlanModel,
+    getAndSearchHealthPlan,
+    getSingleHealthCategoryModelById
 
 } from "../model/health-plan-model.js";
 import Exception from "../util/exception.js";
@@ -80,6 +83,15 @@ export async function getAndSearchHealthPlanService(data) {
 
     return await getAndSearchHealthPlan(data)
 
+}
+
+export async function getSingleHealthPlanCategory(id){
+
+    if (!id) {
+        throw new HealthPlanServiceExpection("id can not be empty", 403)
+    }
+
+    return await getSingleHealthCategoryModelById(id)
 }
 
 class HealthPlanServiceExpection extends Exception {

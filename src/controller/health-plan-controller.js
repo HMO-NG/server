@@ -172,4 +172,25 @@ router.post('/healthplan/category/create', auth, async (req, res, next) => {
     }
 })
 
+router.post('/healthplan/category/get', auth, async (req, res, next) => {
+    try {
+        const data = req.body;
+
+        let response = await createHealthPlanCategoryService(data.id)
+
+        if (!response) {
+            throw new Exception("encountered an issue while returning health plan category data", 401)
+        }
+
+        res.status(200).json({
+            message: `${data.id} returned successfully`,
+            data: response,
+        })
+
+    } catch (error) {
+        console.log(error.status)
+        next(error)
+    }
+})
+
 export default router;
