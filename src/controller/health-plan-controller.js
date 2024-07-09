@@ -5,7 +5,11 @@ import {
     createBenefitService,
     getAndSearchBenefitListService,
     getHealthPlanCategoryService,
-    getAndSearchHealthPlanCategoryService, createHealthPlanService, getAndSearchHealthPlanService
+    getAndSearchHealthPlanCategoryService,
+    createHealthPlanService,
+    getAndSearchHealthPlanService,
+    getSingleHealthPlanCategory,
+    getAllBenefitList
 } from '../service/health-plan-service.js';
 import Exception from "../util/exception.js";
 
@@ -172,11 +176,13 @@ router.post('/healthplan/category/create', auth, async (req, res, next) => {
     }
 })
 
+// get a single health plan category by id
 router.post('/healthplan/category/get', auth, async (req, res, next) => {
     try {
         const data = req.body;
 
-        let response = await createHealthPlanCategoryService(data.id)
+        let response = await getSingleHealthPlanCategory(data.id)
+
 
         if (!response) {
             throw new Exception("encountered an issue while returning health plan category data", 401)
@@ -191,6 +197,31 @@ router.post('/healthplan/category/get', auth, async (req, res, next) => {
         console.log(error.status)
         next(error)
     }
+
+})
+
+// get all benefit lists
+
+router.get('/healthplan/benefit/get', auth, async (req, res, next) => {
+    try {
+
+        let response = await getAllBenefitList()
+
+
+        if (!response) {
+            throw new Exception("encountered an issue while returning health benefit list data", 401)
+        }
+
+        res.status(200).json({
+            message: "benfit list returned successfully",
+            data: response,
+        })
+
+    } catch (error) {
+        console.log(error.status)
+        next(error)
+    }
+
 })
 
 export default router;

@@ -232,12 +232,39 @@ export async function getAndSearchHealthPlan(data) {
                 .innerJoin('health_plan_category', 'health_plan.plan_category', 'health_plan_category.id')
                 .limit(`${data.pageSize}`)
                 .offset(`${(data.pageIndex - 1) * data.pageSize}`)
-                .orderBy(`${data.sort.key ? data.sort.key : "created_at"}`, `${data.sort.order}`)
+                .orderBy(`${data.sort.key ? data.sort.key : "created_at"}`, `${data.sort.order ? data.sort.order : "asc"}`)
 
             total = await db("health_plan").count()
         }
 
         return { total, result }
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+export async function getAllHealthPlan(data) {
+    try {
+
+        result = await db('health_plan')
+            .select(
+                'health_plan.id',
+                'health_plan.plan_name',
+                'health_plan.plan_type',
+                'health_plan.allow_dependent',
+                'health_plan.max_dependant',
+                'health_plan.plan_age_limit',
+                'health_plan.plan_cost',
+                'health_plan.created_at',
+                db.raw("health_plan_category.name as health_plan_category_name"),
+                db.raw("health_plan_category.health_plan_code as health_plan_category_code"),
+                db.raw("health_plan_category.band as health_plan_category_band"),
+                db.raw("user.id as `user_id`"),
+                db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
+            )
+            .innerJoin('user', 'user.id', 'health_plan.created_by')
+            .innerJoin('health_plan_category', 'health_plan.plan_category', 'health_plan_category.id')
+            .orderBy("health_plan.plan_name", `asc`)
 
     } catch (error) {
         console.log(error)
@@ -253,16 +280,30 @@ export async function getSingleHealthCategoryModelById(id) {
             'health_plan_category.health_plan_code',
             'health_plan_category.description',
             'health_plan_category.band',
-            'health_plan_category.band',
-            db.raw("user.id as `user_id`"),
-            db.raw("user.email as `user_user`"),
-            db.raw("user.phone_number as `user_phone_number"),
-            db.raw("user.role as `user_role"),
-            db.raw("user.user_disabled as `is_user_account_active"),
-            db.raw("user.last_active_at as `user_last_active_at"),
+            db.raw("user.id as user_id"),
+            db.raw("user.email as user_email"),
+            db.raw("user.phone_number as user_phone_number"),
+            db.raw("user.role as user_role"),
+            db.raw("user.user_disabled as is_user_account_active"),
+            db.raw("user.last_active_at as user_last_active_at"),
             db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
         )
         .innerJoin('user', 'user.id', 'health_plan_category.created_by')
-        .where('name', `%${id}%`)
+        .where('health_plan_category.id', `${id}`)
+}
+
+/*
+Returns all benefit list
+Use: in attaching benefits to health plan.
+ */
+export async function getAllBenefitListModel() {
+    return await db('benefit_list')
+        .select(
+            'benefit_list.id',
+            'benefit_list.benefit_name',
+            'benefit_list.sub_category',
+            'benefit_list.category',
+        )
+
 }
 

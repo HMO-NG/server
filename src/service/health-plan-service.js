@@ -6,7 +6,8 @@ import {
     getAndSearchHealthPlanCategoryModel,
     createHealthPlanModel,
     getAndSearchHealthPlan,
-    getSingleHealthCategoryModelById
+    getSingleHealthCategoryModelById,
+    getAllBenefitListModel
 
 } from "../model/health-plan-model.js";
 import Exception from "../util/exception.js";
@@ -92,6 +93,10 @@ export async function getSingleHealthPlanCategory(id){
     }
 
     return await getSingleHealthCategoryModelById(id)
+}
+export async function getAllBenefitList(){
+
+    return await getAllBenefitListModel()
 }
 
 class HealthPlanServiceExpection extends Exception {
