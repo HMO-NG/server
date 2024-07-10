@@ -9,7 +9,8 @@ import {
     createHealthPlanService,
     getAndSearchHealthPlanService,
     getSingleHealthPlanCategory,
-    getAllBenefitList
+    getAllBenefitList,
+    createAttachedBenefitService
 } from '../service/health-plan-service.js';
 import Exception from "../util/exception.js";
 
@@ -201,7 +202,6 @@ router.post('/healthplan/category/get', auth, async (req, res, next) => {
 })
 
 // get all benefit lists
-
 router.get('/healthplan/benefit/get', auth, async (req, res, next) => {
     try {
 
@@ -214,6 +214,35 @@ router.get('/healthplan/benefit/get', auth, async (req, res, next) => {
 
         res.status(200).json({
             message: "benfit list returned successfully",
+            data: response,
+        })
+
+    } catch (error) {
+        console.log(error.status)
+        next(error)
+    }
+
+})
+
+// create/save attached benefit lists
+router.post('/healthplan/benefit/attach', auth, async (req, res, next) => {
+    try {
+
+        const data = req.body;
+
+        if (!data) {
+            throw new Exception("request body for attach benefit is empty", 401)
+        }
+
+        let response = await createAttachedBenefitService(data)
+
+        if (!response) {
+            throw new Exception(`Error in encountered while saving ${data.benefit_name} to attached benefit`, 401)
+        }
+
+
+        res.status(200).json({
+            message: "attached benefit to health plan successfully",
             data: response,
         })
 

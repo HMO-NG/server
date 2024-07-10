@@ -292,6 +292,23 @@ export async function getSingleHealthCategoryModelById(id) {
         .where('health_plan_category.id', `${id}`)
 }
 
+// Save Attach benefit
+export async function createAttachedBenefitModel(data) {
+
+    const createAttachedBenefit = {
+        id: uuidv4(),
+        benefit_name: data.benefit_name,
+        limit_type: data.limit_type,
+        limit_value: data.limit_value,
+        health_plan_name: data.health_plan_name,
+        benefit_item_id: data.benefit_item_id,
+        created_by: data.created_by,
+        health_plan_id: data.health_plan_id
+    }
+
+    return await db("attached_benefit").insert(createAttachedBenefit)
+}
+
 /*
 Returns all benefit list
 Use: in attaching benefits to health plan.

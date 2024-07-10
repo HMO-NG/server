@@ -7,11 +7,12 @@ import {
     createHealthPlanModel,
     getAndSearchHealthPlan,
     getSingleHealthCategoryModelById,
-    getAllBenefitListModel
+    getAllBenefitListModel,
+    createAttachedBenefitModel
 
 } from "../model/health-plan-model.js";
 import Exception from "../util/exception.js";
-import {generateUniqueHealthPlanCategoryCode} from "../util/generate-healthplan-code.js";
+import { generateUniqueHealthPlanCategoryCode } from "../util/generate-healthplan-code.js";
 
 export async function createHealthPlanCategoryService(data) {
 
@@ -86,7 +87,7 @@ export async function getAndSearchHealthPlanService(data) {
 
 }
 
-export async function getSingleHealthPlanCategory(id){
+export async function getSingleHealthPlanCategory(id) {
 
     if (!id) {
         throw new HealthPlanServiceExpection("id can not be empty", 403)
@@ -94,9 +95,29 @@ export async function getSingleHealthPlanCategory(id){
 
     return await getSingleHealthCategoryModelById(id)
 }
-export async function getAllBenefitList(){
+export async function getAllBenefitList() {
 
     return await getAllBenefitListModel()
+}
+
+export async function createAttachedBenefitService(data, planName, user_id, benefit_id, health_plan_id, health_plan_name) {
+
+    const extractData = data.benefit_limit;
+
+    const newDetails = extractData.map((item) => {
+        return {
+            benefit_name: item.benefit_name,
+            limit_type: item.limit_type,
+            limit_value: item.limit_value,
+            benefit_item_id: benefit_id,
+            health_plan_id: health_plan_id,
+            created_by: user_id,
+            health_plan_name: health_plan_name,
+
+        }
+    })
+
+    return createAttachedBenefitModel(newDetails)
 }
 
 class HealthPlanServiceExpection extends Exception {
