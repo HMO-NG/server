@@ -100,7 +100,7 @@ export async function getAllBenefitList() {
     return await getAllBenefitListModel()
 }
 
-export async function createAttachedBenefitService(data, planName, user_id, benefit_id, health_plan_id, health_plan_name) {
+export async function createAttachedBenefitService(data, userId, benefitId, healthPlanId, healthPlanName) {
 
     const extractData = data.benefit_limit;
 
@@ -109,10 +109,10 @@ export async function createAttachedBenefitService(data, planName, user_id, bene
             benefit_name: item.benefit_name,
             limit_type: item.limit_type,
             limit_value: item.limit_value,
-            benefit_item_id: benefit_id,
-            health_plan_id: health_plan_id,
-            created_by: user_id,
-            health_plan_name: health_plan_name,
+            benefit_item_id: benefitId,
+            health_plan_id: healthPlanId,
+            created_by: userId,
+            health_plan_name: healthPlanName,
 
         }
     })

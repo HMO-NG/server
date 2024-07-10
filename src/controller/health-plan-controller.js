@@ -234,7 +234,7 @@ router.post('/healthplan/benefit/attach', auth, async (req, res, next) => {
             throw new Exception("request body for attach benefit is empty", 401)
         }
 
-        let response = await createAttachedBenefitService(data)
+        let response = await createAttachedBenefitService(data.data, data.userId, data.benefitId, data.healthPlanId, data.healthPlanName)
 
         if (!response) {
             throw new Exception(`Error in encountered while saving ${data.benefit_name} to attached benefit`, 401)
