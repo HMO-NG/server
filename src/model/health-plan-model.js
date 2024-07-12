@@ -324,3 +324,8 @@ export async function getAllBenefitListModel() {
 
 }
 
+// returns the attached benefits to a health plan by the health plan id
+export async function getAttachBenefitByHealthPlanIdModel(id) {
+    return await db('attached_benefit').select().where('health_plan_id', id)
+}
+

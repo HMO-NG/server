@@ -8,7 +8,8 @@ import {
     getAndSearchHealthPlan,
     getSingleHealthCategoryModelById,
     getAllBenefitListModel,
-    createAttachedBenefitModel
+    createAttachedBenefitModel,
+    getAttachBenefitByHealthPlanIdModel
 
 } from "../model/health-plan-model.js";
 import Exception from "../util/exception.js";
@@ -120,6 +121,16 @@ export async function createAttachedBenefitService(data, userId, healthPlanId, h
     const createdAttachedBenefitList = await Promise.all(newDetails.map((data) => createAttachedBenefitModel(data)))
 
     return createdAttachedBenefitList
+}
+
+export async function getAttachedBenefitByHealthPlanIdService(id){
+
+    // console.log("id", id)
+    if (!id) {
+        throw new HealthPlanServiceExpection("health plan ID can not be empty", 404)
+    }
+
+    return getAttachBenefitByHealthPlanIdModel(id)
 }
 
 class HealthPlanServiceExpection extends Exception {

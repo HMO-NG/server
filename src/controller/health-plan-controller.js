@@ -10,7 +10,8 @@ import {
     getAndSearchHealthPlanService,
     getSingleHealthPlanCategory,
     getAllBenefitList,
-    createAttachedBenefitService
+    createAttachedBenefitService,
+    getAttachedBenefitByHealthPlanIdService
 } from '../service/health-plan-service.js';
 import Exception from "../util/exception.js";
 
@@ -249,6 +250,29 @@ router.post('/healthplan/benefit/attach', auth, async (req, res, next) => {
         next(error)
     }
 
+})
+
+// get attached benefit by health plan ID
+router.post('/healthplan/benefit/attach/get', auth, async (req, res, next) => {
+    try {
+
+        const healthPlanId = req.body
+
+        let response = await getAttachedBenefitByHealthPlanIdService(healthPlanId.id)
+
+        if (!response) {
+            throw new Exception("encountered an issue while returning the attached health plan benefit list", 401)
+        }
+
+        res.status(200).json({
+            message: "attached benfit list returned successfully",
+            data: response,
+        })
+
+    } catch (error) {
+        console.log(error.status)
+        next(error)
+    }
 })
 
 export default router;
