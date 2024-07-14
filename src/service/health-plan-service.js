@@ -9,7 +9,9 @@ import {
     getSingleHealthCategoryModelById,
     getAllBenefitListModel,
     createAttachedBenefitModel,
-    getAttachBenefitByHealthPlanIdModel
+    getAttachBenefitByHealthPlanIdModel,
+    updateAttachBenefitModel,
+    deleteAttachBenefitModel
 
 } from "../model/health-plan-model.js";
 import Exception from "../util/exception.js";
@@ -131,6 +133,23 @@ export async function getAttachedBenefitByHealthPlanIdService(id){
     }
 
     return getAttachBenefitByHealthPlanIdModel(id)
+}
+
+export async function updateAttachedBenefitService(id, data){
+
+    if (!id) {
+        throw new HealthPlanServiceExpection("health plan ID can not be empty", 404)
+    }
+
+    if (!data) {
+        throw new HealthPlanServiceExpection("health plan data to be updated can not be empty", 404)
+    }
+
+    return updateAttachBenefitModel(id, data)
+}
+
+export async function deleteAttachedBenefitService(id){
+    return deleteAttachBenefitModel(id)
 }
 
 class HealthPlanServiceExpection extends Exception {

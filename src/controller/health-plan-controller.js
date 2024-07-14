@@ -11,7 +11,9 @@ import {
     getSingleHealthPlanCategory,
     getAllBenefitList,
     createAttachedBenefitService,
-    getAttachedBenefitByHealthPlanIdService
+    getAttachedBenefitByHealthPlanIdService,
+    updateAttachedBenefitService,
+    deleteAttachedBenefitService
 } from '../service/health-plan-service.js';
 import Exception from "../util/exception.js";
 
@@ -266,6 +268,55 @@ router.post('/healthplan/benefit/attach/get', auth, async (req, res, next) => {
 
         res.status(200).json({
             message: "attached benfit list returned successfully",
+            data: response,
+        })
+
+    } catch (error) {
+        console.log(error.status)
+        next(error)
+    }
+})
+
+// update attached benefit
+router.post('/healthplan/benefit/attach/update', auth, async (req, res, next) => {
+    try {
+
+        const { id, data } = req.body
+
+        let response = await updateAttachedBenefitService(id, data)
+
+        if (!response) {
+            throw new Exception("encountered an issue while returning the attached health plan benefit list", 400)
+        }
+
+        res.status(200).json({
+            message: "health plan benefit updated successfully",
+            data: response,
+        })
+
+    } catch (error) {
+        console.log(error.status)
+        next(error)
+    }
+})
+
+// delete attached benefit
+router.delete('/healthplan/benefit/attach/delete/:id', auth, async (req, res, next) => {
+    try {
+        const { id } = req.params
+
+        if (!id) {
+            throw new Exception("No attached benefit ID included", 400)
+        }
+
+        let response = await deleteAttachedBenefitService(id)
+
+        if (!response) {
+            throw new Exception("encountered an issue while deleting the attached health plan benefit", 400)
+        }
+
+        res.status(200).json({
+            message: "health plan benefit deleted successfully",
             data: response,
         })
 

@@ -329,3 +329,12 @@ export async function getAttachBenefitByHealthPlanIdModel(id) {
     return await db('attached_benefit').select().where('health_plan_id', id)
 }
 
+// edit some field for attach benefit
+export async function updateAttachBenefitModel(id, data) {
+    return await db('attached_benefit').where('id', id).update(data)
+}
+
+// delete attach benefit
+export async function deleteAttachBenefitModel(id){
+    return await db('attached_benefit').where('id', id).del()
+}
