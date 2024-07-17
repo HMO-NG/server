@@ -84,6 +84,22 @@ export async function getAllAndSearchNhisTarrifModel(data) {
     }
 }
 
+// create nhia drug category
+export async function createNhisDrugTarrifModel(data) {
+
+    const createNhiaDrugService = {
+        id: uuidv4(),
+        name_of_drug: data.name_of_drug,
+        dosage_form: data.dosage_form,
+        strength: data.strength,
+        presentation: data.presentation,
+        category: data.category,
+        plan_type: data.plan_type,
+        price: data.price,
+        created_by: data.user_id
+    }
+    return await db("nhis_drug_tarrif").insert(createNhiaDrugService);
+}
 // export async function getHealthPlanCodeModel(code) {
 //     return await db("health_plan").where('health_plan_code', code)
 // }

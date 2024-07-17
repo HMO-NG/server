@@ -1,6 +1,10 @@
 import express, { json } from 'express'
 import { auth } from '../middleware/auth-middleware.js';
-import { createNhisServiceTarrif, getAndSearchNhisTarrifService } from '../service/nhis-service.js';
+import {
+    createNhisServiceTarrif,
+    getAndSearchNhisTarrifService,
+    createNhiaDrugTarrif
+} from '../service/nhis-service.js';
 
 const router = express.Router()
 
@@ -27,6 +31,7 @@ router.post('/nhis/service/tarrif/create', auth, async (req, res, next) => {
 
     }
 });
+
 router.post('/nhis/services/search/get', auth, async (req, res, next) => {
 
     try {
@@ -47,6 +52,28 @@ router.post('/nhis/services/search/get', auth, async (req, res, next) => {
     } catch (error) {
         console.log(error)
         next(error)
+    }
+});
+
+router.post('/nhis/drug/tarrif/create', auth, async (req, res, next) => {
+    try {
+
+        const data = req.body
+
+        let result = await createNhiaDrugTarrif(data)
+
+        if (!result) {
+            throw new Exception("encountered an issue while creating nhis service", 401)
+        }
+
+        res.status(200).json({
+            message: `${data.name} created successfully`,
+            code: data.code
+        })
+    } catch (error) {
+        console.log(error)
+        next(error)
+
     }
 });
 

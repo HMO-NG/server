@@ -13,7 +13,8 @@ export async function createNhisServiceTarrif(data) {
     return await createNhisServiceTarrifModel(data)
 
 };
-export async function getAndSearchNhisTarrifService (data){
+
+export async function getAndSearchNhisTarrifService(data) {
 
     if (!data) {
         throw new NHISServiceExpection("NHIS service details can not be empty", 400)
@@ -22,6 +23,14 @@ export async function getAndSearchNhisTarrifService (data){
     return await getAllAndSearchNhisTarrifModel(data)
 
 };
+
+export async function createNhiaDrugTarrif(data) {
+    if (!data) {
+        throw new NHISServiceExpection("NHIS service details can not be empty", 403)
+    }
+
+    return await createNhisDrugTarrifModel(data)
+}
 
 class NHISServiceExpection extends Exception {
     constructor(message, status) {
