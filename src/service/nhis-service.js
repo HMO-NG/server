@@ -1,25 +1,25 @@
 import {
-    createNhisServiceModel,
-    getAllAndSearchNhisProcedureModel
+    createNhisServiceTarrifModel,
+    getAllAndSearchNhisTarrifModel
 } from "../model//nhis-service-model.js";
 import Exception from "../util/exception.js";
 
-export async function createNhisService(data) {
+export async function createNhisServiceTarrif(data) {
 
     if (!data) {
         throw new NHISServiceExpection("NHIS service details can not be empty", 403)
     }
 
-    return await createNhisServiceModel(data)
+    return await createNhisServiceTarrifModel(data)
 
 };
-export async function getAndSearchNhisService (data){
+export async function getAndSearchNhisTarrifService (data){
 
     if (!data) {
-        throw new NHISServiceExpection("NHIS service details can not be empty", 403)
+        throw new NHISServiceExpection("NHIS service details can not be empty", 400)
     }
 
-    return await getAllAndSearchNhisProcedureModel(data)
+    return await getAllAndSearchNhisTarrifModel(data)
 
 };
 

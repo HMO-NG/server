@@ -3,7 +3,7 @@
  * @returns { Promise<void> }
  */
 exports.up = function (knex) {
-    return knex.schema.createTable('nhis_procedure', table => {
+    return knex.schema.createTable('nhis_service_tarrif', table => {
 
         table.specificType('id', 'char(36) primary key');
         table.string('name').notNullable();
@@ -13,7 +13,7 @@ exports.up = function (knex) {
         table.string('category');
         table.string('sub_category');
         table.double('price', 10, 2);
-        table.string('plan_type', 8).notNullable().references('id').inTable('health_plan').onDelete('cascade');
+        table.string('plan_type', 36).notNullable().references('id').inTable('health_plan').onDelete('cascade');
         table.string('created_by', 36).notNullable().references('id').inTable('user').onDelete('cascade');
         table.timestamp('created_at').notNullable().defaultTo(knex.fn.now());
     })
@@ -24,5 +24,5 @@ exports.up = function (knex) {
  * @returns { Promise<void> }
  */
 exports.down = function (knex) {
-    return knex.schema.dropTable('nhis_procedure')
+    return knex.schema.dropTable('nhis_service_tarrif')
 };
