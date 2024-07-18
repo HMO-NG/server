@@ -1,7 +1,8 @@
 import {
     createNhisServiceTarrifModel,
     getAllAndSearchNhisTarrifModel,
-    getAllAndSearchNhisDrugModel
+    getAllAndSearchNhisDrugModel,
+    createNhisDrugTarrifModel
 } from "../model//nhis-service-model.js";
 import Exception from "../util/exception.js";
 

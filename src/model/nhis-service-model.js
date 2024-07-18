@@ -99,6 +99,7 @@ export async function createNhisDrugTarrifModel(data) {
         price: data.price,
         created_by: data.user_id
     }
+
     return await db("nhis_drug_tarrif").insert(createNhiaDrugService);
 }
 
@@ -162,6 +163,8 @@ export async function getAllAndSearchNhisDrugModel(data) {
         console.log(error)
     }
 }
+
+
 
 // export async function getHealthPlanCodeModel(code) {
 //     return await db("health_plan").where('health_plan_code', code)

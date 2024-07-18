@@ -8,7 +8,7 @@ exports.up = function (knex) {
         table.specificType('id', 'char(36) primary key');
         table.string('name_of_drug',500).notNullable();
         table.string('dosage_form', 300);
-        table.string('strength', 200);
+        table.string('strength', 400);
         table.string('nhia_code', 30);
         table.string('presentation', 100);
         table.string('category');
