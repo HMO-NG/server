@@ -3,7 +3,8 @@ import { auth } from '../middleware/auth-middleware.js';
 import {
     createNhisServiceTarrif,
     getAndSearchNhisTarrifService,
-    createNhiaDrugTarrif
+    createNhiaDrugTarrif,
+    getAndSearchDrugTarrifService
 } from '../service/nhis-service.js';
 
 const router = express.Router()
@@ -67,13 +68,36 @@ router.post('/nhis/drug/tarrif/create', auth, async (req, res, next) => {
         }
 
         res.status(200).json({
-            message: `${data.name} created successfully`,
+            message: `${data.name_of_drug} created successfully`,
             code: data.code
         })
     } catch (error) {
         console.log(error)
         next(error)
 
+    }
+});
+
+router.post('/nhis/drug/tarrif/search', auth, async (req, res, next) => {
+
+    try {
+
+        const data = req.body
+
+        let response = await getAndSearchDrugTarrifService(data)
+
+        if (!response) {
+            throw new Exception("encountered an issue while get or searching nhis service", 401)
+        }
+
+        res.status(200).json({
+            message: `response returned successfully`,
+            data: response.result,
+            total: response.total
+        })
+    } catch (error) {
+        console.log(error)
+        next(error)
     }
 });
 
