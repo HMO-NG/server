@@ -2,7 +2,7 @@ import {
     createNhisServiceTarrifModel,
     getAllAndSearchNhisTarrifModel,
     getAllAndSearchNhisDrugModel,
-    createNhisDrugTarrifModel
+    createNhisDrugTarrifModel,
 } from "../model//nhis-service-model.js";
 import Exception from "../util/exception.js";
 

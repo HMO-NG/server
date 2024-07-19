@@ -16,6 +16,8 @@ exports.up = function (knex) {
         table.string('provider_id', 16)
         table.string('provider_name')
         table.string('provider_Address')
+        table.string('plan_type', 36).notNullable().references('id').inTable('health_plan').onDelete('cascade');
+        table.string('created_by', 36).notNullable().references('id').inTable('user').onDelete('cascade');
         table.timestamp('created_at').notNullable().defaultTo(knex.fn.now());
     })
 };
