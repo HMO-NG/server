@@ -1,5 +1,9 @@
 import express, { json } from 'express'
-import { createProvider, editProviderActivationState, editProviderById, getAllProvider, getProviderById } from '../service/provider-service.js';
+import {
+    createProvider, editProviderActivationState, editProviderById, getAllProvider, getProviderById,
+    createNHIAProviderService,
+    getNHIAProviderByHCPIDService
+} from '../service/provider-service.js';
 import Exception from '../util/exception.js';
 import { auth, verifyUserToken, verifyPermission } from '../middleware/auth-middleware.js';
 
@@ -49,6 +53,7 @@ router.post('/provider/get', auth, async (req, res, next) => {
 
     } catch (error) {
         console.log(error)
+        next(error)
     }
 
 })
@@ -73,9 +78,10 @@ router.post('/provider/get/id', auth, async (req, res, next) => {
             })
         }
     } catch (error) {
-        return error
+        next(error)
     }
 })
+
 // edit
 router.put('/provider/edit', auth, async (req, res, next) => {
 
@@ -118,6 +124,52 @@ router.patch('/provider/status/edit', auth, async (req, res, next) => {
 
 })
 
-// delete
+// --- FOR NHIA PROVIDERS ---
 
+// create NHIA provider
+router.post('/provider/nhia/create', auth, async (req, res, next) => {
+
+    try {
+
+        const data = req.body
+
+        let result = await createNHIAProviderService(data)
+
+        if (!result) {
+            throw new Exception("encountered an issue while creating provider", 401)
+        }
+
+        res.status(200).json({
+            message: "provider created successfully",
+            data: result.id
+        })
+    } catch (error) {
+        console.log(error.status)
+        next(error)
+
+    }
+});
+
+// get NHIA provider by HCP ID
+router.post('/provider/nhia/get', auth, async (req, res, next) => {
+
+    try {
+        const data = req.body
+
+        if (data.hcpId.length === 0) {
+            throw new Exception("Hcp Id is an empty string", 400)
+        }
+
+        let result = await getNHIAProviderByHCPIDService(data.hcpId)
+
+        if (result) {
+            res.status(200).json({
+                message: "result returned successfully",
+                data: result,
+            })
+        }
+    } catch (error) {
+        next(error)
+    }
+})
 export default router;

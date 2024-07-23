@@ -3,7 +3,9 @@ import {
     getAllProviderModel,
     getProviderByIdModel,
     editProviderByIdModel,
-    editProviderActivationStateModel
+    editProviderActivationStateModel,
+    createNHIAProviderModel,
+    getAllNhisProviderModel
 } from "../model/provider-model.js";
 import { NigerianState } from "../util/nigerian-states.js";
 import { generateUniqueProviderCode } from "../util/provider-code.js";
@@ -51,21 +53,21 @@ export async function getProviderById(id) {
 
 export async function editProviderById(id, data) {
 
-        if (!data) {
-            throw new ProviderServiceExpection("provider details to update empty", 400)
-        }
+    if (!data) {
+        throw new ProviderServiceExpection("provider details to update empty", 400)
+    }
 
-        const result = await editProviderByIdModel(id, data)
+    const result = await editProviderByIdModel(id, data)
 
-        if (!result) {
-            throw new ProviderServiceExpection("provider details update failed", 500)
-        }
+    if (!result) {
+        throw new ProviderServiceExpection("provider details update failed", 500)
+    }
 
-        return result
+    return result
 }
 
-export async function editProviderActivationState(id, activateState){
-    if(!id){
+export async function editProviderActivationState(id, activateState) {
+    if (!id) {
         throw new ProviderServiceExpection("Provider Id needed", 400)
     }
     // if(!activateState){
@@ -74,12 +76,30 @@ export async function editProviderActivationState(id, activateState){
 
     const result = await editProviderActivationStateModel(id, activateState)
 
-    if(!result){
+    if (!result) {
         throw new ProviderServiceExpection("updating provider activation status failed", 500)
     }
 
     return result;
 }
+
+// ---FOR NHIA PROVIDERS
+export async function createNHIAProviderService(data) {
+    if (!data) {
+        throw ProviderServiceExpection("NHIA data can not be empty", 400)
+    }
+
+    return await createNHIAProviderModel(data)
+}
+
+export async function getNHIAProviderByHCPIDService(id) {
+
+        return await getAllNhisProviderModel(id)
+}
+
+
+
+
 
 export class ProviderServiceExpection extends Exception {
     constructor(message, status) {

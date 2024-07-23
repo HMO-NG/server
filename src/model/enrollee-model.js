@@ -17,8 +17,8 @@ export async function createNhisEnrolleeModel(data) {
         company_id: data.company_id,
         provider_id: data.provider_id,
         provider_name: data.provider_name,
-        provider_Address:data.provider_Address,
-        created_at: data.user_id
+        provider_Address: data.provider_Address,
+        created_by: data.user_id
     }
     return await db("nhis_enrollee").insert(createNhiaEntrollee);
 }
@@ -41,7 +41,6 @@ export async function getAllAndSearchNhisEnrolleeModel(data) {
                     'nhis_enrollee.other_names',
                     'nhis_enrollee.dob',
                     'nhis_enrollee.sex',
-                    'nhis_enrollee.company_id',
                     'nhis_enrollee.provider_id',
                     'nhis_enrollee.provider_name',
                     db.raw("user.id as `user_id`"),
@@ -49,7 +48,6 @@ export async function getAllAndSearchNhisEnrolleeModel(data) {
                 )
                 .innerJoin('user', 'user.id', 'nhis_enrollee.created_by')
                 .whereILike('policy_id', `%${data.query}%`)
-                .orWhereILike('surname', `%${data.query}%`)
                 .limit(`${data.pageSize}`)
                 .offset(`${(data.pageIndex - 1) * data.pageSize}`)
                 .orderBy(`${data.sort.key ? data.sort.key : "nhis_enrollee.created_at"}`, `${data.sort.order}`)
@@ -62,13 +60,13 @@ export async function getAllAndSearchNhisEnrolleeModel(data) {
             result = await db('nhis_enrollee')
                 .select(
                     'nhis_enrollee.id',
-                    'nhis_enrollee.name',
-                    'nhis_enrollee.nhia_code',
-                    'nhis_enrollee.price',
-                    'nhis_enrollee.tarrif_type',
-                    'nhis_enrollee.service_type',
-                    'nhis_enrollee.category',
-                    'nhis_enrollee.sub_category',
+                    'nhis_enrollee.policy_id',
+                    'nhis_enrollee.surname',
+                    'nhis_enrollee.other_names',
+                    'nhis_enrollee.dob',
+                    'nhis_enrollee.sex',
+                    'nhis_enrollee.provider_id',
+                    'nhis_enrollee.provider_name',
                     db.raw("user.id as `user_id`"),
                     db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
                 )
@@ -85,4 +83,12 @@ export async function getAllAndSearchNhisEnrolleeModel(data) {
     } catch (error) {
         console.log(error)
     }
+}
+
+// get all nhis enrollee but no searching
+export async function getAllNhisEnrolleeModel(data) {
+
+    return await db('nhis_enrollee')
+        .select()
+        .whereILike('policy_id', `%${data.id}%`)
 }

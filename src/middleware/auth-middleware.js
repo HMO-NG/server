@@ -10,7 +10,7 @@ export function auth(req, res, next) {
 
     if (!req.session.remember_me) {
         res.status(403).json({
-            message: "access denied"
+            message: "access denied, please loggin again!"
         })
         return
     }

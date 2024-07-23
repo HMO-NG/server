@@ -6,6 +6,7 @@ import {
     createNhiaDrugTarrif,
     getAndSearchDrugTarrifService
 } from '../service/nhis-service.js';
+import Exception from '../util/exception.js';
 
 const router = express.Router()
 

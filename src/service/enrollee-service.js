@@ -1,7 +1,8 @@
 import {
     getAllAndSearchNhisEnrolleeModel,
-    createNhisEnrolleeModel
-} from "../model//nhis-service-model.js";
+    createNhisEnrolleeModel,
+    getAllNhisEnrolleeModel
+} from "../model/enrollee-model.js";
 import Exception from "../util/exception.js";
 
 export async function createNhisEnrolleeService(data) {
@@ -21,6 +22,16 @@ export async function getAndSearchNhisEnrolleeService(data) {
     }
 
     return await getAllAndSearchNhisEnrolleeModel(data)
+
+};
+
+export async function getAllNhisEnrolleeService(data) {
+
+    if (!data) {
+        throw new EnrolleeExpection("NHIS service details can not be empty", 400)
+    }
+
+    return await getAllNhisEnrolleeModel(data)
 
 };
 

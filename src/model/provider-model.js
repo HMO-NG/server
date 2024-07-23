@@ -137,13 +137,34 @@ export async function editProviderByIdModel(id, data) {
 }
 
 //edit provider activation state using the provider id
-export async function editProviderActivationStateModel(id, activateState){
+export async function editProviderActivationStateModel(id, activateState) {
 
     const updatedData = {
         is_active: activateState.is_active,
-        modified_by:activateState.user_id,
+        modified_by: activateState.user_id,
         modified_at: new Date()
     }
     return await db('provider').where('id', id).update(updatedData)
+}
+
+// --- FOR NHIA PROVIDERS
+export async function createNHIAProviderModel(data) {
+
+    const newProvider = {
+        id: uuidv4(),
+        name: data.name,
+        hcp_id: data.hcp_id,
+        is_active: data.is_active,
+        created_by: data.user_id
+    }
+
+    return await db("nhis_providers").insert(newProvider);
+}
+
+export async function getAllNhisProviderModel(data) {
+
+    return await db('nhis_providers')
+        .select()
+        .whereILike('hcp_id', `%${data}%`)
 }
 

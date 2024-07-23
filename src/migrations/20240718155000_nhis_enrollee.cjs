@@ -10,13 +10,12 @@ exports.up = function (knex) {
         table.string('relationship', 36);
         table.string('surname');
         table.string('other_names');
-        table.timestamp('dob');
+        table.string('dob');
         table.string('sex',10);
         table.string('company_id',10);
         table.string('provider_id', 16)
         table.string('provider_name')
         table.string('provider_Address')
-        table.string('plan_type', 36).notNullable().references('id').inTable('health_plan').onDelete('cascade');
         table.string('created_by', 36).notNullable().references('id').inTable('user').onDelete('cascade');
         table.timestamp('created_at').notNullable().defaultTo(knex.fn.now());
     })
