@@ -1,0 +1,94 @@
+name: hmo-app
+services:
+  db:
+    image: mysql:8.4.2
+    ports:
+      - '3306:3306'
+    networks:
+      - private
+    environment:
+      MYSQL_DATABASE: hmo
+      MYSQL_USER: mysql
+      # mysql already have _FILE implemented and is useful for sensitive values
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_password
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+    secrets:
+      - mysql_password
+      - mysql_root_password
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$(< /run/secrets/mysql_root_password)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  server:
+    restart: on-failure
+#    image: your docker image tag name here and remove build props only needed in dev not prod
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    ports:
+      - 9000:3000
+    networks:
+      - private
+      - public
+    depends_on:
+       db:
+         condition: service_healthy
+    environment:
+      DB_PORT: 3306
+      DB_CLIENT: mysql2
+      DB_NAME: hmo
+      DB_HOST: db
+      DB_USER: mysql
+      # You have to implement your own _FILE implementation for sensitive values, I have done that already for db atleast (:
+      DB_PASSWORD_FILE: /run/secrets/mysql_password
+      # not secure way ):
+#      DB_PASSWORD: mysql
+      SESSION_KEY: 93493dks32030
+      JWT_TOKEN_SECRET: jjdfj300343
+    secrets:
+      - mysql_password
+      - source: mysql_password
+        target: /mysql_password.txt
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --silent --fail http://server:3000/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  migrate:
+    image: curlimages/curl:latest
+    networks:
+      - private
+    depends_on:
+      server:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      echo 'Waiting for API to be ready...' &&
+      while ! curl --silent --fail http://server:3000/migrate; do
+        sleep 5;
+      done &&
+      echo 'API is ready. Running migrations...' &&
+      curl --silent --fail http://server:3000/migrate"
+
+secrets:
+  mysql_password:
+    file: secrets/mysql/mysql_password.txt
+  mysql_root_password:
+    file: secrets/mysql/mysql_root_password.txt
+
+networks:
+  private:
+  public:
+
+volumes:
+  mysql_data:
+#    driver: local
+#    driver_opts:
+#      type: none
+#      device: /path/in/your/vps/dir
+#      o: bind

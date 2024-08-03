@@ -1,15 +1,31 @@
-# Use docker build -t customer-image-name .
+# Stage 1: Build the app
+FROM node:lts-alpine3.20 AS appbuild
+# Set working directory
+WORKDIR /app
 
-# Use the official MySQL image from Docker Hub
-FROM mysql:8.4
+COPY package.json yarn.lock ./
 
-# Set environment variables for MySQL configuration
-ENV MYSQL_DATABASE=hci-db
-ENV MYSQL_USER=hmo
-ENV MYSQL_ROOT_PASSWORD=mypassword
+RUN yarn install
 
-# Expose the MySQL port
-EXPOSE 3306
+# Copy source files and build the app
+COPY ./src ./src
 
-# By default, the MySQL image will run the `mysqld` server,
-# so you don't need to specify CMD or ENTRYPOINT unless you want to override the defaults.
+RUN yarn run build
+
+# Stage 2: Set up the production environment
+# This is neccessary to reduce image size and caching
+FROM node:lts-alpine3.20 AS prod
+RUN apk update && apk add curl
+
+WORKDIR /app
+
+COPY package.json yarn.lock ./
+
+# Install only production dependencies
+RUN yarn install --production
+
+COPY --from=appbuild /app/dist ./dist
+
+EXPOSE 3000
+
+CMD ["yarn", "start"]
