@@ -4,6 +4,8 @@ import app from '../src/app.js'
 import * as assert from "node:assert";
 
 describe('Server Integration Test', () => {
+    console.log('env',process.env.NODE_ENV)
+
     describe('health check', () => {
         it('should return 200', async () => {
             const response = await request(app)

@@ -13,7 +13,7 @@ const config = {
         },
         useNullAsDefault: true,
         migrations: {
-            directory: 'dist/migrations',
+            directory: 'src/migrations',
             loadExtensions: ['.js'],
             tableName: "knex_migrations"
         }
@@ -32,7 +32,7 @@ const config = {
             max: 10
         },
         migrations: {
-            directory: 'dist/migrations',
+            directory: 'src/migrations',
             loadExtensions: ['.js'],
             tableName: "knex_migrations"
         }
