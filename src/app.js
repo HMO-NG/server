@@ -4,16 +4,15 @@ import router from './route.js'
 import KnexSessionStore from 'connect-session-knex'
 import morgan from 'morgan'
 import knex from "knex";
-import config from "./src/knexfile.js";
+import config from "./knexfile.js";
 
 
 import session from 'express-session'
 
-import exceptionMiddleware from './src/middleware/exception-middleware.js'
+import exceptionMiddleware from './middleware/exception-middleware.js'
 // KnexSessionStore(session)
 
 let db = knex(config[process.env.NODE_ENV || 'development']);
-
 
 const knexSession = KnexSessionStore(session);
 const store = new knexSession({
@@ -25,13 +24,11 @@ const store = new knexSession({
 
 })
 
-const port = process.env.PORT
-
 const app = express()
 
 // middleware to parse json from req.body
 app.use(express.json())
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({extended: true}));
 
 // session
 app.use(
@@ -54,10 +51,25 @@ app.use(morgan(function (tokens, req, res) {
     ].join(' ')
 }))
 
+// your solution triggers the db tables during the health check, health should always be here, consider making the change
+app.get('/health', async (req, res) => {
+    res.send('ok');
+})
+
+// finding a way to do migration, prod ready
+app.get('/migrate', async (req, res) => {
+    try {
+        await db.migrate.latest();
+    }catch (e) {
+        console.error('migration err',e);
+    }finally {
+        console.log('Migrations completed');
+        res.send('Migrations completed');
+    }
+})
+
 app.use('/api/v1', router)
 
 app.use(exceptionMiddleware)
 
-app.listen(port, () => {
-    console.log(`app listening on port ${port}`)
-})
+export default app;
