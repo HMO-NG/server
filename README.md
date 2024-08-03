@@ -12,3 +12,8 @@ docker compose -f docker/docker-compose.yaml up -d
 ```bash
 docker compose -f docker/docker-compose.yaml down
 ```
+
+# Test
+```bash
+curl localhost:8080/health
+```
