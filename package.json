@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "NODE_ENV=test mocha --exit",
+    "test:local": "NODE_ENV=test mocha --exit",
+    "test": "mocha --exit",
     "build": "rimraf dist && babel src --out-dir dist",
     "start": "node dist/index.js",
     "knex": "@babel/node knex",
