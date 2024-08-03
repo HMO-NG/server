@@ -10,6 +10,9 @@ jobs:
     env:
       PORT: 3000
       NODE_ENV: test
+      DB_CLIENT: sqlite3
+      SESSION_KEY: 93493dks32030
+      JWT_TOKEN_SECRET: jjdfj300343
       DB_PASSWORD_FILE: './db_password.txt'
     steps:
       - uses: actions/checkout@v4
