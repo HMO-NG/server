@@ -24,7 +24,7 @@ const config = {
             host: process.env.DB_HOST,
             port: process.env.DB_PORT,
             user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD || fs.readFileSync(process.env.DB_PASSWORD_FILE, 'utf8'),
+            password: process.env.DB_PASSWORD,
             database: process.env.DB_NAME,
         },
         pool: {
@@ -38,22 +38,24 @@ const config = {
         }
     },
     production: {
-        client: 'nill',
+        client: process.env.DB_CLIENT,
         connection: {
-            host: 'nill',
-            port: 0,
-            user: 'nill',
-            password: 'nill',
-            database: 'nill',
+            host: process.env.DB_HOST,
+            port: process.env.DB_PORT,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD || fs.readFileSync(process.env.DB_PASSWORD_FILE, 'utf8'),
+            database: process.env.DB_NAME,
         },
         pool: {
             min: 2,
             max: 10
         },
         migrations: {
+            directory: 'dist/migrations',
+            loadExtensions: ['.js'],
             tableName: "knex_migrations"
         }
-    }
+    },
 
 };
 
