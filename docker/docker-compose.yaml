@@ -49,8 +49,8 @@ services:
       DB_PASSWORD_FILE: /run/secrets/mysql_password
       # not secure way ):
 #      DB_PASSWORD: mysql
-      SESSION_KEY: 93493dks32030
-      JWT_TOKEN_SECRET: jjdfj300343
+      SESSION_KEY: z45r.l90-2
+      JWT_TOKEN_SECRET: uj00932(&*);,w35#$o9lkal;[]
     secrets:
       - mysql_password
       - source: mysql_password
