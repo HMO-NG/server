@@ -6,3 +6,6 @@ start-app:
 
 stop:
 	docker compose -f docker/docker-compose.yaml down
+
+prune:
+	docker buildx prune -f --verbose

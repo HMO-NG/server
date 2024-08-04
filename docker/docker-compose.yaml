@@ -1,27 +1,22 @@
 name: hmo-app
 services:
   db:
-    image: mysql:8.4.2
-    ports:
-      - '3306:3306'
+    image: postgres:12-alpine
     networks:
       - private
+    ports:
+      - "5432:5432"
     environment:
-      MYSQL_DATABASE: hmo
-      MYSQL_USER: mysql
-      # mysql already have _FILE implemented and is useful for sensitive values
-      MYSQL_PASSWORD_FILE: /run/secrets/mysql_password
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
-    secrets:
-      - mysql_password
-      - mysql_root_password
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: hmo
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$(< /run/secrets/mysql_root_password)"]
+      test: [ "CMD", "pg_isready" ]
       interval: 10s
       timeout: 5s
       retries: 5
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
 
   express-server:
     restart: on-failure
@@ -40,21 +35,21 @@ services:
          condition: service_healthy
     environment:
       NODE_ENV: production
-      DB_PORT: 3306
-      DB_CLIENT: mysql2
+      DB_PORT: 5432
+      DB_CLIENT: pg
       DB_NAME: hmo
       DB_HOST: db
-      DB_USER: mysql
+      DB_USER: postgres
       # You have to implement your own _FILE implementation for sensitive values, I have done that already for db atleast (:
-      DB_PASSWORD_FILE: /run/secrets/mysql_password
+#      DB_PASSWORD_FILE: /run/secrets/mysql_password
       # not secure way ):
-#      DB_PASSWORD: mysql
+      DB_PASSWORD: postgres
       SESSION_KEY: z45r.l90-2
       JWT_TOKEN_SECRET: uj00932(&*);,w35#$o9lkal;[]
-    secrets:
-      - mysql_password
-      - source: mysql_password
-        target: /mysql_password.txt
+#    secrets:
+#      - mysql_password
+#      - source: mysql_password
+#        target: /mysql_password.txt
     healthcheck:
       test: [ "CMD-SHELL", "curl --silent --fail http://localhost:3000/health" ]
       interval: 10s
@@ -82,13 +77,22 @@ services:
     networks:
       - public
     ports:
-      - '8080:8080'
+      - '8080:80'
     configs:
       - source: nginx_conf
         target: /etc/nginx/nginx.conf
     depends_on:
       express-server:
         condition: service_healthy
+      frontend:
+        condition: service_started
+
+  frontend:
+    image: hmo-web
+    networks:
+      - public
+    ports:
+      - '8090:80'
 
 secrets:
   mysql_password:
@@ -110,7 +114,8 @@ networks:
   public:
 
 volumes:
-  mysql_data:
+  postgres_data:
+#  mysql_data:
 #    driver: local
 #    driver_opts:
 #      type: none

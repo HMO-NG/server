@@ -4,14 +4,14 @@
  */
 export async function up(knex) {
     await knex.schema.createTable('user', table => {
-        table.specificType('id', 'char(36) primary key');
+        table.uuid('id').primary(); // Use UUID for primary key
         table.string('email').notNullable().unique();
         table.string('password').notNullable();
         table.string('first_name').notNullable();
         table.string('last_name').notNullable();
         table.string('phone_number', 32).notNullable().unique();
         table.string('role', 32).notNullable();
-        table.string('type', 8).notNullable(); // provider, client, staff etc.
+        table.string('type', 8).notNullable(); // e.g., provider, client, staff
         table.boolean('verified').defaultTo(false);
         table.string('avatar_url');
         table.string('referral_code', 6).notNullable().unique();
