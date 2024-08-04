@@ -103,10 +103,10 @@ configs:
 networks:
   # custom networking in case you need it (:
   private:
-    ipam:
-      config:
-        - gateway: '10.0.0.1'
-          subnet: '10.0.0.0/19'
+    # ipam:
+    #   config:
+    #     - gateway: '10.0.0.1'
+    #       subnet: '10.0.0.0/19'
   public:
 
 volumes:
