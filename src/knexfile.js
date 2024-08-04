@@ -1,5 +1,5 @@
-import  {config as env} from 'dotenv'
-env({path: '../.env'})
+import { config as env } from 'dotenv'
+env({ path: '../.env' })
 
 console.log("db host is", process.env.DB_HOST)
 
@@ -24,13 +24,13 @@ const config = {
 
 
   production: {
-    client: 'nill',
+    client: process.env.DB_CLIENT,
     connection: {
-      host: 'nill',
-      port: 0,
-      user: 'nill',
-      password: 'nill',
-      database: 'nill',
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
     },
     pool: {
       min: 2,
