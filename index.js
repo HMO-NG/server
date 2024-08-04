@@ -58,6 +58,6 @@ app.use('/api/v1', router)
 
 app.use(exceptionMiddleware)
 
-app.listen(port, () => {
+app.listen(port, '0.0.0.0',() => {
     console.log(`app listening on port ${port}`)
 })
