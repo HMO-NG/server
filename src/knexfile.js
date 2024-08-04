@@ -1,7 +1,7 @@
 import  {config as env} from 'dotenv'
 env({path: '../.env'})
 
-console.log(process.env.DB_HOST)
+console.log("db host is", process.env.DB_HOST)
 
 const config = {
   development: {
