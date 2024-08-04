@@ -1,0 +1,13 @@
+services:
+  node-hmo-server:
+    image: node:20.16.0
+    container_name: node-hmo-server
+    ports:
+      - "3000:3000"
+    networks:
+      - hci-network
+    restart: unless-stopped
+
+networks:
+  hci-network:
+    external: true

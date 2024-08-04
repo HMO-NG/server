@@ -16,7 +16,6 @@ let db = knex(config[process.env.NODE_ENV || 'development']);
 
 console.log("node env is", process.env.NODE_ENV)
 
-
 const knexSession = KnexSessionStore(session);
 const store = new knexSession({
     tablename: 'sessions',
