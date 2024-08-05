@@ -1,0 +1,142 @@
+name: hmo-app
+services:
+  db:
+    image: postgres:12-alpine
+    networks:
+      - private
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_DB: hmo
+    secrets:
+      - postgres_password
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  express-server:
+    pull_policy: always
+    restart: on-failure
+#    image: your docker image tag name here and remove build props only needed in dev not prod
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    # you don't need to expose anymore since nginx is setup below
+#    ports:
+#      - 9000:3000
+
+    networks:
+      - private
+      - public
+    depends_on:
+       db:
+         condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DB_PORT: 5432
+      DB_CLIENT: pg
+      DB_NAME: hmo
+      DB_HOST: db
+      DB_USER: postgres
+      # You have to implement your own _FILE implementation for sensitive values, I have done that already for db atleast (:
+      DB_PASSWORD_FILE: '/run/secrets/postgres_password'
+      # not secure way ):
+#      DB_PASSWORD: postgres
+      SESSION_KEY: z45r.l90-2
+      JWT_TOKEN_SECRET: uj00932(&*);,w35#$o9lkal;[]
+    secrets:
+      - postgres_password
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --silent --fail http://localhost:3000/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  migrate:
+    image: curlimages/curl:8.9.1
+    networks:
+      - private
+    depends_on:
+      express-server:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      echo 'Waiting for API to be ready...' &&
+      while ! curl --silent --fail http://express-server:3000/health; do
+        sleep 5;
+      done &&
+      echo ' API is ready. Running migrations...' &&
+      curl --silent --fail http://express-server:3000/migrate"
+
+  ssl-generator:
+    image: alpine:3.20
+    volumes:
+      - nginx_data:/etc/nginx/certs
+    entrypoint: >
+      sh -c "
+      apk add --no-cache openssl &&
+      mkdir -p /etc/nginx/certs &&
+      openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/certs/selfsigned.key -out /etc/nginx/certs/selfsigned.crt -subj '/CN=hmo.web'"
+    command: [ "echo", "SSL certificates generated." ]
+
+  nginx:
+    image: nginx:alpine3.19
+    networks:
+      - public
+    ports:
+      - '80:80'
+      - '443:443'
+    configs:
+      - source: nginx_conf
+        target: /etc/nginx/nginx.conf
+    volumes:
+      - nginx_data:/etc/nginx/certs
+    depends_on:
+      ssl-generator:
+        condition: service_completed_successfully
+      express-server:
+        condition: service_healthy
+      frontend:
+        condition: service_started
+
+  frontend:
+    image: hmo-web
+    networks:
+      - public
+
+secrets:
+  postgres_password:
+    file: secrets/postgres/postgres_password.txt
+  mysql_password:
+    file: secrets/mysql/mysql_password.txt
+  mysql_root_password:
+    file: secrets/mysql/mysql_root_password.txt
+
+configs:
+  nginx_conf:
+    file: nginx/nginx.conf
+
+networks:
+  # custom networking in case you need it (:
+  private:
+    # ipam:
+    #   config:
+    #     - gateway: '10.0.0.1'
+    #       subnet: '10.0.0.0/19'
+  public:
+
+volumes:
+  nginx_data:
+  postgres_data:
+#  mysql_data:
+#    driver: local
+#    driver_opts:
+#      type: none
+#      device: /path/in/your/vps/dir
+#      o: bind

@@ -2,10 +2,9 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.up = function (knex) {
+export async function up(knex) {
     return knex.schema.createTable('nhis_drug_tarrif', table => {
-
-        table.specificType('id', 'char(36) primary key');
+        table.string('id').primary();
         table.string('name_of_drug',500).notNullable();
         table.string('dosage_form', 300);
         table.string('strength', 400);
@@ -13,16 +12,16 @@ exports.up = function (knex) {
         table.string('presentation', 100);
         table.string('category');
         table.double('price', 10, 2);
-        table.string('plan_type', 36).notNullable().references('id').inTable('health_plan').onDelete('cascade');
-        table.string('created_by', 36).notNullable().references('id').inTable('user').onDelete('cascade');
+        table.string('plan_type', 36).notNullable();
+        table.string('created_by', 36).notNullable();
         table.timestamp('created_at').notNullable().defaultTo(knex.fn.now());
     })
-};
+}
 
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.down = function (knex) {
-    return knex.schema.dropTable('nhis_drug_tarrif')
-};
+export async function down(knex) {
+    await knex.schema.dropTable('nhis_drug_tarrif');
+}
