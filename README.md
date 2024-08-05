@@ -47,5 +47,5 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/certs/sel
 > I've resolve the migration, do not need to manually trigger them, please follow the styling
 to avoid the previous issues... ):
 
-![schema](/img/hmo_app_schema.png)
+![schema](./img/hmo_app_schema.png)
 
