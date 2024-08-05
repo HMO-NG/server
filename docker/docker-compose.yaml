@@ -8,8 +8,10 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
       POSTGRES_DB: hmo
+    secrets:
+      - postgres_password
     healthcheck:
       test: [ "CMD", "pg_isready" ]
       interval: 10s
@@ -19,6 +21,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   express-server:
+    pull_policy: always
     restart: on-failure
 #    image: your docker image tag name here and remove build props only needed in dev not prod
     build:
@@ -27,6 +30,7 @@ services:
     # you don't need to expose anymore since nginx is setup below
 #    ports:
 #      - 9000:3000
+
     networks:
       - private
       - public
@@ -41,15 +45,13 @@ services:
       DB_HOST: db
       DB_USER: postgres
       # You have to implement your own _FILE implementation for sensitive values, I have done that already for db atleast (:
-#      DB_PASSWORD_FILE: /run/secrets/mysql_password
+      DB_PASSWORD_FILE: '/run/secrets/postgres_password'
       # not secure way ):
-      DB_PASSWORD: postgres
+#      DB_PASSWORD: postgres
       SESSION_KEY: z45r.l90-2
       JWT_TOKEN_SECRET: uj00932(&*);,w35#$o9lkal;[]
-#    secrets:
-#      - mysql_password
-#      - source: mysql_password
-#        target: /mysql_password.txt
+    secrets:
+      - postgres_password
     healthcheck:
       test: [ "CMD-SHELL", "curl --silent --fail http://localhost:3000/health" ]
       interval: 10s
@@ -91,10 +93,10 @@ services:
     image: hmo-web
     networks:
       - public
-    ports:
-      - '8090:80'
 
 secrets:
+  postgres_password:
+    file: secrets/postgres/postgres_password.txt
   mysql_password:
     file: secrets/mysql/mysql_password.txt
   mysql_root_password:
