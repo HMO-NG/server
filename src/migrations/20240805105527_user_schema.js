@@ -4,7 +4,7 @@
  */
 export async function up(knex) {
     await knex.schema.createTable('user', table => {
-        table.uuid('id').primary(); // Use UUID for primary key
+        table.string('id').primary(); // Use UUID for primary key
         table.string('email').notNullable().unique();
         table.string('password').notNullable();
         table.string('first_name').notNullable();
