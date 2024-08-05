@@ -9,3 +9,6 @@ stop:
 
 prune:
 	docker buildx prune -f --verbose
+
+config:
+	docker compose -f docker/docker-compose.yaml config

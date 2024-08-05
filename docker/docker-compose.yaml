@@ -74,16 +74,32 @@ services:
       echo ' API is ready. Running migrations...' &&
       curl --silent --fail http://express-server:3000/migrate"
 
+  ssl-generator:
+    image: alpine:3.20
+    volumes:
+      - nginx_data:/etc/nginx/certs
+    entrypoint: >
+      sh -c "
+      apk add --no-cache openssl &&
+      mkdir -p /etc/nginx/certs &&
+      openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/certs/selfsigned.key -out /etc/nginx/certs/selfsigned.crt -subj '/CN=hmo.web'"
+    command: [ "echo", "SSL certificates generated." ]
+
   nginx:
     image: nginx:alpine3.19
     networks:
       - public
     ports:
-      - '8080:80'
+      - '80:80'
+      - '443:443'
     configs:
       - source: nginx_conf
         target: /etc/nginx/nginx.conf
+    volumes:
+      - nginx_data:/etc/nginx/certs
     depends_on:
+      ssl-generator:
+        condition: service_completed_successfully
       express-server:
         condition: service_healthy
       frontend:
@@ -116,6 +132,7 @@ networks:
   public:
 
 volumes:
+  nginx_data:
   postgres_data:
 #  mysql_data:
 #    driver: local
