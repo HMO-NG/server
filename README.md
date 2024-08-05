@@ -42,3 +42,10 @@ NB if you want to change this local dns, edit the docker compose ssl-generator a
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/certs/selfsigned.key -out /etc/nginx/certs/selfsigned.crt -subj '/CN=your local DNS'"
 
 ```
+
+## Application Schema
+> I've resolve the migration, do not need to manually trigger them, please follow the styling
+to avoid the previous issues... ):
+
+![schema](/img/hmo_app_schema.png)
+
