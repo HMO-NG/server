@@ -68,7 +68,7 @@ app.get('/migrate', async (req, res) => {
     }
 })
 
-app.use('/api/v1', router)
+app.use('/v1', router)
 
 app.use(exceptionMiddleware)
 
