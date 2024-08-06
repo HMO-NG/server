@@ -28,7 +28,7 @@ const app = express()
 
 // middleware to parse json from req.body
 app.use(express.json())
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
 // session
 app.use(
@@ -60,16 +60,18 @@ app.get('/health', async (req, res) => {
 app.get('/migrate', async (req, res) => {
     try {
         await db.migrate.latest();
-    }catch (e) {
-        console.error('migration err',e);
-    }finally {
+    } catch (e) {
+        console.error('migration err', e);
+    } finally {
         console.log('Migrations completed');
         res.send('Migrations completed');
     }
 })
-
-app.use('/v1', router)
-
+if (process.env.NODE_ENV === 'development') {
+    app.use('/api/v1', router)
+} else {
+    app.use('/v1', router)
+}
 app.use(exceptionMiddleware)
 
 export default app;

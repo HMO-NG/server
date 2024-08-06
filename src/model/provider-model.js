@@ -55,10 +55,10 @@ export async function getAllProviderModel(data) {
                     'provider.created_at',
                     'provider.modified_at',
                     'provider.modified_at',
-                    db.raw("user.id as `user_id`"),
-                    db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
+                    db.raw(`"user"."id" as "user_id"`),
+                    db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "entered_by"`)
                 )
-                .innerJoin('user', 'user.id', 'provider.created_by')
+                .innerJoin('user', 'user.id', '=', "provider.created_by")
                 .whereILike('name', `%${data.query}%`)
                 .orWhereILike('state', `%${data.query}%`)
                 .orWhereILike('code', `%${data.query}%`)
@@ -73,28 +73,27 @@ export async function getAllProviderModel(data) {
 
         } else {
             result = await db('provider')
-                .select(
-                    'provider.id',
-                    'provider.name',
-                    'provider.state',
-                    'provider.is_active',
-                    'provider.code',
-                    'provider.email',
-                    'provider.address',
-                    'provider.phone_number',
-                    'provider.medical_director_name',
-                    'provider.medical_director_phone_no',
-                    'provider.modified_by',
-                    'provider.created_at',
-                    'provider.modified_at',
-                    'provider.modified_at',
-                    db.raw("user.id as `user_id`"),
-                    db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
-                )
-                .innerJoin('user', 'user.id', 'provider.created_by')
-                .limit(`${data.pageSize}`)
-                .offset(`${(data.pageIndex - 1) * data.pageSize}`)
-                .orderBy(`${data.sort.key ? data.sort.key : "created_at"}`, `${data.sort.order}`)
+            .select(
+                'provider.id',
+                'provider.name',
+                'provider.state',
+                'provider.is_active',
+                'provider.code',
+                'provider.email',
+                'provider.address',
+                'provider.phone_number',
+                'provider.medical_director_name',
+                'provider.medical_director_phone_no',
+                'provider.modified_by',
+                'provider.created_at',
+                'provider.modified_at',
+                db.raw(`"user"."id" as "user_id"`),
+                db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "entered_by"`)
+              )
+              .innerJoin('user', 'user.id', '=', "provider.created_by")
+              .limit(data.pageSize)
+              .offset((data.pageIndex - 1) * data.pageSize)
+              .orderBy(data.sort.key ? `provider.${data.sort.key}` : 'created_at', data.sort.order)
 
             total = await db("provider").count()
         }

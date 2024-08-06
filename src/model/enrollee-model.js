@@ -43,10 +43,10 @@ export async function getAllAndSearchNhisEnrolleeModel(data) {
                     'nhis_enrollee.sex',
                     'nhis_enrollee.provider_id',
                     'nhis_enrollee.provider_name',
-                    db.raw("user.id as `user_id`"),
-                    db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
+                    db.raw(`"user"."id" as "user_id"`),
+                    db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "entered_by"`)
                 )
-                .innerJoin('user', 'user.id', 'nhis_enrollee.created_by')
+                .innerJoin('user', 'user.id', '=', "nhis_enrollee.created_by")
                 .whereILike('policy_id', `%${data.query}%`)
                 .limit(`${data.pageSize}`)
                 .offset(`${(data.pageIndex - 1) * data.pageSize}`)
@@ -67,10 +67,10 @@ export async function getAllAndSearchNhisEnrolleeModel(data) {
                     'nhis_enrollee.sex',
                     'nhis_enrollee.provider_id',
                     'nhis_enrollee.provider_name',
-                    db.raw("user.id as `user_id`"),
-                    db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
+                    db.raw(`"user"."id" as "user_id"`),
+                    db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "entered_by"`)
                 )
-                .innerJoin('user', 'user.id', 'nhis_enrollee.created_by')
+                .innerJoin('user', 'user.id', '=', "nhis_enrollee.created_by")
                 .limit(`${data.pageSize}`)
                 .offset(`${(data.pageIndex - 1) * data.pageSize}`)
                 .orderBy(`${data.sort.key ? data.sort.key : "nhis_enrollee.created_at"}`, `${data.sort.order}`)

@@ -41,10 +41,10 @@ export async function getAllAndSearchNhisTarrifModel(data) {
                     'nhis_service_tarrif.service_type',
                     'nhis_service_tarrif.category',
                     'nhis_service_tarrif.sub_category',
-                    db.raw("user.id as `user_id`"),
-                    db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
+                    db.raw(`"user"."id" as "user_id"`),
+                    db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "entered_by"`)
                 )
-                .innerJoin('user', 'user.id', 'nhis_service_tarrif.created_by')
+                .innerJoin('user', 'user.id', '=', "nhis_service_tarrif.created_by")
                 .whereILike('name', `%${data.query}%`)
                 .orWhereILike('nhia_code', `%${data.query}%`)
                 .limit(`${data.pageSize}`)
@@ -66,10 +66,10 @@ export async function getAllAndSearchNhisTarrifModel(data) {
                     'nhis_service_tarrif.service_type',
                     'nhis_service_tarrif.category',
                     'nhis_service_tarrif.sub_category',
-                    db.raw("user.id as `user_id`"),
-                    db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
+                    db.raw(`"user"."id" as "user_id"`),
+                    db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "entered_by"`)
                 )
-                .innerJoin('user', 'user.id', 'nhis_service_tarrif.created_by')
+                .innerJoin('user', 'user.id', '=', "nhis_service_tarrif.created_by")
                 .limit(`${data.pageSize}`)
                 .offset(`${(data.pageIndex - 1) * data.pageSize}`)
                 .orderBy(`${data.sort.key ? data.sort.key : "nhis_service_tarrif.created_at"}`, `${data.sort.order}`)
@@ -122,10 +122,10 @@ export async function getAllAndSearchNhisDrugModel(data) {
                     'nhis_drug_tarrif.dosage_form',
                     'nhis_drug_tarrif.strength',
                     'nhis_drug_tarrif.presentation',
-                    db.raw("user.id as `user_id`"),
-                    db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
+                    db.raw(`"user"."id" as "user_id"`),
+                    db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "entered_by"`)
                 )
-                .innerJoin('user', 'user.id', 'nhis_drug_tarrif.created_by')
+                .innerJoin('user', 'user.id', '=', "nhis_drug_tarrif.created_by")
                 .whereILike('name_of_drug', `%${data.query}%`)
                 .orWhereILike('nhia_code', `%${data.query}%`)
                 .limit(`${data.pageSize}`)
@@ -146,10 +146,10 @@ export async function getAllAndSearchNhisDrugModel(data) {
                     'nhis_drug_tarrif.dosage_form',
                     'nhis_drug_tarrif.strength',
                     'nhis_drug_tarrif.presentation',
-                    db.raw("user.id as `user_id`"),
-                    db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
+                    db.raw(`"user"."id" as "user_id"`),
+                    db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "entered_by"`)
                 )
-                .innerJoin('user', 'user.id', 'nhis_drug_tarrif.created_by')
+                .innerJoin('user', 'user.id', '=', "nhis_drug_tarrif.created_by")
                 .limit(`${data.pageSize}`)
                 .offset(`${(data.pageIndex - 1) * data.pageSize}`)
                 .orderBy(`${data.sort.key ? data.sort.key : "nhis_drug_tarrif.created_at"}`, `${data.sort.order}`)

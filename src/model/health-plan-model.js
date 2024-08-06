@@ -74,10 +74,10 @@ export async function getAndSearchBenefitListModel(data) {
                     'benefit_list.benefit_name',
                     'benefit_list.sub_category',
                     'benefit_list.category',
-                    db.raw("user.id as `user_id`"),
-                    db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
+                    db.raw(`"user"."id" as "user_id"`),
+                    db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "entered_by"`)
                 )
-                .innerJoin('user', 'user.id', 'benefit_list.created_by')
+                .innerJoin('user', 'user.id', '=', "benefit_list.created_by")
                 .whereILike('name', `%${data.query}%`)
                 .orWhereILike('sub_category', `%${data.query}%`)
                 .orWhereILike('category', `%${data.query}%`)
@@ -95,10 +95,10 @@ export async function getAndSearchBenefitListModel(data) {
                     'benefit_list.benefit_name',
                     'benefit_list.sub_category',
                     'benefit_list.category',
-                    db.raw("user.id as `user_id`"),
-                    db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
+                    db.raw(`"user"."id" as "user_id"`),
+                    db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "entered_by"`)
                 )
-                .innerJoin('user', 'user.id', 'benefit_list.created_by')
+                .innerJoin('user', 'user.id', '=', "benefit_list.created_by")
                 .limit(`${data.pageSize}`)
                 .offset(`${(data.pageIndex - 1) * data.pageSize}`)
                 .orderBy(`${data.sort.key ? data.sort.key : "benefit_name"}`, `${data.sort.order}`)
@@ -129,10 +129,10 @@ export async function getAndSearchHealthPlanCategoryModel(data) {
                     'health_plan_category.is_active',
                     'health_plan_category.health_plan_code',
                     'health_plan_category.band',
-                    db.raw("user.id as `user_id`"),
-                    db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
+                    db.raw(`"user"."id" as "user_id"`),
+                    db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "entered_by"`)
                 )
-                .innerJoin('user', 'user.id', 'health_plan_category.created_by')
+                .innerJoin('user', 'user.id', '=', "health_plan_category.created_by")
                 .whereILike('name', `%${data.query}%`)
                 .orWhereILike('band', `%${data.query}%`)
                 .orWhereILike('health_plan_code', `%${data.query}%`)
@@ -152,10 +152,10 @@ export async function getAndSearchHealthPlanCategoryModel(data) {
                     'health_plan_category.is_active',
                     'health_plan_category.health_plan_code',
                     'health_plan_category.band',
-                    db.raw("user.id as `user_id`"),
-                    db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
+                    db.raw(`"user"."id" as "user_id"`),
+                    db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "entered_by"`)
                 )
-                .innerJoin('user', 'user.id', 'health_plan_category.created_by')
+                .innerJoin('user', 'user.id', '=', "health_plan_category.created_by")
                 .whereILike('name', `%${data.query}%`)
                 .orWhereILike('band', `%${data.query}%`)
                 .orWhereILike('health_plan_code', `%${data.query}%`)
@@ -193,14 +193,14 @@ export async function getAndSearchHealthPlan(data) {
                     'health_plan.plan_age_limit',
                     'health_plan.plan_cost',
                     'health_plan.created_at',
-                    db.raw("health_plan_category.name as health_plan_category_name"),
-                    db.raw("health_plan_category.health_plan_code as health_plan_category_code"),
-                    db.raw("health_plan_category.band as health_plan_category_band"),
-                    db.raw("user.id as `user_id`"),
-                    db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
+                    db.raw(`"health_plan_category"."name" as "health_plan_category_name"`),
+                    db.raw(`"health_plan_category"."health_plan_code" as "health_plan_category_code"`),
+                    db.raw(`"health_plan_category"."band" as "health_plan_category_band"`),
+                    db.raw(`"user"."id" as "user_id"`),
+                    db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "entered_by"`)
                 )
-                .innerJoin('user', 'user.id', 'health_plan.created_by')
-                .innerJoin('health_plan_category', 'health_plan.plan_category', 'health_plan_category.id')
+                .innerJoin('user', 'user.id', '=', 'health_plan.created_by')
+                .innerJoin('health_plan_category',  'health_plan_category.id', '=','health_plan.plan_category')
                 .whereILike('plan_name', `%${data.query}%`)
                 .orWhereILike('plan_category', `%${data.query}%`)
                 .limit(`${data.pageSize}`)
@@ -222,14 +222,14 @@ export async function getAndSearchHealthPlan(data) {
                     'health_plan.plan_age_limit',
                     'health_plan.plan_cost',
                     'health_plan.created_at',
-                    db.raw("health_plan_category.name as health_plan_category_name"),
-                    db.raw("health_plan_category.health_plan_code as health_plan_category_code"),
-                    db.raw("health_plan_category.band as health_plan_category_band"),
-                    db.raw("user.id as `user_id`"),
-                    db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
+                    db.raw(`"health_plan_category"."name" as "health_plan_category_name"`),
+                    db.raw(`"health_plan_category"."health_plan_code" as "health_plan_category_code"`),
+                    db.raw(`"health_plan_category"."band" as "health_plan_category_band"`),
+                    db.raw(`"user"."id" as "user_id"`),
+                    db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "entered_by"`)
                 )
-                .innerJoin('user', 'user.id', 'health_plan.created_by')
-                .innerJoin('health_plan_category', 'health_plan.plan_category', 'health_plan_category.id')
+                .innerJoin('user', 'user.id', '=', 'health_plan.created_by')
+                .innerJoin('health_plan_category',  'health_plan_category.id', '=','health_plan.plan_category')
                 .limit(`${data.pageSize}`)
                 .offset(`${(data.pageIndex - 1) * data.pageSize}`)
                 .orderBy(`${data.sort.key ? data.sort.key : "created_at"}`, `${data.sort.order ? data.sort.order : "asc"}`)
@@ -256,14 +256,14 @@ export async function getAllHealthPlan(data) {
                 'health_plan.plan_age_limit',
                 'health_plan.plan_cost',
                 'health_plan.created_at',
-                db.raw("health_plan_category.name as health_plan_category_name"),
-                db.raw("health_plan_category.health_plan_code as health_plan_category_code"),
-                db.raw("health_plan_category.band as health_plan_category_band"),
-                db.raw("user.id as `user_id`"),
-                db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
+                db.raw(`"health_plan_category"."name" as "health_plan_category_name"`),
+                db.raw(`"health_plan_category"."health_plan_code" as "health_plan_category_code"`),
+                db.raw(`"health_plan_category"."band" as "health_plan_category_band"`),
+                db.raw(`"user"."id" as "user_id"`),
+                db.raw(`"concat(user.first_name, \' \', "user"."last_name") as "entered_by"`)
             )
-            .innerJoin('user', 'user.id', 'health_plan.created_by')
-            .innerJoin('health_plan_category', 'health_plan.plan_category', 'health_plan_category.id')
+            .innerJoin('user', 'user.id', '=', 'health_plan.created_by')
+            .innerJoin('health_plan_category', '=', 'health_plan.plan_category', 'health_plan_category.id')
             .orderBy("health_plan.plan_name", `asc`)
 
     } catch (error) {
@@ -280,15 +280,15 @@ export async function getSingleHealthCategoryModelById(id) {
             'health_plan_category.health_plan_code',
             'health_plan_category.description',
             'health_plan_category.band',
-            db.raw("user.id as user_id"),
-            db.raw("user.email as user_email"),
-            db.raw("user.phone_number as user_phone_number"),
-            db.raw("user.role as user_role"),
-            db.raw("user.user_disabled as is_user_account_active"),
-            db.raw("user.last_active_at as user_last_active_at"),
-            db.raw("concat(user.first_name, ' ', user.last_name) as `entered_by`")
+            db.raw(`"user"."id" as "user_id"`),
+            db.raw(`"user"."email" as "user_email"`),
+            db.raw(`"user"."phone_number" as "user_phone_number"`),
+            db.raw(`"user"."role" as "user_role"`),
+            db.raw(`"user"."user_disabled" as "is_user_account_active"`),
+            db.raw(`"user"."last_active_at" as "user_last_active_at"`),
+            db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "entered_by"`)
         )
-        .innerJoin('user', 'user.id', 'health_plan_category.created_by')
+        .innerJoin('user', 'user.id', '=', 'health_plan_category.created_by')
         .where('health_plan_category.id', `${id}`)
 }
 
@@ -335,6 +335,6 @@ export async function updateAttachBenefitModel(id, data) {
 }
 
 // delete attach benefit
-export async function deleteAttachBenefitModel(id){
+export async function deleteAttachBenefitModel(id) {
     return await db('attached_benefit').where('id', id).del()
 }
