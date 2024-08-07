@@ -164,6 +164,29 @@ export async function getAllAndSearchNhisDrugModel(data) {
     }
 }
 
+// --NHIA REPORT/CLAIM
+export async function createNhiaClaimModel(data) {
+
+    const createNhiaClaim = {
+
+        id: uuidv4(),
+        nhia_enrollee_name: data.nhia_enrollee_name,
+        nhia_enrollee_id: data.nhia_enrollee_id,
+        referring_hcf: data.referring_hcf,
+        recieving_hcf: data.recieving_hcf,
+        referral_code: data.referral_code,
+        approval_date: data.approval_date,
+        date_hmo_recieved_claim: data.date_hmo_recieved_claim,
+        diagnosis: data.diagnosis,
+        items: data.items,
+        created_by: data.user_id
+    }
+    try {
+        return await db('nhia_claim').insert(createNhiaClaim)
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 
 // export async function getHealthPlanCodeModel(code) {
