@@ -112,7 +112,7 @@ router.post('/nhis/claim/create', auth, async (req, res, next) => {
         let response = await createNhiaClaimService(data)
 
         if (!response) {
-            throw new Exception("encountered an issue while creating nhis claim", 401)
+            throw new Exception("encountered an issue while creating nhis claim, check the input", 400)
         }
 
         res.status(200).json({

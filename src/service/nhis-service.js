@@ -49,7 +49,7 @@ export async function getAndSearchDrugTarrifService(data) {
 export async function createNhiaClaimService(data){
 
     if (!data) {
-        throw new NHISServiceExpection("NHIS claim details can not be empty", 400)
+        throw new NHISServiceExpection("NHIS claim input can not be empty", 400)
     }
 
     return createNhiaClaimModel(data)
