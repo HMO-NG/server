@@ -3,7 +3,7 @@
  * @returns { Promise<void> }
  */
 export async function up(knex) {
-    return knex.schema.createTable('nhia_report', table => {
+    return knex.schema.createTable('nhia_claim', table => {
         table.string('id').primary();
         table.string('nhia_enrollee_name').notNullable();
         table.string('nhia_enrollee_id', 36).notNullable();
@@ -24,5 +24,5 @@ export async function up(knex) {
  * @returns { Promise<void> }
  */
 export async function down(knex) {
-    await knex.schema.dropTable('nhia_report');
+    await knex.schema.dropTable('nhia_claim');
 }

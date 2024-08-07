@@ -32,7 +32,7 @@ const config = {
             max: 10
         },
         migrations: {
-            directory: 'src/migrations',
+            directory: './migrations',
             loadExtensions: ['.js'],
             tableName: "knex_migrations"
         }

@@ -4,7 +4,8 @@ import {
     createNhisServiceTarrif,
     getAndSearchNhisTarrifService,
     createNhiaDrugTarrif,
-    getAndSearchDrugTarrifService
+    getAndSearchDrugTarrifService,
+    createNhiaClaimService
 } from '../service/nhis-service.js';
 import Exception from '../util/exception.js';
 
@@ -95,6 +96,27 @@ router.post('/nhis/drug/tarrif/search', auth, async (req, res, next) => {
             message: `response returned successfully`,
             data: response.result,
             total: response.total
+        })
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+});
+
+router.post('/nhis/claim/create', auth, async (req, res, next) => {
+
+    try {
+
+        const data = req.body
+
+        let response = await createNhiaClaimService(data)
+
+        if (!response) {
+            throw new Exception("encountered an issue while creating nhis claim", 401)
+        }
+
+        res.status(200).json({
+            message: `nhia claim created successfully`,
         })
     } catch (error) {
         console.log(error)

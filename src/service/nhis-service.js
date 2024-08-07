@@ -3,6 +3,7 @@ import {
     getAllAndSearchNhisTarrifModel,
     getAllAndSearchNhisDrugModel,
     createNhisDrugTarrifModel,
+    createNhiaClaimModel
 } from "../model//nhis-service-model.js";
 import Exception from "../util/exception.js";
 
@@ -43,6 +44,16 @@ export async function getAndSearchDrugTarrifService(data) {
     return await getAllAndSearchNhisDrugModel(data)
 
 };
+
+// --- NHIA drug
+export async function createNhiaClaimService(data){
+
+    if (!data) {
+        throw new NHISServiceExpection("NHIS claim details can not be empty", 400)
+    }
+
+    return createNhiaClaimModel(data)
+}
 
 class NHISServiceExpection extends Exception {
     constructor(message, status) {
