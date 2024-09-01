@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt'
 import Exception from "../util/exception.js"
 import { generateUniqueReferralCode } from "../util/referral-code.js"
 import session from "express-session"
+import {getAllUsersOnlyEmailAndFullName} from '../model/user-model.js'
 
 // import { createOTP, getOTP } from "../data-access/models/opt.js"
 // import vine, { errors } from "@vinejs/vine"
@@ -68,26 +69,33 @@ export async function create(data, next) {
  */
 export async function signin(data) {
 
-        const isEmailValid = await getUserByEmail(data.email)
+    const isEmailValid = await getUserByEmail(data.email)
 
-        if (!isEmailValid.length) {
-            throw new AuthServiceExpection('User email not found', 409)
-        }
+    if (!isEmailValid.length) {
+        throw new AuthServiceExpection('User email not found', 409)
+    }
 
-        const getHashedPassword = isEmailValid[0].password
+    const getHashedPassword = isEmailValid[0].password
 
-        const comparePassword = await bcrypt.compare(data.password, getHashedPassword)
+    const comparePassword = await bcrypt.compare(data.password, getHashedPassword)
 
-        if (!comparePassword) {
-            throw new Exception("password incorrect", 401)
-        }
+    if (!comparePassword) {
+        throw new Exception("password incorrect", 401)
+    }
 
-        return {comparePassword, isEmailValid};
+    return { comparePassword, isEmailValid };
 
 }
 
-export class AuthServiceExpection extends Exception{
-    constructor(message, status){
+// return all users (email, first name and last name only)
+export async function getAllUserByEmailFirstNameAndLastName(data) {
+
+    return getAllUsersOnlyEmailAndFullName(data)
+
+}
+
+export class AuthServiceExpection extends Exception {
+    constructor(message, status) {
         super(message, status)
     }
 }

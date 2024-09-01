@@ -1,6 +1,8 @@
 import express from 'express'
 import { signJWT, verifyJWT } from '../util/jwt.js'
-import { create, signin } from '../service/auth-service.js';
+import { create, signin, getAllUserByEmailFirstNameAndLastName } from '../service/auth-service.js';
+import { auth } from '../middleware/auth-middleware.js';
+
 
 const router = express.Router()
 
@@ -51,7 +53,7 @@ router.post('/auth/signin', async (req, res, next) => {
                 token: token,
                 user:
                 {
-                    user_id:isEmailValid[0].id,
+                    user_id: isEmailValid[0].id,
                     email: isEmailValid[0].email,
                     first_name: isEmailValid[0].first_name,
                     last_name: isEmailValid[0].last_name,
@@ -68,6 +70,25 @@ router.post('/auth/signin', async (req, res, next) => {
     }
 
 });
+
+// get all user (returns only email and full name)
+router.post('/auth/user/permission', auth, async (req, res, next) => {
+    try {
+
+        const {result, total} = await getAllUserByEmailFirstNameAndLastName(req.body)
+
+        res.status(200).json({
+            message: `returned successfully`,
+            data: result,
+            total: total
+        })
+
+
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+})
 
 // forget user password
 // signout user

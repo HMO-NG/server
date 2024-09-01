@@ -51,6 +51,45 @@ export async function getUserByEmail(userEmail) {
 export async function getUserById(id) {
     return await db('user').select().where('id', id);
 }
+
 export async function getUserByReferralCode(userReferralCode) {
     return await db('user').select().where('referral_code', userReferralCode);
+}
+
+// get all users (email and full-name)
+export async function getAllUsersOnlyEmailAndFullName(data) {
+
+    let result;
+    let total;
+
+    if (data.query) {
+
+        result = await db('user').select(
+            'id',
+            'email',
+            db.raw(`concat("first_name", \' \', "last_name") as "user_full_name"`)
+        )
+            .whereILike('email', `%${data.query}%`)
+            .orWhereILike('first_name', `%${data.query}%`)
+            .orWhereILike('last_name', `%${data.query}%`)
+            .limit(`${data.pageSize}`)
+            .offset(`${(data.pageIndex - 1) * data.pageSize}`)
+            .orderBy(`${data.sort.key ? data.sort.key : "user.created_at"}`, `${data.sort.order}`)
+
+        total = await db("user").whereILike('email', `%${data.query}%`).orWhereILike('first_name', `%${data.query}%`)
+            .orWhereILike('last_name', `%${data.query}%`).count()
+    } else {
+        result = await db('user').select(
+            'id',
+            'email',
+            db.raw(`concat("first_name", \' \', "last_name") as "user_full_name"`)
+        )
+            .limit(`${data.pageSize}`)
+            .offset(`${(data.pageIndex - 1) * data.pageSize}`)
+            .orderBy(`${data.sort.key ? data.sort.key : "user.created_at"}`, `${data.sort.order}`)
+
+        total = await db("user").count()
+    }
+
+    return { total, result }
 }
