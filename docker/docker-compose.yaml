@@ -25,7 +25,7 @@ services:
     pull_policy: always
     restart: on-failure
 #    if using docker image then remove/comment build props only needed in dev not prod
-    image: wamiikechukwu/hci-backend-internal
+    image: wamiikechukwu/hci-backend-internal:1.0.0
     #build:
     #  context: ..
     #  dockerfile: Dockerfile
@@ -116,7 +116,7 @@ services:
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   frontend:
-    image: wamiikechukwu/hci-frontend-internal
+    image: wamiikechukwu/hci-frontend-internal:1.0.0
     restart: on-failure
     networks:
       - public
