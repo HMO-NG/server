@@ -6,6 +6,7 @@ services:
       - private
     ports:
       - "5432:5432"
+    restart: on-failure
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
@@ -23,14 +24,14 @@ services:
   express-server:
     pull_policy: always
     restart: on-failure
-#    image: your docker image tag name here and remove build props only needed in dev not prod
-    build:
-      context: ..
-      dockerfile: Dockerfile
+#    if using docker image then remove/comment build props only needed in dev not prod
+    image: wamiikechukwu/hci-backend-internal
+    #build:
+    #  context: ..
+    #  dockerfile: Dockerfile
     # you don't need to expose anymore since nginx is setup below
 #    ports:
 #      - 9000:3000
-
     networks:
       - private
       - public
@@ -98,15 +99,16 @@ services:
     volumes:
       - nginx_data:/etc/nginx/certs
     depends_on:
-      ssl-generator:
-        condition: service_completed_successfully
+#      ssl-generator:
+#        condition: service_completed_successfully
       express-server:
         condition: service_healthy
       frontend:
         condition: service_started
 
   frontend:
-    image: hmo-web
+    image: wamiikechukwu/hci-frontend-internal
+    restart: on-failure
     networks:
       - public
 
@@ -134,9 +136,3 @@ networks:
 volumes:
   nginx_data:
   postgres_data:
-#  mysql_data:
-#    driver: local
-#    driver_opts:
-#      type: none
-#      device: /path/in/your/vps/dir
-#      o: bind
