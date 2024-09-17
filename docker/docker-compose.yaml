@@ -97,7 +97,7 @@ services:
       - source: nginx_conf
         target: /etc/nginx/nginx.conf
     volumes:
-      - nginx_data:/etc/nginx/certs
+#      - nginx_data:/etc/nginx/certs
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
