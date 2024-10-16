@@ -17,7 +17,7 @@ export async function up(knex) {
         table.string('dependent_blood_group', 3);
         table.string('dependent_email', 100);
         table.string('dependent_dob', 10);
-        table.string('dependent_name_of_employer', 100);
+        table.string('principal_id', 36);
         table.string('dependent_name_of_hospital');
         table.string('dependent_profile_pic');
         table.timestamp('created_at').notNullable().defaultTo(knex.fn.now());
