@@ -3,31 +3,24 @@ import { v4 as uuidv4 } from 'uuid'
 import config from '../knexfile.js'
 let db = knex(config[process.env.NODE_ENV || 'development']);
 
-// create the principal and dependent form details
-export async function createFormDetails(data) {
-
-    const createPrincipalFormDetails = {
-        id: uuidv4(),
-        principal_firstname: data.principal_firstname,
-        principal_surname: data.principal_surname,
-        principal_othername: data.principal_othername,
-        principal_occupation: data.principal_occupation,
-        principal_address: data.principal_address,
-        principal_phone_number: data.principal_phone_number,
-        principal_sex: data.principal_sex,
-        principal_health_plan: data.principal_health_plan,
-        principal_genotype: data.principal_genotype,
-        principal_blood_group: data.principal_blood_group,
-        principal_email: data.principal_email,
-        principal_dob: data.principal_dob,
-        principal_name_of_employer: data.principal_name_of_employer,
-        principal_address_of_employer: data.principal_address_of_employer,
-        principal_name_of_hospital: data.principal_name_of_hospital,
-        principal_profile_pic: data.principal_profile_pic
-    }
-
-    const spouse = {
-        id: createFormDetails.id,
+/*
+{
+        firstname: '',
+        surname: '',
+        othername: '',
+        address: '',
+        occupation: '',
+        phone_number: '',
+        principal_health_plan: '',
+        principal_genotype: '',
+        principal_blood_group: '',
+        email: '',
+        sex: '',
+        dob: '',
+        name_of_employer: '',
+        address_of_employer: '',
+        name_of_hospital: '',
+        principal_profile_pic: '',
         spouse_surname: '',
         spouse_othername: '',
         spouse_firstname: '',
@@ -39,10 +32,7 @@ export async function createFormDetails(data) {
         spouse_dob: '',
         spouse_genotype: '',
         spouse_blood_group: '',
-    }
-
-    const dependantOne = {
-        id: createFormDetails.id,
+        number_of_dependent: '',
         dependent_one_surname: '',
         dependent_one_othername: '',
         dependent_one_firstname: '',
@@ -55,10 +45,6 @@ export async function createFormDetails(data) {
         dependent_one_genotype: '',
         dependent_one_blood_group: '',
         dependent_one_profile_pic: '',
-    }
-
-    const dependantTwo = {
-        id: createFormDetails.id,
         dependent_two_surname: '',
         dependent_two_othername: '',
         dependent_two_firstname: '',
@@ -71,10 +57,6 @@ export async function createFormDetails(data) {
         dependent_two_genotype: '',
         dependent_two_blood_group: '',
         dependent_two_profile_pic: '',
-    }
-
-    const dependantThree = {
-        id: createFormDetails.id,
         dependent_three_surname: '',
         dependent_three_othername: '',
         dependent_three_firstname: '',
@@ -87,10 +69,6 @@ export async function createFormDetails(data) {
         dependent_three_genotype: '',
         dependent_three_blood_group: '',
         dependent_three_profile_pic: '',
-    }
-
-    const dependantFour = {
-        id: createFormDetails.id,
         dependent_four_surname: '',
         dependent_four_othername: '',
         dependent_four_firstname: '',
@@ -103,13 +81,89 @@ export async function createFormDetails(data) {
         dependent_four_genotype: '',
         dependent_four_blood_group: '',
         dependent_four_profile_pic: ''
+    } */
+// create the principal and dependent form details
+export async function createFormDetails(data) {
+
+    const createPrincipalFormDetails = {
+        id: uuidv4(),
+        principal_firstname: data.firstname,
+        principal_surname: data.surname,
+        principal_othername: data.othername,
+        principal_occupation: data.occupation,
+        principal_address: data.address,
+        principal_phone_number: data.principal_phone_number,
+        principal_sex: data.sex,
+        principal_health_plan: data.principal_health_plan,
+        principal_genotype: data.principal_genotype,
+        principal_blood_group: data.principal_blood_group,
+        principal_email: data.email,
+        principal_dob: data.dob,
+        principal_name_of_employer: data.name_of_employer,
+        principal_address_of_employer: data.address_of_employer,
+        principal_name_of_hospital: data.name_of_hospital,
+        principal_profile_pic: data.principal_profile_pic,
+        spouse_surname: data.spouse_surname,
+        spouse_othername: data.spouse_othername,
+        spouse_firstname: data.spouse_firstname,
+        spouse_address: data.spouse_address,
+        spouse_occupation: data.spouse_occupation,
+        spouse_sex: data.spouse_sex,
+        spouse_phone_number: data.spouse_phone_number,
+        spouse_email: data.spouse_email,
+        spouse_dob: data.spouse_dob,
+        spouse_genotype: data.spouse_genotype,
+        spouse_blood_group: data.spouse_blood_group,
+        dependent_one_surname: data.dependent_one_surname,
+        dependent_one_othername: data.dependent_one_othername,
+        dependent_one_firstname: data.dependent_one_firstname,
+        dependent_one_address: data.dependent_one_address,
+        dependent_one_occupation: data.dependent_one_occupation,
+        dependent_one_sex: data.dependent_one_sex,
+        dependent_one_phone_number: data.dependent_one_phone_number,
+        dependent_one_email: data.dependent_one_email,
+        dependent_one_dob: data.dependent_one_dob,
+        dependent_one_genotype: data.dependent_one_genotype,
+        dependent_one_blood_group: data.dependent_one_blood_group,
+        dependent_one_profile_pic: data.dependent_one_profile_pic,
+        dependent_two_surname: data.dependent_two_surname,
+        dependent_two_othername: data.dependent_two_othername,
+        dependent_two_firstname: data.dependent_two_firstname,
+        dependent_two_address: data.dependent_two_address,
+        dependent_two_occupation: data.dependent_two_occupation,
+        dependent_two_sex: data.dependent_two_sex,
+        dependent_two_phone_number: data.dependent_two_phone_number,
+        dependent_two_email: data.dependent_two_email,
+        dependent_two_dob: data.dependent_two_dob,
+        dependent_two_genotype: data.dependent_two_genotype,
+        dependent_two_blood_group: data.dependent_two_blood_group,
+        dependent_two_profile_pic: data.dependent_two_profile_pic,
+        dependent_three_surname: data.dependent_three_surname,
+        dependent_three_othername: data.dependent_three_othername,
+        dependent_three_firstname: data.dependent_three_firstname,
+        dependent_three_address: data.dependent_three_address,
+        dependent_three_occupation: data.dependent_three_occupation,
+        dependent_three_sex: data.dependent_three_sex,
+        dependent_three_phone_number: data.dependent_three_phone_number,
+        dependent_three_email: data.dependent_three_email,
+        dependent_three_dob: data.dependent_three_dob,
+        dependent_three_genotype: data.dependent_three_genotype,
+        dependent_three_blood_group: data.dependent_three_blood_group,
+        dependent_three_profile_pic: data.dependent_three_profile_pic,
+        dependent_four_surname: data.dependent_four_surname,
+        dependent_four_othername: data.dependent_four_othername,
+        dependent_four_firstname: data.dependent_four_firstname,
+        dependent_four_address: data.dependent_four_address,
+        dependent_four_occupation: data.dependent_four_occupation,
+        dependent_four_sex: data.dependent_four_sex,
+        dependent_four_phone_number: data.dependent_four_phone_number,
+        dependent_four_email: data.dependent_four_email,
+        dependent_four_dob: data.dependent_four_dob,
+        dependent_four_genotype: data.dependent_four_genotype,
+        dependent_four_blood_group: data.dependent_four_blood_group,
+        dependent_four_profile_pic: data.dependent_four_profile_pic
     }
 
-    const array = [spouse, dependantOne, dependantTwo, dependantThree, dependantFour];
+    return db("client_enrollment_form_details").insert(createPrincipalFormDetails);
 
-    db("principal_enrollment_form_details").insert(createPrincipalFormDetails).then();
-
-
-
-    return await db("principal_enrollment_form_details").insert(createPrincipalFormDetails);
 }
