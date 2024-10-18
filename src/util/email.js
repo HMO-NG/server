@@ -12,22 +12,15 @@ const transport = nodemailer.createTransport({
     }
 });
 
-export async function email(clientDetails, senderDetails) {
+export async function email(clientDetails, senderDetails, mainBody) {
 
 
     const info = await transport.sendMail({
         from: '"Client Registration" <noreply@hcihealthcare.ng>',
         to: 'ikechukwu.wami@hcihealthcare.ng, wamiikechukwu@gmail.com',
         subject: 'A new client registered',
-        html: `<div>${clientDetails}</div>`,
+        html: `<div>${mainBody}</div>`,
     });
 
     console.log("Message sent: %s", info.messageId);
 }
-
-// transport.sendMail(mailOptions, (error, info) => {
-//     if (error) {
-//         return console.log(error);
-//     }
-//     console.log('Successfully sent');
-// });
