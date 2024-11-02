@@ -18,7 +18,7 @@ export async function createNhisEnrolleeModel(data) {
         provider_id: data.provider_id,
         provider_name: data.provider_name,
         provider_Address: data.provider_Address,
-        created_by: data.user_id
+        created_by: data.created_by
     }
     return await db("nhis_enrollee").insert(createNhiaEntrollee);
 }
@@ -85,10 +85,18 @@ export async function getAllAndSearchNhisEnrolleeModel(data) {
     }
 }
 
-// get all nhis enrollee but no searching
+// get all nhis enrollee by id and dob - for unique searching
 export async function getAllNhisEnrolleeModel(data) {
 
+    //db.raw("to_char(dob, 'YYYY-MM-DD') as dob") had to be use as the returned value from the db was converted
+    // using UTC timezone, will removed -1hour from the Date
+
     return await db('nhis_enrollee')
-        .select()
+        .select([
+            db.raw('nhis_enrollee.*'),
+            db.raw("to_char(dob, 'YYYY-MM-DD') as dob")
+        ])
         .whereILike('policy_id', `%${data.id}%`)
+        .whereRaw("dob::date = ?::date", [data.dob])
+
 }

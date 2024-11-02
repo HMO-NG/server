@@ -10,6 +10,7 @@ import Exception from '../util/exception.js';
 const router = express.Router()
 
 router.post('/nhia/enrollee/create', auth, async (req, res, next) => {
+    // getAllNhisEnrolleeService
     try {
 
         const data = req.body
@@ -59,16 +60,15 @@ router.post('/nhis/enrollee/get', auth, async (req, res, next) => {
 
         const data = req.body
 
-        if (data.id.length === 0) {
-            throw new Exception("returned value is either an empty array or encountered an issue while getting or searching nhis enrollee", 400)
+        if (!data.id || !data.dob || data.id.length === 0 || data.dob.length === 0) {
+            /* 400 Bad Request indicates that the server understood the request,
+            but there's a problem with the client-provided data.
+            This perfectly aligns with the situation where the id or dob fields
+            in the request body (req.body) are empty. */
+            throw new Exception("NHIA ID or date of birth is empty", 400)
         }
 
         let response = await getAllNhisEnrolleeService(data)
-
-        // if (response?.length === 0) {
-        if (!response) {
-            throw new Exception("returned value is either an empty array or encountered an issue while getting or searching nhis enrollee", 400)
-        }
 
         res.status(200).json({
             message: `response returned successfully`,
