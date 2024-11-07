@@ -12,12 +12,12 @@ const transport = nodemailer.createTransport({
     }
 });
 
-export async function email(clientDetails, senderDetails, mainBody) {
+export async function email(mainBody) {
 
 
     const info = await transport.sendMail({
         from: '"Client Registration" <noreply@hcihealthcare.ng>',
-        to: 'ikechukwu.wami@hcihealthcare.ng, wamiikechukwu@gmail.com',
+        to: 'abdulkadri.osumah@hcihealthcare.ng, ikechukwu.wami@hcihealthcare.ng, wamiikechukwu@gmail.com',
         subject: 'A new client registered',
         html: `<div>${mainBody}</div>`,
     });

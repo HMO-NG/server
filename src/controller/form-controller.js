@@ -9,7 +9,11 @@ const router = express.Router()
 router.post('/client/form/registration', async (req, res, next) => {
     try {
 
-        const data = req.body
+        const data = req.body.details
+        const auth = req.body.auth
+
+        console.log(data)
+        console.log(auth)
 
         let result = await createFormService(data)
 
