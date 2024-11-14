@@ -47,6 +47,11 @@ export async function getUserByEmail(userEmail) {
     return await db('user').select().where('email', userEmail);
 }
 
+// get user by phone number (since phone numbers are meant to be unique)
+export async function getUserByPhoneNumber(userPhoneNumber) {
+    return await db('user').select().where('phone_number', userPhoneNumber)
+}
+
 // get user by id
 export async function getUserById(id) {
     return await db('user').select().where('id', id);

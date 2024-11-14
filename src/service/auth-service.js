@@ -1,4 +1,4 @@
-import { createUser, getUserByEmail } from "../model/user-model.js"
+import { createUser, getUserByEmail, getUserByPhoneNumber } from "../model/user-model.js"
 import bcrypt from 'bcrypt'
 import Exception from "../util/exception.js"
 import { generateUniqueReferralCode } from "../util/referral-code.js"
@@ -23,11 +23,17 @@ export async function create(data, next) {
         // check if email/user already exist
         const doesUserHaveAnEmail = await getUserByEmail(data.email)
 
-        //TODO  phone number should be checked if it exist.
-
         if (doesUserHaveAnEmail.length) {
             // throw an exception
             throw new Exception('email address already in use', 409)
+        }
+
+        // check if phone number already exist.
+        const doesPhoneNumberAlreadyExist = await getUserByPhoneNumber(data.phone_number)
+
+        if (doesPhoneNumberAlreadyExist.length) {
+            // throw an exception
+            throw new Exception('Phone number already in use', 409)
         }
 
         //generate a unique referal code
