@@ -98,3 +98,20 @@ export async function getAllUsersOnlyEmailAndFullName(data) {
 
     return { total, result }
 }
+
+// update user
+export async function updateUserDetails(id, data) {
+
+    console.log(id, data)
+    // if the user is NHIA, the only update the neccessary information
+    if (data.type === 'NHIA') {
+        const updatedInformation = {
+            address: data.address,
+            employer_name: data.employer_name,
+            modified_at: new Date()
+        }
+        
+        return await db('user').where('id', id).update(updatedInformation)
+
+    }
+}

@@ -1,9 +1,15 @@
-import { createUser, getUserByEmail, getUserByPhoneNumber } from "../model/user-model.js"
+import {
+    createUser, getUserByEmail, getUserByPhoneNumber,
+    updateUserDetails
+} from "../model/user-model.js"
+import { getNhiaEnrolleeAndUserDetailsModel } from "../model/enrollee-model.js"
 import bcrypt from 'bcrypt'
 import Exception from "../util/exception.js"
 import { generateUniqueReferralCode } from "../util/referral-code.js"
 import session from "express-session"
-import {getAllUsersOnlyEmailAndFullName} from '../model/user-model.js'
+import { getAllUsersOnlyEmailAndFullName } from '../model/user-model.js'
+import { email } from "../util/email.js";
+
 
 // import { createOTP, getOTP } from "../data-access/models/opt.js"
 // import vine, { errors } from "@vinejs/vine"
@@ -99,6 +105,30 @@ export async function getAllUserByEmailFirstNameAndLastName(data) {
     return getAllUsersOnlyEmailAndFullName(data)
 
 }
+
+// update user information
+export async function updateUserDetailsService(id, data) {
+
+    if (!id) {
+        throw new AuthServiceExpection('UserId not set', 400)
+    }
+
+    if (!data) {
+        throw new AuthServiceExpection('data to update not found', 400)
+    }
+
+    return updateUserDetails(id, data)
+}
+
+// book user appointment
+export async function bookAppointmentService(data) {
+
+    const result = getNhiaEnrolleeAndUserDetailsModel(data)
+
+    email("", 'ikechukwu.wami@hcihealthcare.ng', 'NEW NHIA User Complain')
+
+}
+
 
 export class AuthServiceExpection extends Exception {
     constructor(message, status) {

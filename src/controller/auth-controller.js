@@ -1,7 +1,12 @@
-import express from 'express'
+import express, { response } from 'express'
 import { signJWT, verifyJWT } from '../util/jwt.js'
-import { create, signin, getAllUserByEmailFirstNameAndLastName } from '../service/auth-service.js';
+import {
+    create, signin, getAllUserByEmailFirstNameAndLastName,
+    updateUserDetailsService, bookAppointmentService
+} from '../service/auth-service.js';
 import { auth } from '../middleware/auth-middleware.js';
+import Exception from '../util/exception.js';
+
 
 
 const router = express.Router()
@@ -75,12 +80,60 @@ router.post('/auth/signin', async (req, res, next) => {
 router.post('/auth/user/permission', auth, async (req, res, next) => {
     try {
 
-        const {result, total} = await getAllUserByEmailFirstNameAndLastName(req.body)
+        const { result, total } = await getAllUserByEmailFirstNameAndLastName(req.body)
 
         res.status(200).json({
             message: `returned successfully`,
             data: result,
             total: total
+        })
+
+
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+})
+
+// update user
+router.post('/auth/user/update', auth, async (req, res, next) => {
+    try {
+
+        const { id, data } = req.body
+
+        let reponse = updateUserDetailsService(id, data)
+
+        if(!response){
+            throw new Exception('Response empty, mostly like user details did not save', 400)
+        }
+
+        res.status(200).json({
+            message: `Your information saved successfully`,
+        })
+
+
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+})
+
+// send user complain
+router.post('/auth/user/bookapointment', auth, async (req, res, next) => {
+    try {
+
+        const { data } = req.body
+
+        console.log(data.userid)
+
+        let reponse = bookAppointmentService(data)
+
+        if(!response){
+            throw new Exception('Response empty, mostly like user details did not save', 400)
+        }
+
+        res.status(200).json({
+            message: `Your information saved successfully`,
         })
 
 

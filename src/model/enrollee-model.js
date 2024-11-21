@@ -119,9 +119,11 @@ export async function getNhiaEnrolleeAndUserDetailsModel(data) {
                 'nhis_enrollee.provider_name',
                 'user.email',
                 'user.phone_number',
-                'user.phone_number',
+                'user.type',
+                'user.address',
+                'user.employer_name',
             )
-            .innerJoin('user', 'user.id', '=', "nhis_enrollee.created_by")
+            .innerJoin('user', 'user.id', '=', "nhis_enrollee.linked_to_user")
             .where('linked_to_user', data.userid)
 
     } catch (error) {
