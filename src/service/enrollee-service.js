@@ -1,7 +1,8 @@
 import {
     getAllAndSearchNhisEnrolleeModel,
     createNhisEnrolleeModel,
-    getAllNhisEnrolleeModel
+    bindUserToNhiaEnrolleeModel,
+    getNhiaEnrolleeAndUserDetailsModel
 } from "../model/enrollee-model.js";
 import Exception from "../util/exception.js";
 
@@ -25,13 +26,23 @@ export async function getAndSearchNhisEnrolleeService(data) {
 
 };
 
-export async function getAllNhisEnrolleeService(data) {
+export async function bindUserToNhiaEnrolleeService(data) {
 
     if (!data) {
         throw new EnrolleeExpection("NHIS service details can not be empty", 400)
     }
 
-    return await getAllNhisEnrolleeModel(data)
+    return await bindUserToNhiaEnrolleeModel(data)
+
+};
+
+export async function getNhiaEnrolleeAndUserDetailsService(data) {
+
+    if (!data) {
+        throw new EnrolleeExpection("basic user information missing, kindly re-login", 400)
+    }
+
+    return await getNhiaEnrolleeAndUserDetailsModel(data)
 
 };
 

@@ -5,7 +5,7 @@ import KnexSessionStore from 'connect-session-knex'
 import morgan from 'morgan'
 import knex from "knex";
 import config from "./knexfile.js";
-
+import cors from "cors";
 
 import session from 'express-session'
 
@@ -25,6 +25,8 @@ const store = new knexSession({
 })
 
 const app = express()
+
+app.use(cors());
 
 // middleware to parse json from req.body
 app.use(express.json())

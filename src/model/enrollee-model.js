@@ -18,7 +18,7 @@ export async function createNhisEnrolleeModel(data) {
         provider_id: data.provider_id,
         provider_name: data.provider_name,
         provider_Address: data.provider_Address,
-        created_by: data.user_id
+        created_by: data.created_by
     }
     return await db("nhis_enrollee").insert(createNhiaEntrollee);
 }
@@ -85,10 +85,48 @@ export async function getAllAndSearchNhisEnrolleeModel(data) {
     }
 }
 
-// get all nhis enrollee but no searching
-export async function getAllNhisEnrolleeModel(data) {
+// get all nhis enrollee by id and dob - for unique searching
+export async function bindUserToNhiaEnrolleeModel(data) {
+
+    //db.raw("to_char(dob, 'YYYY-MM-DD') as dob") had to be use as the returned value (2012-10-15T23:00:00.000Z) from the db was converted
+    // using UTC timezone, will removed -1hour from the Date
 
     return await db('nhis_enrollee')
-        .select()
-        .whereILike('policy_id', `%${data.id}%`)
+        .where('policy_id', data.id)
+        .whereRaw("dob::date = ?::date", [data.dob])
+        .update({ linked_to_user: data.userid })
+        .returning([
+            db.raw('nhis_enrollee.*'),
+            db.raw("to_char(dob, 'YYYY-MM-DD') as dob")
+        ]);
+}
+
+//get nhis enrollee + binded user details in the mobile app
+export async function getNhiaEnrolleeAndUserDetailsModel(data) {
+    try {
+
+        return await db('nhis_enrollee')
+            .select(
+                'nhis_enrollee.id',
+                'nhis_enrollee.policy_id',
+                'nhis_enrollee.relationship',
+                'nhis_enrollee.surname',
+                'nhis_enrollee.other_names',
+                'nhis_enrollee.dob',
+                'nhis_enrollee.sex',
+                'nhis_enrollee.company_id',
+                'nhis_enrollee.provider_id',
+                'nhis_enrollee.provider_name',
+                'user.email',
+                'user.phone_number',
+                'user.type',
+                'user.address',
+                'user.employer_name',
+            )
+            .innerJoin('user', 'user.id', '=', "nhis_enrollee.linked_to_user")
+            .where('linked_to_user', data.userid)
+
+    } catch (error) {
+        console.log(error)
+    }
 }
