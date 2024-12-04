@@ -69,11 +69,9 @@ app.get('/migrate', async (req, res) => {
         res.send('Migrations completed');
     }
 })
-if (process.env.NODE_ENV === 'development') {
-    app.use('/api/v1', router)
-} else {
-    app.use('/v1', router)
-}
+
+app.use('/v1', router)
+
 app.use(exceptionMiddleware)
 
 export default app;
