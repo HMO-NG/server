@@ -7,8 +7,6 @@ import knex from "knex";
 import config from "./knexfile.js";
 import cors from "cors";
 
-
-
 import session from 'express-session'
 
 import exceptionMiddleware from './middleware/exception-middleware.js'
