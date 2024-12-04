@@ -75,16 +75,6 @@ services:
       echo ' API is ready. Running migrations...' &&
       curl --silent --fail http://express-server:3000/migrate"
 
-#  ssl-generator:
-#    image: alpine:3.20
-#    volumes:
-#      - nginx_data:/etc/nginx/certs
-#    entrypoint: >
-#      sh -c "
-#      apk add --no-cache openssl &&
-#      mkdir -p /etc/nginx/certs &&
-#      openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/certs/selfsigned.key -out /etc/nginx/certs/selfsigned.crt -subj '/CN=hmo.web'"
-#    command: [ "echo", "SSL certificates generated." ]
 
   nginx:
     image: nginx:alpine3.19
@@ -93,9 +83,7 @@ services:
     ports:
       - '80:80'
       - '443:443'
-    configs:
-      - source: nginx_conf
-        target: /etc/nginx/nginx.conf
+    build: ./nginx
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./ssl:/etc/nginx/ssl:ro  # Mount SSL certificates
@@ -104,13 +92,6 @@ services:
         condition: service_healthy
       frontend:
         condition: service_started
-
-#  certbot:
-#    image: certbot/certbot
-#    volumes:
-#      - ./certbot/conf:/etc/letsencrypt
-#      - ./certbot/www:/var/www/certbot
-#    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   frontend:
     image: wamiikechukwu/hci-frontend-internal:1.0.0
@@ -142,3 +123,5 @@ networks:
 volumes:
   nginx_data:
   postgres_data:
+  ssl:
+  nginx_conf:
