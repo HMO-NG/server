@@ -6,7 +6,7 @@ import { TemplateOne } from "../util/email-template/template-one.js";
 export async function createFormService(data) {
 
     if (!data) {
-        throw new FormsExpection("forms details can not be empty", 403)
+        throw new FormsExpection("forms details can not be empty", 400)
     }
 
     email(TemplateOne(data))

@@ -22,7 +22,7 @@ router.post('/provider/create', auth, async (req, res, next) => {
         let result = await createProvider(data)
 
         if (!result) {
-            throw new Exception("encountered an issue while creating provider", 401)
+            throw new Exception("encountered an issue while creating provider", 400)
         }
 
         res.status(200).json({
@@ -136,7 +136,7 @@ router.post('/provider/nhia/create', auth, async (req, res, next) => {
         let result = await createNHIAProviderService(data)
 
         if (!result) {
-            throw new Exception("encountered an issue while creating provider", 401)
+            throw new Exception("encountered an issue while creating provider", 400)
         }
 
         res.status(200).json({

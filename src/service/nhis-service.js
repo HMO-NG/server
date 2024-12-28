@@ -10,7 +10,7 @@ import Exception from "../util/exception.js";
 export async function createNhisServiceTarrif(data) {
 
     if (!data) {
-        throw new NHISServiceExpection("NHIS service details can not be empty", 403)
+        throw new NHISServiceExpection("NHIS service details can not be empty", 400)
     }
 
     return await createNhisServiceTarrifModel(data)
@@ -29,7 +29,7 @@ export async function getAndSearchNhisTarrifService(data) {
 
 export async function createNhiaDrugTarrif(data) {
     if (!data) {
-        throw new NHISServiceExpection("NHIS service details can not be empty", 403)
+        throw new NHISServiceExpection("NHIS service details can not be empty", 400)
     }
 
     return await createNhisDrugTarrifModel(data)

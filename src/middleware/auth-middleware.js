@@ -9,7 +9,7 @@ export function auth(req, res, next) {
     //protected route should only be accessed when user is signin
 
     if (!req.session.remember_me) {
-        res.status(403).json({
+        res.status(401).json({
             message: "access denied, please loggin again!"
         })
         return
@@ -17,6 +17,7 @@ export function auth(req, res, next) {
 
     next()
 }
+
 /*
 verify user token
 is unverified users allowed to access the endpoint?
@@ -39,7 +40,7 @@ export async function verifyUserToken(req, res, next) {
         const user = await getUserById(result.payload.id);
 
         if (!user) {
-            return res.status(403).json({ error: "invalid user" });
+            return res.status(401).json({ error: "invalid user" });
         }
 
         // set the role to the req obj
@@ -49,7 +50,7 @@ export async function verifyUserToken(req, res, next) {
 
     } catch (error) {
         if (error instanceof JsonWebTokenError) {
-            res.status(403).json({ message: "token either incorrect/tempered with or has expired" });
+            res.status(401).json({ message: "token either incorrect/tempered with or has expired" });
         } else {
             res.status(500).json({ error: "Something went wrong!" });
         }

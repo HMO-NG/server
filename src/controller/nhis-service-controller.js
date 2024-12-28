@@ -21,7 +21,7 @@ router.post('/nhis/service/tarrif/create', auth, async (req, res, next) => {
         let result = await createNhisServiceTarrif(data)
 
         if (!result) {
-            throw new Exception("encountered an issue while creating nhis service", 401)
+            throw new Exception("encountered an issue while creating nhis service", 400)
         }
 
         res.status(200).json({
@@ -44,7 +44,7 @@ router.post('/nhis/services/search/get', auth, async (req, res, next) => {
         let response = await getAndSearchNhisTarrifService(data)
 
         if (!response) {
-            throw new Exception("encountered an issue while get or searching nhis service", 401)
+            throw new Exception("encountered an issue while get or searching nhis service", 400)
         }
 
         res.status(200).json({
@@ -66,7 +66,7 @@ router.post('/nhis/drug/tarrif/create', auth, async (req, res, next) => {
         let result = await createNhiaDrugTarrif(data)
 
         if (!result) {
-            throw new Exception("encountered an issue while creating nhis service", 401)
+            throw new Exception("encountered an issue while creating nhis service", 400)
         }
 
         res.status(200).json({
@@ -89,7 +89,7 @@ router.post('/nhis/drug/tarrif/search', auth, async (req, res, next) => {
         let response = await getAndSearchDrugTarrifService(data)
 
         if (!response) {
-            throw new Exception("encountered an issue while get or searching nhis service", 401)
+            throw new Exception("encountered an issue while get or searching nhis service", 400)
         }
 
         res.status(200).json({

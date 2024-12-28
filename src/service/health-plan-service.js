@@ -20,7 +20,7 @@ import { generateUniqueHealthPlanCategoryCode } from "../util/generate-healthpla
 export async function createHealthPlanCategoryService(data) {
 
     if (!data) {
-        throw new HealthPlanServiceExpection("data body can not be empty", 403)
+        throw new HealthPlanServiceExpection("data body can not be empty", 400)
     }
 
     // generate code
@@ -39,7 +39,7 @@ export async function createHealthPlanCategoryService(data) {
 export async function createHealthPlanService(data) {
 
     if (!data) {
-        throw new HealthPlanServiceExpection("data body can not be empty", 403)
+        throw new HealthPlanServiceExpection("data body can not be empty", 400)
     }
 
     return await createHealthPlanModel(data)
@@ -54,7 +54,7 @@ export async function getHealthPlanCategoryService() {
 
 export async function createBenefitService(data) {
     if (!data) {
-        throw new HealthPlanServiceExpection("data body can not be empty", 403)
+        throw new HealthPlanServiceExpection("data body can not be empty", 400)
     }
 
     return await createBenefitModel(data)
@@ -63,7 +63,7 @@ export async function createBenefitService(data) {
 export async function getAndSearchBenefitListService(data) {
 
     if (!data) {
-        throw new HealthPlanServiceExpection("benefit list can not be empty", 403)
+        throw new HealthPlanServiceExpection("benefit list can not be empty", 400)
     }
 
     return await getAndSearchBenefitListModel(data)
@@ -73,7 +73,7 @@ export async function getAndSearchBenefitListService(data) {
 export async function getAndSearchHealthPlanCategoryService(data) {
 
     if (!data) {
-        throw new HealthPlanServiceExpection("plan category can not be empty", 403)
+        throw new HealthPlanServiceExpection("plan category can not be empty", 400)
     }
 
     return await getAndSearchHealthPlanCategoryModel(data)
@@ -83,7 +83,7 @@ export async function getAndSearchHealthPlanCategoryService(data) {
 export async function getAndSearchHealthPlanService(data) {
 
     if (!data) {
-        throw new HealthPlanServiceExpection("health plan can not be empty", 403)
+        throw new HealthPlanServiceExpection("health plan can not be empty", 400)
     }
 
     return await getAndSearchHealthPlan(data)
@@ -93,7 +93,7 @@ export async function getAndSearchHealthPlanService(data) {
 export async function getSingleHealthPlanCategory(id) {
 
     if (!id) {
-        throw new HealthPlanServiceExpection("id can not be empty", 403)
+        throw new HealthPlanServiceExpection("id can not be empty", 400)
     }
 
     return await getSingleHealthCategoryModelById(id)

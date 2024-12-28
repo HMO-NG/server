@@ -25,7 +25,7 @@ router.get('/healthplan/category/get', auth, async (req, res, next) => {
     try {
         let result = await getHealthPlanCategoryService()
         if (!result) {
-            throw new Exception("encountered an issue while getting health plan category", 401)
+            throw new Exception("encountered an issue while getting health plan category", 400)
         }
 
         res.status(200).json({
@@ -48,7 +48,7 @@ router.post('/healthplan/benefit/create', auth, async (req, res, next) => {
         let result = await createBenefitService(data)
 
         if (!result) {
-            throw new Exception("encountered an issue while creating health benefit", 401)
+            throw new Exception("encountered an issue while creating health benefit", 400)
         }
 
         res.status(200).json({
@@ -72,7 +72,7 @@ router.post('/healthplan/create', auth, async (req, res, next) => {
         let result = await createHealthPlanService(data)
 
         if (!result) {
-            throw new Exception("encountered an issue while creating health plan", 401)
+            throw new Exception("encountered an issue while creating health plan", 400)
         }
 
         res.status(200).json({
@@ -95,7 +95,7 @@ router.post('/healthplan/benefit/view', auth, async (req, res, next) => {
         let response = await getAndSearchBenefitListService(data)
 
         if (!response) {
-            throw new Exception("encountered an issue while returning health benefit data", 401)
+            throw new Exception("encountered an issue while returning health benefit data", 400)
         }
 
         res.status(200).json({
@@ -119,7 +119,7 @@ router.post('/healthplan/category/view', auth, async (req, res, next) => {
         let response = await getAndSearchHealthPlanCategoryService(data)
 
         if (!response) {
-            throw new Exception("encountered an issue while returning health benefit data", 401)
+            throw new Exception("encountered an issue while returning health benefit data", 400)
         }
 
         res.status(200).json({
@@ -143,7 +143,7 @@ router.post('/healthplan/view', auth, async (req, res, next) => {
         let response = await getAndSearchHealthPlanService(data)
 
         if (!response) {
-            throw new Exception("encountered an issue while returning health benefit data", 401)
+            throw new Exception("encountered an issue while returning health benefit data", 400)
         }
 
         res.status(200).json({
@@ -165,7 +165,7 @@ router.post('/healthplan/category/create', auth, async (req, res, next) => {
         let response = await createHealthPlanCategoryService(data)
 
         if (!response) {
-            throw new Exception("encountered an issue while returning health benefit data", 401)
+            throw new Exception("encountered an issue while returning health benefit data", 400)
         }
 
         res.status(200).json({
@@ -189,7 +189,7 @@ router.post('/healthplan/category/get', auth, async (req, res, next) => {
 
 
         if (!response) {
-            throw new Exception("encountered an issue while returning health plan category data", 401)
+            throw new Exception("encountered an issue while returning health plan category data", 400)
         }
 
         res.status(200).json({
@@ -212,7 +212,7 @@ router.get('/healthplan/benefit/get', auth, async (req, res, next) => {
 
 
         if (!response) {
-            throw new Exception("encountered an issue while returning health benefit list data", 401)
+            throw new Exception("encountered an issue while returning health benefit list data", 400)
         }
 
         res.status(200).json({
@@ -234,12 +234,12 @@ router.post('/healthplan/benefit/attach', auth, async (req, res, next) => {
         const data = req.body;
 
         if (!data) {
-            throw new Exception("request body for attach benefit is empty", 401)
+            throw new Exception("request body for attach benefit is empty", 400)
         }
         let response = await createAttachedBenefitService(data.data, data.userId, data.healthPlanId, data.healthPlanName)
 
         if (!response) {
-            throw new Exception(`Error in encountered while attaching benefits to ${data.healthPlanName}`, 401)
+            throw new Exception(`Error in encountered while attaching benefits to ${data.healthPlanName}`, 400)
         }
 
 
@@ -263,7 +263,7 @@ router.post('/healthplan/benefit/attach/get', auth, async (req, res, next) => {
         let response = await getAttachedBenefitByHealthPlanIdService(healthPlanId.id)
 
         if (!response) {
-            throw new Exception("encountered an issue while returning the attached health plan benefit list", 401)
+            throw new Exception("encountered an issue while returning the attached health plan benefit list", 400)
         }
 
         res.status(200).json({
