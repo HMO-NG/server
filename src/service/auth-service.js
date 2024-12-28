@@ -1,14 +1,15 @@
 import {
     createUser, getUserByEmail, getUserByPhoneNumber,
-    updateUserDetails
+    updateUserDetails,
 } from "../model/user-model.js"
-import { getNhiaEnrolleeAndUserDetailsModel } from "../model/enrollee-model.js"
+import { getNhiaEnrolleeAndUserDetailsModel, checkIfNhiaIdIsLinked } from "../model/enrollee-model.js"
 import bcrypt from 'bcrypt'
 import Exception from "../util/exception.js"
 import { generateUniqueReferralCode } from "../util/referral-code.js"
 import session from "express-session"
 import { getAllUsersOnlyEmailAndFullName } from '../model/user-model.js'
 import { email } from "../util/email.js";
+import NhiaBookAppointment from "../util/email-template/nhia-book-appointment.js"
 
 
 // import { createOTP, getOTP } from "../data-access/models/opt.js"
@@ -123,12 +124,14 @@ export async function updateUserDetailsService(id, data) {
 // book user appointment
 export async function bookAppointmentService(data) {
 
-    const result = getNhiaEnrolleeAndUserDetailsModel(data)
+    // returns true if NHIA ID is linked to user or false if not
+    await checkIfNhiaIdIsLinked(data)
 
-    email("", 'ikechukwu.wami@hcihealthcare.ng', 'NEW NHIA User Complain')
+    const result = await getNhiaEnrolleeAndUserDetailsModel(data)
+
+    email(NhiaBookAppointment(result[0], data), 'clientexperience@hcihealthcare.ng, support@hcihealthcare.ng', 'NEW NHIA User Complain')
 
 }
-
 
 export class AuthServiceExpection extends Exception {
     constructor(message, status) {

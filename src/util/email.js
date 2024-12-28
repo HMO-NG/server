@@ -18,7 +18,7 @@ export async function email(mainBody, to, subject) {
 
         const info = await transport.sendMail({
             from: '"HCI Healthcare Team" <noreply@hcihealthcare.ng>',
-            to: 'clientexperience@hcihealthcare.ng, support@hcihealthcare.ng',
+            to: `${to}`,
             subject: `${subject}`,
             html: `<div>${mainBody}</div>`,
         });
