@@ -110,7 +110,7 @@ export async function updateUserDetails(id, data) {
             employer_name: data.employer_name,
             modified_at: new Date()
         }
-        
+
         return await db('user').where('id', id).update(updatedInformation)
 
     }

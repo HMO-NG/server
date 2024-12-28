@@ -17,17 +17,11 @@ export async function email(mainBody, to, subject) {
     try {
 
         const info = await transport.sendMail({
-            from: '"Client Registration" <noreply@hcihealthcare.ng>',
-            to: 'ikechukwu.wami@hcihealthcare.ng, wamiikechukwu@gmail.com',
-            subject: 'A new client registered',
+            from: '"HCI Healthcare Team" <noreply@hcihealthcare.ng>',
+            to: 'clientexperience@hcihealthcare.ng, support@hcihealthcare.ng',
+            subject: `${subject}`,
             html: `<div>${mainBody}</div>`,
         });
-        // const info = await transport.sendMail({
-        //     from: '"Client Registration" <noreply@hcihealthcare.ng>',
-        //     to: `${to}`,
-        //     subject: `${subject}`,
-        //     html: `<div>${mainBody}</div>`,
-        // });
 
         console.log("Message sent: %s", info.messageId);
     } catch (error) {
