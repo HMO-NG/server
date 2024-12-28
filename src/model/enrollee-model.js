@@ -91,6 +91,20 @@ export async function bindUserToNhiaEnrolleeModel(data) {
     //db.raw("to_char(dob, 'YYYY-MM-DD') as dob") had to be use as the returned value (2012-10-15T23:00:00.000Z) from the db was converted
     // using UTC timezone, will removed -1hour from the Date
 
+    const hasNhiaIdBeenUsed = await db('nhis_enrollee').where('policy_id', data.id)
+        .whereRaw("dob::date = ?::date", [data.dob])
+
+    console.log("data from db for linkedUser", hasNhiaIdBeenUsed)
+
+    if (hasNhiaIdBeenUsed[0].linked_to_user === data.userid) {
+        return 'NHIA ID already linked to your user account'
+    }
+
+    if (hasNhiaIdBeenUsed[0].linked_to_user != null && hasNhiaIdBeenUsed[0].linked_to_user !== data.userid){
+        return `NHIA ID is linked to this user, ${hasNhiaIdBeenUsed[0].surname +' '+ hasNhiaIdBeenUsed[0].other_names +' with policy number '+ hasNhiaIdBeenUsed[0].policy_id}. If you think this is mistake, kindly contact support@hcihealthcare.ng for corrections`
+    }
+
+
     return await db('nhis_enrollee')
         .where('policy_id', data.id)
         .whereRaw("dob::date = ?::date", [data.dob])
@@ -129,4 +143,12 @@ export async function getNhiaEnrolleeAndUserDetailsModel(data) {
     } catch (error) {
         console.log(error)
     }
+}
+
+// NHIA - Check if user is linked to an NHIA id
+export async function checkIfNhiaIdIsLinked(data) {
+
+    const result = await db('nhis_enrollee').select('linked_to_user').where('linked_to_user', data.userid)
+
+    console.log('linked_to_user', result[0])
 }
