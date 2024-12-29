@@ -125,7 +125,13 @@ export async function updateUserDetailsService(id, data) {
 export async function bookAppointmentService(data) {
 
     // returns true if NHIA ID is linked to user or false if not
-    await checkIfNhiaIdIsLinked(data)
+    const isNhiaIDLinkedToUser = await checkIfNhiaIdIsLinked(data)
+
+    console.log('isNhiaIDLinkedToUser', isNhiaIDLinkedToUser)
+
+    if (isNhiaIDLinkedToUser[0] == null) {
+        throw new AuthServiceExpection('You need to link you NHIA Policy ID, to book an appointment, if you are facing any challenge, send us an email via clientexperience@hcihealthcare.ng', 400)
+    }
 
     const result = await getNhiaEnrolleeAndUserDetailsModel(data)
 

@@ -124,7 +124,7 @@ router.post('/auth/user/bookapointment', auth, async (req, res, next) => {
 
         const { data } = req.body
 
-        let response = bookAppointmentService(data)
+        let response = await bookAppointmentService(data)
 
         if(!response){
             throw new Exception('Response empty, mostly like user details did not save', 400)

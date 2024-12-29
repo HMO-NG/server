@@ -148,7 +148,5 @@ export async function getNhiaEnrolleeAndUserDetailsModel(data) {
 // NHIA - Check if user is linked to an NHIA id
 export async function checkIfNhiaIdIsLinked(data) {
 
-    const result = await db('nhis_enrollee').select('linked_to_user').where('linked_to_user', data.userid)
-
-    console.log('linked_to_user', result[0])
+    return await db('nhis_enrollee').select('linked_to_user').where('linked_to_user', data.userid)
 }
