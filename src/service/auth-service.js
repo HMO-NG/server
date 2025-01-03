@@ -130,7 +130,7 @@ export async function bookAppointmentService(data) {
     console.log('isNhiaIDLinkedToUser', isNhiaIDLinkedToUser)
 
     if (isNhiaIDLinkedToUser[0] == null) {
-        throw new AuthServiceExpection('You need to link you NHIA Policy ID, to book an appointment, if you are facing any challenge, send us an email via clientexperience@hcihealthcare.ng', 400)
+        throw new AuthServiceExpection('You need to link your NHIA Policy ID, to book an appointment, if you are facing any challenge, send us an email via clientexperience@hcihealthcare.ng', 400)
     }
 
     const result = await getNhiaEnrolleeAndUserDetailsModel(data)

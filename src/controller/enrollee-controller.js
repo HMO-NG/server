@@ -101,7 +101,7 @@ router.post('/nhis/enrollee/get', auth, async (req, res, next) => {
         let response = await getNhiaEnrolleeAndUserDetailsService(data)
 
         if(response.length === 0){
-            throw new Exception("No User ID found, contact support@hcihealthcare.ng", 400)
+            throw new Exception('You need to link your NHIA Policy ID, to update your information, if you are facing any challenge, send us an email via clientexperience@hcihealthcare.ng', 400)
         }
 
         res.status(200).json({
