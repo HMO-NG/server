@@ -126,10 +126,6 @@ router.post('/auth/user/bookapointment', auth, async (req, res, next) => {
 
         let response = await bookAppointmentService(data)
 
-        if(!response){
-            throw new Exception('Response empty, mostly like user details did not save', 400)
-        }
-
         res.status(200).json({
             message: `Your appointment booked successfully, you will be contacted shortly.`,
         })
