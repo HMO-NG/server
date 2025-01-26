@@ -13,7 +13,8 @@ import {
     createAttachedBenefitService,
     getAttachedBenefitByHealthPlanIdService,
     updateAttachedBenefitService,
-    deleteAttachedBenefitService
+    deleteAttachedBenefitService,
+    updateHealthPlanService
 } from '../service/health-plan-service.js';
 import Exception from "../util/exception.js";
 
@@ -325,5 +326,34 @@ router.delete('/healthplan/benefit/attach/delete/:id', auth, async (req, res, ne
         next(error)
     }
 })
+router.put('/healthplan/update/:id', auth, async (req, res, next) => {
+
+  try {
+     const { id } = req.params;
+      const data = req.body
+      if (!id ) {
+        return res.status(400).json({ message: "Invalid ID provided" });
+      }
+
+      let response = await updateHealthPlanService(id,data)
+
+      // if (!response) {
+      //     throw new Exception("encountered an issue while updating healthplan", 400)
+      // }
+      if (!response || response === 0) {
+        return res.status(400).json({ message: "No health plan found to update" });
+      }
+
+      res.status(200).json({
+          message: `health plan updated successfully`,
+          data: response.result,
+          total: response.total
+      })
+  } catch (error) {
+      console.log(error.status)
+      next(error)
+
+  }
+});
 
 export default router;
