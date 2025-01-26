@@ -338,3 +338,19 @@ export async function updateAttachBenefitModel(id, data) {
 export async function deleteAttachBenefitModel(id) {
     return await db('attached_benefit').where('id', id).del()
 }
+
+export async function updateHealthPlanModel(id, data){
+  const updateHealthPlan = {
+    // id: uuidv4(),
+    plan_name: data.plan_name,
+    plan_category: data.plan_category,
+    plan_type: data.plan_type,
+    allow_dependent: data.allow_dependent,
+    max_dependant: data.max_dependant,
+    plan_age_limit: data.plan_age_limit,
+    plan_cost: data.plan_cost,
+    created_by: data.user_id,
+
+}
+return await db('health_plan').where('id', id).update(updateHealthPlan)
+}
