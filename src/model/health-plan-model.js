@@ -193,6 +193,7 @@ export async function getAndSearchHealthPlan(data) {
                     'health_plan.plan_age_limit',
                     'health_plan.plan_cost',
                     'health_plan.created_at',
+                    'health_plan.disabled_plan',
                     db.raw(`"health_plan_category"."name" as "health_plan_category_name"`),
                     db.raw(`"health_plan_category"."health_plan_code" as "health_plan_category_code"`),
                     db.raw(`"health_plan_category"."band" as "health_plan_category_band"`),
@@ -222,6 +223,7 @@ export async function getAndSearchHealthPlan(data) {
                     'health_plan.plan_age_limit',
                     'health_plan.plan_cost',
                     'health_plan.created_at',
+                    'health_plan.disabled_plan',
                     db.raw(`"health_plan_category"."name" as "health_plan_category_name"`),
                     db.raw(`"health_plan_category"."health_plan_code" as "health_plan_category_code"`),
                     db.raw(`"health_plan_category"."band" as "health_plan_category_band"`),
@@ -354,3 +356,5 @@ export async function updateHealthPlanModel(id, data){
 }
 return await db('health_plan').where('id', id).update(updateHealthPlan)
 }
+
+
