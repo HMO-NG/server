@@ -20,6 +20,7 @@ export async function up(knex) {
     table.string('state');
     table.string('city');
     table.string('address');
+    table.string('provider_id').notNullable();
     table.string('company_id').notNullable();
     table.string('linked_to_user').nullable();
     table.string('enrolled_by').notNullable(); //created by
