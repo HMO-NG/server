@@ -11,7 +11,7 @@ export async function up(knex) {
     table.string('allergies').nullable()
     table.string('pre_existing_conditions').nullable()
     table.string('past_surgeries').nullable()
-    table.date('family_medical_history');
+    table.string('family_medical_history');
     table.string('linked_to_enrollee').notNullable(); // the private employee main table
     table.timestamp('modified_at').notNullable().defaultTo(knex.fn.now());
     table.timestamp('created_at').notNullable().defaultTo(knex.fn.now())
