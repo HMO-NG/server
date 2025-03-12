@@ -12,6 +12,55 @@ import Exception from '../util/exception.js';
 const router = express.Router()
 
 // create user
+
+/**
+ * @swagger
+ * /auth/signup:
+ *   post:
+ *     summary: User Signup
+ *     description: Endpoint to register a new user.
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "example@domain.com"
+ *               first_name:
+ *                 type: string
+ *                 example: "John"
+ *               last_name:
+ *                 type: string
+ *                 example: "Doe"
+ *               phone_number:
+ *                 type: string
+ *                 example: "+1234567890"
+ *               role:
+ *                 type: string
+ *                 example: "admin"
+ *               type:
+ *                 type: string
+ *                 example: "premium"
+ *     responses:
+ *       201:
+ *         description: User successfully created.
+ *       400:
+ *         description: |
+ *           Bad request. Possible reasons include:
+ *           - user password is either empty or undefined
+ *           - user not created
+ *       409:
+ *         description: |
+ *           Conflict. Possible reasons include:
+ *           - Phone number already in use
+ *           - Email address already in use
+ */
+
 router.post('/auth/signup', async (req, res, next) => {
 
     try {
@@ -103,7 +152,7 @@ router.post('/auth/user/update', auth, async (req, res, next) => {
 
         let reponse = updateUserDetailsService(id, data)
 
-        if(!response){
+        if (!response) {
             throw new Exception('Response empty, mostly like user details did not save', 400)
         }
 

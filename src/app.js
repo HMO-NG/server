@@ -6,10 +6,11 @@ import morgan from 'morgan'
 import knex from "knex";
 import config from "./knexfile.js";
 import cors from "cors";
-
 import session from 'express-session'
-
 import exceptionMiddleware from './middleware/exception-middleware.js'
+import swaggerUi from "swagger-ui-express"
+import swaggerSpec from "./swagger.js"
+
 // KnexSessionStore(session)
 
 let db = knex(config[process.env.NODE_ENV || 'development']);
@@ -57,6 +58,9 @@ app.use(morgan(function (tokens, req, res) {
 app.get('/health', async (req, res) => {
     res.send('ok');
 })
+
+// for the swagger api documentation
+app.use('/api-doc/hci-healthcare', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 // finding a way to do migration, prod ready
 app.get('/migrate', async (req, res) => {
