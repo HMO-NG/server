@@ -1,20 +1,21 @@
 import express, { json } from 'express'
 import { auth } from '../middleware/auth-middleware.js';
 import {
-    createHealthPlanCategoryService,
-    createBenefitService,
-    getAndSearchBenefitListService,
-    getHealthPlanCategoryService,
-    getAndSearchHealthPlanCategoryService,
-    createHealthPlanService,
-    getAndSearchHealthPlanService,
-    getSingleHealthPlanCategory,
-    getAllBenefitList,
-    createAttachedBenefitService,
-    getAttachedBenefitByHealthPlanIdService,
-    updateAttachedBenefitService,
-    deleteAttachedBenefitService,
-    updateHealthPlanService
+  createHealthPlanCategoryService,
+  createBenefitService,
+  getAndSearchBenefitListService,
+  getHealthPlanCategoryService,
+  getAndSearchHealthPlanCategoryService,
+  createHealthPlanService,
+  getAndSearchHealthPlanService,
+  getSingleHealthPlanCategory,
+  getAllBenefitList,
+  createAttachedBenefitService,
+  getAttachedBenefitByHealthPlanIdService,
+  updateAttachedBenefitService,
+  deleteAttachedBenefitService,
+  updateHealthPlanService,
+  changeHealthPlanStatusService
 } from '../service/health-plan-service.js';
 import Exception from "../util/exception.js";
 
@@ -23,337 +24,361 @@ const router = express.Router()
 // get all health plan category
 router.get('/healthplan/category/get', auth, async (req, res, next) => {
 
-    try {
-        let result = await getHealthPlanCategoryService()
-        if (!result) {
-            throw new Exception("encountered an issue while getting health plan category", 400)
-        }
-
-        res.status(200).json({
-            message: `${result.length} returned successfully`,
-            data: result
-        })
-    } catch (error) {
-        console.log(error.status)
-        next(error)
-
+  try {
+    let result = await getHealthPlanCategoryService()
+    if (!result) {
+      throw new Exception("encountered an issue while getting health plan category", 400)
     }
+
+    res.status(200).json({
+      message: `${result.length} returned successfully`,
+      data: result
+    })
+  } catch (error) {
+    console.log(error.status)
+    next(error)
+
+  }
 });
 
 router.post('/healthplan/benefit/create', auth, async (req, res, next) => {
 
-    try {
+  try {
 
-        const data = req.body
+    const data = req.body
 
-        let result = await createBenefitService(data)
+    let result = await createBenefitService(data)
 
-        if (!result) {
-            throw new Exception("encountered an issue while creating health benefit", 400)
-        }
-
-        res.status(200).json({
-            message: `${data.benefit_name} created successfully`,
-            data: data
-        })
-    } catch (error) {
-        console.log(error.status)
-        next(error)
-
+    if (!result) {
+      throw new Exception("encountered an issue while creating health benefit", 400)
     }
+
+    res.status(200).json({
+      message: `${data.benefit_name} created successfully`,
+      data: data
+    })
+  } catch (error) {
+    console.log(error.status)
+    next(error)
+
+  }
 });
 
 // create health plan
 router.post('/healthplan/create', auth, async (req, res, next) => {
 
-    try {
+  try {
 
-        const data = req.body
+    const data = req.body
 
-        let result = await createHealthPlanService(data)
+    let result = await createHealthPlanService(data)
 
-        if (!result) {
-            throw new Exception("encountered an issue while creating health plan", 400)
-        }
-
-        res.status(200).json({
-            message: `${data.plan_name} created successfully`,
-            data: data
-        })
-    } catch (error) {
-        console.log(error.status)
-        next(error)
-
+    if (!result) {
+      throw new Exception("encountered an issue while creating health plan", 400)
     }
+
+    res.status(200).json({
+      message: `${data.plan_name} created successfully`,
+      data: data
+    })
+  } catch (error) {
+    console.log(error.status)
+    next(error)
+
+  }
 });
 
 router.post('/healthplan/benefit/view', auth, async (req, res, next) => {
 
-    try {
+  try {
 
-        const data = req.body
+    const data = req.body
 
-        let response = await getAndSearchBenefitListService(data)
+    let response = await getAndSearchBenefitListService(data)
 
-        if (!response) {
-            throw new Exception("encountered an issue while returning health benefit data", 400)
-        }
-
-        res.status(200).json({
-            message: `health benefit list returned successfully`,
-            data: response.result,
-            total: response.total
-        })
-    } catch (error) {
-        console.log(error.status)
-        next(error)
-
+    if (!response) {
+      throw new Exception("encountered an issue while returning health benefit data", 400)
     }
+
+    res.status(200).json({
+      message: `health benefit list returned successfully`,
+      data: response.result,
+      total: response.total
+    })
+  } catch (error) {
+    console.log(error.status)
+    next(error)
+
+  }
 });
 
 router.post('/healthplan/category/view', auth, async (req, res, next) => {
 
-    try {
+  try {
 
-        const data = req.body
+    const data = req.body
 
-        let response = await getAndSearchHealthPlanCategoryService(data)
+    let response = await getAndSearchHealthPlanCategoryService(data)
 
-        if (!response) {
-            throw new Exception("encountered an issue while returning health benefit data", 400)
-        }
-
-        res.status(200).json({
-            message: `health plan category list returned successfully`,
-            data: response.result,
-            total: response.total
-        })
-    } catch (error) {
-        console.log(error.status)
-        next(error)
-
+    if (!response) {
+      throw new Exception("encountered an issue while returning health benefit data", 400)
     }
+
+    res.status(200).json({
+      message: `health plan category list returned successfully`,
+      data: response.result,
+      total: response.total
+    })
+  } catch (error) {
+    console.log(error.status)
+    next(error)
+
+  }
 });
 
 router.post('/healthplan/view', auth, async (req, res, next) => {
 
-    try {
+  try {
 
-        const data = req.body
+    const data = req.body
 
-        let response = await getAndSearchHealthPlanService(data)
+    let response = await getAndSearchHealthPlanService(data)
 
-        if (!response) {
-            throw new Exception("encountered an issue while returning health benefit data", 400)
-        }
-
-        res.status(200).json({
-            message: `health plan returned successfully`,
-            data: response.result,
-            total: response.total
-        })
-    } catch (error) {
-        console.log(error.status)
-        next(error)
-
+    if (!response) {
+      throw new Exception("encountered an issue while returning health benefit data", 400)
     }
+
+    res.status(200).json({
+      message: `health plan returned successfully`,
+      data: response.result,
+      total: response.total
+    })
+  } catch (error) {
+    console.log(error.status)
+    next(error)
+
+  }
 });
 
 router.post('/healthplan/category/create', auth, async (req, res, next) => {
-    try {
-        const data = req.body;
+  try {
+    const data = req.body;
 
-        let response = await createHealthPlanCategoryService(data)
+    let response = await createHealthPlanCategoryService(data)
 
-        if (!response) {
-            throw new Exception("encountered an issue while returning health benefit data", 400)
-        }
-
-        res.status(200).json({
-            message: `${data.name} created successfully`,
-            data: response.result,
-            total: response.total
-        })
-
-    } catch (error) {
-        console.log(error.status)
-        next(error)
+    if (!response) {
+      throw new Exception("encountered an issue while returning health benefit data", 400)
     }
+
+    res.status(200).json({
+      message: `${data.name} created successfully`,
+      data: response.result,
+      total: response.total
+    })
+
+  } catch (error) {
+    console.log(error.status)
+    next(error)
+  }
 })
 
 // get a single health plan category by id
 router.post('/healthplan/category/get', auth, async (req, res, next) => {
-    try {
-        const data = req.body;
+  try {
+    const data = req.body;
 
-        let response = await getSingleHealthPlanCategory(data.id)
+    let response = await getSingleHealthPlanCategory(data.id)
 
 
-        if (!response) {
-            throw new Exception("encountered an issue while returning health plan category data", 400)
-        }
-
-        res.status(200).json({
-            message: `${data.id} returned successfully`,
-            data: response,
-        })
-
-    } catch (error) {
-        console.log(error.status)
-        next(error)
+    if (!response) {
+      throw new Exception("encountered an issue while returning health plan category data", 400)
     }
+
+    res.status(200).json({
+      message: `${data.id} returned successfully`,
+      data: response,
+    })
+
+  } catch (error) {
+    console.log(error.status)
+    next(error)
+  }
 
 })
 
 // get all benefit lists
 router.get('/healthplan/benefit/get', auth, async (req, res, next) => {
-    try {
+  try {
 
-        let response = await getAllBenefitList()
+    let response = await getAllBenefitList()
 
 
-        if (!response) {
-            throw new Exception("encountered an issue while returning health benefit list data", 400)
-        }
-
-        res.status(200).json({
-            message: "benfit list returned successfully",
-            data: response,
-        })
-
-    } catch (error) {
-        console.log(error.status)
-        next(error)
+    if (!response) {
+      throw new Exception("encountered an issue while returning health benefit list data", 400)
     }
+
+    res.status(200).json({
+      message: "benfit list returned successfully",
+      data: response,
+    })
+
+  } catch (error) {
+    console.log(error.status)
+    next(error)
+  }
 
 })
 
 // create/save attached benefit lists
 router.post('/healthplan/benefit/attach', auth, async (req, res, next) => {
-    try {
+  try {
 
-        const data = req.body;
+    const data = req.body;
 
-        if (!data) {
-            throw new Exception("request body for attach benefit is empty", 400)
-        }
-        let response = await createAttachedBenefitService(data.data, data.userId, data.healthPlanId, data.healthPlanName)
-
-        if (!response) {
-            throw new Exception(`Error in encountered while attaching benefits to ${data.healthPlanName}`, 400)
-        }
-
-
-        res.status(200).json({
-            message: "attached benefit to health plan successfully",
-        })
-
-    } catch (error) {
-        console.log(error.status)
-        next(error)
+    if (!data) {
+      throw new Exception("request body for attach benefit is empty", 400)
     }
+    let response = await createAttachedBenefitService(data.data, data.userId, data.healthPlanId, data.healthPlanName)
+
+    if (!response) {
+      throw new Exception(`Error in encountered while attaching benefits to ${data.healthPlanName}`, 400)
+    }
+
+
+    res.status(200).json({
+      message: "attached benefit to health plan successfully",
+    })
+
+  } catch (error) {
+    console.log(error.status)
+    next(error)
+  }
 
 })
 
 // get attached benefit by health plan ID
 router.post('/healthplan/benefit/attach/get', auth, async (req, res, next) => {
-    try {
+  try {
 
-        const healthPlanId = req.body
+    const healthPlanId = req.body
 
-        let response = await getAttachedBenefitByHealthPlanIdService(healthPlanId.id)
+    let response = await getAttachedBenefitByHealthPlanIdService(healthPlanId.id)
 
-        if (!response) {
-            throw new Exception("encountered an issue while returning the attached health plan benefit list", 400)
-        }
-
-        res.status(200).json({
-            message: "attached benfit list returned successfully",
-            data: response,
-        })
-
-    } catch (error) {
-        console.log(error.status)
-        next(error)
+    if (!response) {
+      throw new Exception("encountered an issue while returning the attached health plan benefit list", 400)
     }
+
+    res.status(200).json({
+      message: "attached benfit list returned successfully",
+      data: response,
+    })
+
+  } catch (error) {
+    console.log(error.status)
+    next(error)
+  }
 })
 
 // update attached benefit
 router.post('/healthplan/benefit/attach/update', auth, async (req, res, next) => {
-    try {
+  try {
 
-        const { id, data } = req.body
+    const { id, data } = req.body
 
-        let response = await updateAttachedBenefitService(id, data)
+    let response = await updateAttachedBenefitService(id, data)
 
-        if (!response) {
-            throw new Exception("encountered an issue while returning the attached health plan benefit list", 400)
-        }
-
-        res.status(200).json({
-            message: "health plan benefit updated successfully",
-            data: response,
-        })
-
-    } catch (error) {
-        console.log(error.status)
-        next(error)
+    if (!response) {
+      throw new Exception("encountered an issue while returning the attached health plan benefit list", 400)
     }
+
+    res.status(200).json({
+      message: "health plan benefit updated successfully",
+      data: response,
+    })
+
+  } catch (error) {
+    console.log(error.status)
+    next(error)
+  }
 })
 
 // delete attached benefit
 router.delete('/healthplan/benefit/attach/delete/:id', auth, async (req, res, next) => {
-    try {
-        const { id } = req.params
+  try {
+    const { id } = req.params
 
-        if (!id) {
-            throw new Exception("No attached benefit ID included", 400)
-        }
-
-        let response = await deleteAttachedBenefitService(id)
-
-        if (!response) {
-            throw new Exception("encountered an issue while deleting the attached health plan benefit", 400)
-        }
-
-        res.status(200).json({
-            message: "health plan benefit deleted successfully",
-            data: response,
-        })
-
-    } catch (error) {
-        console.log(error.status)
-        next(error)
+    if (!id) {
+      throw new Exception("No attached benefit ID included", 400)
     }
+
+    let response = await deleteAttachedBenefitService(id)
+
+    if (!response) {
+      throw new Exception("encountered an issue while deleting the attached health plan benefit", 400)
+    }
+
+    res.status(200).json({
+      message: "health plan benefit deleted successfully",
+      data: response,
+    })
+
+  } catch (error) {
+    console.log(error.status)
+    next(error)
+  }
 })
 router.put('/healthplan/update/:id', auth, async (req, res, next) => {
 
   try {
-     const { id } = req.params;
-      const data = req.body
-      if (!id ) {
-        return res.status(400).json({ message: "Invalid ID provided" });
-      }
+    const { id } = req.params;
+    const data = req.body;
+    if (!id) {
+      return res.status(400).json({ message: "Invalid ID provided" });
+    }
+    if (Object.values(data).every(value => value === '')) {
+      return res.status(400).json({ message: "data cannot be empty" });
+    }
 
-      let response = await updateHealthPlanService(id,data)
 
-      // if (!response) {
-      //     throw new Exception("encountered an issue while updating healthplan", 400)
-      // }
-      if (!response || response === 0) {
-        return res.status(400).json({ message: "No health plan found to update" });
-      }
+    let response = await updateHealthPlanService(id, data)
 
-      res.status(200).json({
-          message: `health plan updated successfully`,
-          data: response.result,
-          total: response.total
-      })
+
+    if (!response || response === 0) {
+      return res.status(400).json({ message: "No health plan found to update" });
+    }
+
+    res.status(200).json({
+      message: `health plan updated successfully`,
+    })
   } catch (error) {
-      console.log(error.status)
-      next(error)
+    console.log(error.status)
+    next(error)
 
   }
+});
+
+router.put('/healthplan/change-status/:id', auth, async (req, res, next) => {
+
+      try {
+        const { id } = req.params;
+        const { disabled_plan } = req.body;
+
+        if (!id || typeof disabled_plan !== "boolean") {
+            return res.status(400).json({ message: "Invalid request data" });
+        }
+
+        let response = await changeHealthPlanStatusService(id, { disabled_plan });
+
+        if (!response) {
+            throw new Error("Failed to update health plan status");
+        }
+
+        res.status(200).json({ message: "Health plan status updated successfully" });
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+
 });
 
 export default router;
