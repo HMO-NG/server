@@ -343,7 +343,6 @@ export async function deleteAttachBenefitModel(id) {
 
 export async function updateHealthPlanModel(id, data){
   const updateHealthPlan = {
-    // id: uuidv4(),
     plan_name: data.plan_name,
     plan_category: data.plan_category,
     plan_type: data.plan_type,
@@ -351,10 +350,15 @@ export async function updateHealthPlanModel(id, data){
     max_dependant: data.max_dependant,
     plan_age_limit: data.plan_age_limit,
     plan_cost: data.plan_cost,
-    created_by: data.user_id,
 
 }
 return await db('health_plan').where('id', id).update(updateHealthPlan)
 }
 
+export async function changeHealthPlanStatusModel(id, data){
+  const disableHealthPlan = {
+    disabled_plan: data.disabled_plan,
 
+}
+return await db('health_plan').where('id', id).update(disableHealthPlan)
+}
