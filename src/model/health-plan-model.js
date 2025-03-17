@@ -193,6 +193,7 @@ export async function getAndSearchHealthPlan(data) {
                     'health_plan.plan_age_limit',
                     'health_plan.plan_cost',
                     'health_plan.created_at',
+                    'health_plan.disabled_plan',
                     db.raw(`"health_plan_category"."name" as "health_plan_category_name"`),
                     db.raw(`"health_plan_category"."health_plan_code" as "health_plan_category_code"`),
                     db.raw(`"health_plan_category"."band" as "health_plan_category_band"`),
@@ -222,6 +223,7 @@ export async function getAndSearchHealthPlan(data) {
                     'health_plan.plan_age_limit',
                     'health_plan.plan_cost',
                     'health_plan.created_at',
+                    'health_plan.disabled_plan',
                     db.raw(`"health_plan_category"."name" as "health_plan_category_name"`),
                     db.raw(`"health_plan_category"."health_plan_code" as "health_plan_category_code"`),
                     db.raw(`"health_plan_category"."band" as "health_plan_category_band"`),
@@ -337,4 +339,26 @@ export async function updateAttachBenefitModel(id, data) {
 // delete attach benefit
 export async function deleteAttachBenefitModel(id) {
     return await db('attached_benefit').where('id', id).del()
+}
+
+export async function updateHealthPlanModel(id, data){
+  const updateHealthPlan = {
+    plan_name: data.plan_name,
+    plan_category: data.plan_category,
+    plan_type: data.plan_type,
+    allow_dependent: data.allow_dependent,
+    max_dependant: data.max_dependant,
+    plan_age_limit: data.plan_age_limit,
+    plan_cost: data.plan_cost,
+
+}
+return await db('health_plan').where('id', id).update(updateHealthPlan)
+}
+
+export async function changeHealthPlanStatusModel(id, data){
+  const disableHealthPlan = {
+    disabled_plan: data.disabled_plan,
+
+}
+return await db('health_plan').where('id', id).update(disableHealthPlan)
 }
