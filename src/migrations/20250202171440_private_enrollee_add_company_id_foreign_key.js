@@ -3,8 +3,8 @@
  * @returns { Promise<void> }
  */
 export async function up(knex) {
-  await knex.schema.table('private_employees', table => {
-    table.foreign('company_id').references('user.id').onDelete('CASCADE');
+  await knex.schema.table('enrollee', table => {
+    table.foreign('company_id').references('client.id').onDelete('CASCADE');
 
   });
 }
@@ -14,7 +14,7 @@ export async function up(knex) {
 * @returns { Promise<void> }
 */
 export async function down(knex) {
-  await knex.schema.table('private_employees',table =>{
+  await knex.schema.table('enrollee',table =>{
       table.dropForeign('company_id')
   });
 }
