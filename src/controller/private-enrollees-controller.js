@@ -11,6 +11,7 @@ import generatePassword from '../util/generate-enrollee-password.js';
 import Exception from '../util/exception.js';
 import uploadImage from '../util/upload_image.js';
 import { email } from '../util/email.js';
+import bodyParser from 'body-parser';
 const router = express.Router()
 
 
@@ -25,12 +26,12 @@ router.post('/privates/enrollee/company-masterlist',async (req,res,next)=>{
     let response = await createPrivateEnrolleeService(data,company_info.company_id,enrolled_by)
     let link;
     if (data.beneficiary_type=="individual"){
-      link = `http://localhost:5174/${response.map(data => data.id)}/${company_info.company_name}/${enrolled_by}/false/null/mainform`;
+      link = `http://localhost:5174/${response[0].id}/${company_info.company_name}/${enrolled_by}/false/null/mainform`;
     }
     else if(data.beneficiary_type=="family"){
-      link = `http://localhost:5174/${response.map(data => data.id)}/${company_info.company_name}/${enrolled_by}/true/${data.family_size}/mainform`;
+      link = `http://localhost:5174/${response[0].id}/${company_info.company_name}/${enrolled_by}/true/${data.family_size}/mainform`;
     }
-    let mainBody=`welcome to hci healthcare ${data.first_name}, pleas use this link ${link} to register and add the rest of your details`;
+    let mainBody=`welcome to hci healthcare ${data.first_name}, please use this link ${link} to register and add the rest of your details`;
     let subject = `Self enrollement portal ${company_info.company_name} enrollee`;
 
 
@@ -49,6 +50,7 @@ router.post('/privates/enrollee/company-masterlist',async (req,res,next)=>{
 
 });
 
+//this is to onboard individual enrolee from the CRM 
 router.post('/privates/enrollee/onboarding',async (req,res,next)=>{
   try{
     const data= req.body;
@@ -72,7 +74,7 @@ router.post('/privates/enrollee/onboarding',async (req,res,next)=>{
     let subject = `Hci login details`;
 
 
-    // email(mainBody,data.email,subject)
+    email(mainBody,data.email,subject)
    console.log(mainBody,data.email,subject)
    if(response && create_acc){
     res.status(200).json({
@@ -134,6 +136,8 @@ router.get('/privates/enrollee/get/:id', async (req, res, next) => {
 
 });
 
+// This generate a temporary password and send to the PRINCIPAL email address.
+//AND NOT TO THE DEPENDENTS
 router.put('/privates/enrollee/form/:id', async (req, res, next) => {
 try{
   const data = req.body
