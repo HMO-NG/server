@@ -25,10 +25,9 @@ export async function createPrivateEnrolleeModel(data,company_id,enrolled_by) {
         address:data.address,
         company_id:company_id,
         provider_id:data.provider_id,
-        // linked_to_user
         enrolled_by:enrolled_by
     }
-    return await db("enrollee").insert(createPrivateEnrollee).returning('*');
+    return await db("enrollee").insert(createPrivateEnrollee).returning('id');
 }
 export async function getAllProviderNameAndIdModel() {
     try {
@@ -241,5 +240,5 @@ export async function onboardSinglePrivateEnrolleeModel(data,profile_id) {
       linked_to_user:profile_id,
       enrolled_by:data.enrolled_by
   }
-  return await db("enrollee").insert(createPrivateEnrollee).returning('*');
+  return await db("enrollee").insert(createPrivateEnrollee)
 }
