@@ -3,7 +3,7 @@
  * @returns { Promise<void> }
  */
 export async function up (knex) {
-  return knex.schema.createTable('private_company', table =>{
+  return knex.schema.createTable('client', table =>{
     table.string('id').primary();
     table.string('company_name').notNullable();
     table.string('business_type').notNullable();
@@ -12,6 +12,7 @@ export async function up (knex) {
     table.string('primary_contact_email').notNullable();
     table.string('primary_contact_phonenumber').notNullable();
     table.string('enrolled_by').notNullable(); // created by
+    table.boolean('is_active').defaultTo(1);
     table.timestamp('created_at').notNullable().defaultTo(knex.fn.now())
 
   });
@@ -23,5 +24,5 @@ export async function up (knex) {
  * @returns { Promise<void> }
  */
 export async function down(knex) {
-  await knex.schema.dropTable('private_company');
+  await knex.schema.dropTable('client');
 }
