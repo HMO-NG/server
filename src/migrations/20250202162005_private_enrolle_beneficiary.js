@@ -3,7 +3,7 @@
  * @returns { Promise<void> }
  */
 export async function up(knex) {
-  return knex.schema.createTable('private_beneficiaries', table => {
+  return knex.schema.createTable('beneficiary', table => {
     table.string('id').primary();
     table.string('first_name').notNullable();
     table.string('last_name').notNullable();
@@ -16,7 +16,20 @@ export async function up(knex) {
     table.string('state');
     table.string('city');
     table.string('address');
+
+    table.string('blood_group').nullable()
+    table.string('genotype').nullable()
+    table.string('disabilities').nullable()
+    table.string('allergies').nullable()
+    table.string('pre_existing_conditions').nullable()
+    table.string('past_surgeries').nullable()
+    table.string('family_medical_history');
+
+    table.string('provider_id').nullable();
+    table.boolean('is_active').defaultTo(0);
+    table.string('linked_to_user').nullable();
     table.string('beneficiary_of').notNullable(); // the employee that made them thier beneficiary
+    table.timestamp('modified_at').notNullable().defaultTo(knex.fn.now());
     table.timestamp('created_at').notNullable().defaultTo(knex.fn.now())
   });
 
@@ -27,5 +40,5 @@ export async function up(knex) {
  * @returns { Promise<void> }
  */
 export async function down(knex) {
-  await knex.schema.dropTable('private_beneficiaries');
+  await knex.schema.dropTable('beneficiary');
 }
