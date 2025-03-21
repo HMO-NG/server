@@ -10,9 +10,10 @@ import session from "express-session"
 import { getAllUsersOnlyEmailAndFullName } from '../model/user-model.js'
 import { email } from "../util/email.js";
 import NhiaBookAppointment from "../util/email-template/nhia-book-appointment.js"
+import { generateUniqueOtp } from "../util/otp.js"
+import { createOTP } from "../model/user-model.js"
+import { OTPEmailTemplate } from "../util/email-template/otp_email_template.js"
 
-
-// import { createOTP, getOTP } from "../data-access/models/opt.js"
 // import vine, { errors } from "@vinejs/vine"
 // import transporter from "../../util/email.js"
 // import { generateUniqueOtp } from "../../util/opt.js"
@@ -137,6 +138,40 @@ export async function bookAppointmentService(data) {
 
     email(NhiaBookAppointment(result[0], data), 'clientexperience@hcihealthcare.ng, support@hcihealthcare.ng', 'NEW NHIA User Complain')
 
+}
+
+// forget password
+export async function forgetPassword(data) {
+    try {
+        // get user email and check on db if it exist.
+        const userEmailAddr = await getUserByEmail(data.email);
+
+        console.log("what does the user email throw if its found or not on the db", userEmailAddr)
+
+        if (!userEmailAddr) {
+            throw Exception("User email doesn't exist, kindly register or contact clientexperience@hcihealthcare.ng", 409)
+        }
+
+        const otp = await generateUniqueOtp(6)
+
+        // store otp on db
+        await createOTP({ user_id: data.userid, otp_code: otp, purpose: "forget password", delivery_method: "email" })
+
+        // send email
+        email(OTPEmailTemplate({ companyname: "HCI Healthcare LTD", otp: otp }), data.email, "Forget Password OTP")
+
+        // another endpoint to check if the supplied otp matches server stored otp and it has expired
+
+        // if valid send a 200
+
+        // if invilid notify users and start all over
+
+        // navigate to tanothe screen for user to input therir new password
+
+        // if password is valid override the existing and save to the db and nofify the user.
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 export class AuthServiceExpection extends Exception {

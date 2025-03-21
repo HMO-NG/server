@@ -117,25 +117,31 @@ export async function updateUserDetails(id, data) {
 }
 
 // insert into OTP db table when a new OTP is generated.
- export async function createOTP(data) {
+export async function createOTP(data) {
 
     const data = {
         id: uuidv4(),
         user_id: data.user_id,
         otp_code: data.otp_code,
         purpose: data.purpose,
-        status: data.status,
         delivery_method: data.delivery_method,
     }
 
-   return await db('otp').insert(data)
+    const isItInserted = await db('otp').insert(data)
+
+    console.log("what is inserted into the OTP", isItInserted)
+
+    return isItInserted;
 }
 
-// get all otp
-export async function getAllOTP(data) {
+// get otp that matched the parameters.
+export async function getOTP(otpCode) {
 
-    // const getAllOTP = await db('otp').
+    const isItResult = await db('otp').select().where("otp_code", otpCode)
 
+    console.log("what is returned from the otp table", isItResult);
+
+    return isItResult;
 }
 // update otp
 //
