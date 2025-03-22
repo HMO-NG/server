@@ -5,7 +5,6 @@
 export async function up(knex) {
     await knex.schema.alterTable('user', table => {
         table.string('address').nullable();
-
     });
 }
 
@@ -15,6 +14,6 @@ export async function up(knex) {
  */
 export async function down(knex) {
     return knex.schema.alterTable('user', (table) => {
-        dropColumn('address')
+        table.dropColumn('address')
     });
 }

@@ -8,7 +8,7 @@ export async function up(knex) {
         table.string('user_id', 36).notNullable();
         table.string('otp_code', 6).notNullable().unique();
         table.string('purpose', 255).notNullable();
-        table.string('status', 50).notNullable();
+        table.string('status', 50).notNullable().defaultTo("ACTIVE");
         table.string('delivery_method', 50).notNullable();
         table.timestamp('expires_at').notNullable().defaultTo(knex.raw("CURRENT_TIMESTAMP + INTERVAL '15 minutes'"));
         table.timestamp('created_at').notNullable().defaultTo(knex.fn.now());

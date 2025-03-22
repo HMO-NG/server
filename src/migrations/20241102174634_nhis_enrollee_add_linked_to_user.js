@@ -15,6 +15,6 @@ export async function up(knex) {
  */
 export async function down(knex) {
     return knex.schema.alterTable('nhis_enrollee', (table) => {
-        dropColumn('linked_to_user')
+        table.dropColumn('linked_to_user')
     });
 }

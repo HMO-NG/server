@@ -15,6 +15,6 @@ export async function up(knex) {
  */
 export async function down(knex) {
     return knex.schema.alterTable('user', (table) => {
-        dropColumn('employer_name')
+        table.dropColumn('employer_name')
     });
 }
