@@ -20,7 +20,7 @@ export function OTPEmailTemplate(data) {
         <tr>
             <td style="padding: 30px 20px;">
                 <h2 style="color: #2d3748; margin-top: 0;">Your One-Time Password</h2>
-                <p style="color: #4a5568;">Hello [User Name],</p>
+                <p style="color: #4a5568;">Hello,</p>
                 <p style="color: #4a5568;">Your OTP for authentication is:</p>
 
                 <!-- OTP Display -->
@@ -41,7 +41,7 @@ export function OTPEmailTemplate(data) {
         <!-- Footer -->
         <tr>
             <td style="padding: 20px; background-color: #ffffff; text-align: center; font-size: 12px; color: #718096;">
-                <p style="margin: 0;">©${getFullYear()} ${data.companyname}. All rights reserved.</p>
+                <p style="margin: 0;">${data.companyname}. All rights reserved.</p>
                 <p style="margin: 10px 0 0 0;">
                     <a href="[Unsubscribe Link]" style="color: #718096; text-decoration: none;">Unsubscribe</a> |
                     <a href="[Privacy Policy Link]" style="color: #718096; text-decoration: none;">Privacy Policy</a> |
