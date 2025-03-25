@@ -116,10 +116,14 @@ export async function updateUserDetails(id, data) {
     }
 }
 
+export async function updateUserPassword(id, data) {
+    return await db('user').where('id', id).update({})
+}
+
 // insert into OTP db table when a new OTP is generated.
 export async function createOTP(data) {
 
-    const data = {
+    const content = {
         id: uuidv4(),
         user_id: data.user_id,
         otp_code: data.otp_code,
@@ -127,11 +131,7 @@ export async function createOTP(data) {
         delivery_method: data.delivery_method,
     }
 
-    const isItInserted = await db('otp').insert(data)
-
-    console.log("what is inserted into the OTP", isItInserted)
-
-    return isItInserted;
+    return await db('otp').insert(content)
 }
 
 // get otp that matched the parameters.
@@ -143,5 +143,24 @@ export async function getOTP(otpCode) {
 
     return isItResult;
 }
+
+// a VALID otp is one that is:
+// status is active
+// hasn't expired
+// hasn't been used (is null)
+// this returns an array []
+export async function getValidOTP(otp) {
+    return await db('otp')
+        .select()
+        .where({
+            otp_code: otp,
+            status: 'ACTIVE',
+            used_at: null  // Checks for NULL values
+        })
+        .where('expires_at', '>', new Date());
+}
+
 // update otp
-//
+export async function updateOTPToInvalid(otp) {
+    return await db('otp').where({ otp_code: otp }).update({ status: 'USED', used_at: new Date() })
+}

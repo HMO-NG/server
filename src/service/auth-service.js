@@ -1,6 +1,6 @@
 import {
     createUser, getUserByEmail, getUserByPhoneNumber,
-    updateUserDetails,
+    updateUserDetails, createOTP, getValidOTP, updateOTPToInvalid
 } from "../model/user-model.js"
 import { getNhiaEnrolleeAndUserDetailsModel, checkIfNhiaIdIsLinked } from "../model/enrollee-model.js"
 import bcrypt from 'bcrypt'
@@ -11,7 +11,6 @@ import { getAllUsersOnlyEmailAndFullName } from '../model/user-model.js'
 import { email } from "../util/email.js";
 import NhiaBookAppointment from "../util/email-template/nhia-book-appointment.js"
 import { generateUniqueOtp } from "../util/otp.js"
-import { createOTP } from "../model/user-model.js"
 import { OTPEmailTemplate } from "../util/email-template/otp_email_template.js"
 
 // import vine, { errors } from "@vinejs/vine"
@@ -142,36 +141,43 @@ export async function bookAppointmentService(data) {
 
 // forget password
 export async function forgetPassword(data) {
-    try {
-        // get user email and check on db if it exist.
-        const userEmailAddr = await getUserByEmail(data.email);
 
-        console.log("what does the user email throw if its found or not on the db", userEmailAddr)
+    // get user email and check on db if it exist.
+    const userEmailAddr = await getUserByEmail(data.email);
 
-        if (!userEmailAddr) {
-            throw Exception("User email doesn't exist, kindly register or contact clientexperience@hcihealthcare.ng", 409)
-        }
-
-        const otp = await generateUniqueOtp(6)
-
-        // store otp on db
-        await createOTP({ user_id: data.userid, otp_code: otp, purpose: "forget password", delivery_method: "email" })
-
-        // send email
-        email(OTPEmailTemplate({ companyname: "HCI Healthcare LTD", otp: otp }), data.email, "Forget Password OTP")
-
-        // another endpoint to check if the supplied otp matches server stored otp and it has expired
-
-        // if valid send a 200
-
-        // if invilid notify users and start all over
-
-        // navigate to tanothe screen for user to input therir new password
-
-        // if password is valid override the existing and save to the db and nofify the user.
-    } catch (error) {
-        console.log(error)
+    if (userEmailAddr.length === 0) {
+        throw new AuthServiceExpection("User email doesn't exist, kindly register or contact clientexperience@hcihealthcare.ng", 409)
     }
+
+    const otp = await generateUniqueOtp(6)
+
+    // store otp on db
+    createOTP({ user_id: data.userid, otp_code: otp, purpose: "forget password", delivery_method: "email" })
+
+    // send email
+    // email(OTPEmailTemplate({ companyname: "HCI Healthcare LTD", otp: otp }), data.email, "Forget Password OTP")
+
+}
+
+// valid the otp and the set the status to used/inactive
+export async function validateOTP(otp) {
+    // check if otp is active on the db
+
+    // if there is no otp sent from the controller, throw an exception
+    if (!otp) {
+        throw new AuthServiceExpection("No OTP providered", 404)
+    }
+
+    const isOTPValid = await getValidOTP(otp);
+
+    if (isOTPValid.length === 0) {
+        throw new AuthServiceExpection("OTP not valid, either it's been used or has expired", 404)
+    }
+
+    // when OTP has been validated, invalid it later.
+    await updateOTPToInvalid(otp)
+
+    return isOTPValid;
 }
 
 export class AuthServiceExpection extends Exception {

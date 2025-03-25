@@ -2,7 +2,7 @@ import express, { response } from 'express'
 import { signJWT, verifyJWT } from '../util/jwt.js'
 import {
     create, signin, getAllUserByEmailFirstNameAndLastName,
-    updateUserDetailsService, bookAppointmentService
+    updateUserDetailsService, bookAppointmentService, forgetPassword, validateOTP
 } from '../service/auth-service.js';
 import { auth } from '../middleware/auth-middleware.js';
 import Exception from '../util/exception.js';
@@ -186,7 +186,50 @@ router.post('/auth/user/bookapointment', auth, async (req, res, next) => {
     }
 })
 
-// forget user password
+// request forget password
+router.post('/auth/forget/password', async (req, res, next) => {
+    try {
+        const { email, userid } = req.body;
+
+        forgetPassword({ email: email, userid: userid })
+
+        res.status(200).json({
+            message: "OTP sent and valid for 15 minutes, kindly use it to change your password"
+        })
+
+    } catch (error) {
+        // TODO check if there is a need to have this console
+        console.log(error)
+        next(error)
+    }
+})
+
+// update password
+router.post('/auth/update/password', async (req, res, next) => {
+    try {
+
+    } catch (error) {
+
+    }
+})
+
+// check otp validity
+router.post('/auth/validate/otp', async (req, res, next) => {
+    try {
+        const { otp } = req.body;
+
+        const result = await validateOTP(otp)
+
+        res.status(200).json({
+            message: `OTP is valid with id ${result[0].id}`
+        })
+
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+})
+
 // signout user
 
 export default router;
