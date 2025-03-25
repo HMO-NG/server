@@ -64,13 +64,49 @@ app.use('/api-doc/hci-healthcare', swaggerUi.serve, swaggerUi.setup(swaggerSpec)
 
 // finding a way to do migration, prod ready
 app.get('/migrate', async (req, res) => {
+
+    // global variable to store the error
+    let e;
+
+    async function testDatabaseConnection() {
+        try {
+            // Test the database connection by running a simple query
+            await db.raw("SELECT 1");
+            console.log("Database connection successful!");
+            return true; // Connection is valid
+        } catch (error) {
+            console.error("Database connection failed:", error);
+            return false; // Connection failed
+        }
+    }
+
     try {
+
+        // Test the database connection first
+        const isConnectionValid = await testDatabaseConnection();
+
+        if (!isConnectionValid) {
+            throw new Error("Database connection failed. Migrations aborted.");
+        }
+
+        // If the connection is valid, run migrations
         await db.migrate.latest();
-    } catch (e) {
-        console.error('migration err', e);
+
+        console.log("Migrations completed successfully");
+
+    } catch (error) {
+        e = error
+        console.error('migration err', error);
     } finally {
-        console.log('Migrations completed');
-        res.send('Migrations completed');
+        console.log("what is e? e is : ", e)
+        if (!e) {
+            console.log('Migrations completed');
+            res.send('Migrations completed, check the database if the tables were created');
+        } else {
+            console.log('Error Found, Migrations did not complete successfully');
+            res.status(500).json({ message: `Migration failed the error is: ${e.message}` });
+        }
+
     }
 })
 
