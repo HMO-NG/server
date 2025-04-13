@@ -1,3 +1,8 @@
+import knex from "knex";
+import { v4 as uuidv4 } from 'uuid'
+import config from '../knexfile.js'
+let db = knex(config[process.env.NODE_ENV || 'development']);
+
 export async function addDocumentsModel(data) {
   try {
 
