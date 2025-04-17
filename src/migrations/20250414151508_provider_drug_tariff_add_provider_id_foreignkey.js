@@ -15,7 +15,7 @@ export async function up(knex) {
 */
 export async function down(knex) {
   await knex.schema.table('provider_drug_tariff',table =>{
-      table.dropForeign('created_by')
+      table.dropForeign('provider_id')
   });
 
 };
