@@ -7,13 +7,14 @@ export async function up (knex) {
     table.string('id').primary();
     table.string('item_name').notNullable();
     table.decimal('item_price').notNullable();
+    table.string('description')
     table.string('provider_id').notNullable();
     table.string('insurance_plan_type')
 
     table.enum('formulation', ['tablet', 'capsule', 'injection', 'liquid']);
-    table.string('unit_of_measure', 10)
+    table.string('unit_of_measure', 10)// e.g., "each", "mL"
     table.string('category');
-    table.string('strength', 20);
+    table.string('strength', 20);// e.g., "500mg"
 
     table.boolean('is_active').defaultTo(true)
 
