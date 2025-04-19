@@ -2,7 +2,7 @@ import express, { response } from 'express'
 import { signJWT, verifyJWT } from '../util/jwt.js'
 import {
     create, signin, getAllUserByEmailFirstNameAndLastName,
-    updateUserDetailsService, bookAppointmentService, forgetPassword, validateOTP
+    updateUserDetailsService, bookAppointmentService, forgetPassword, validateOTP, updateUserPasswordService
 } from '../service/auth-service.js';
 import { auth } from '../middleware/auth-middleware.js';
 import Exception from '../util/exception.js';
@@ -186,12 +186,13 @@ router.post('/auth/user/bookapointment', auth, async (req, res, next) => {
     }
 })
 
+/* step 1 - user request for a forget password, which generate and send the otp to the user */
 // request forget password
 router.post('/auth/forget/password', async (req, res, next) => {
     try {
         const { email, userid } = req.body;
 
-        forgetPassword({ email: email, userid: userid })
+        await forgetPassword({ email: email, userid: userid })
 
         res.status(200).json({
             message: "OTP sent and valid for 15 minutes, kindly use it to change your password"
@@ -204,24 +205,28 @@ router.post('/auth/forget/password', async (req, res, next) => {
     }
 })
 
-// update password
-router.post('/auth/update/password', async (req, res, next) => {
-    try {
-
-    } catch (error) {
-
-    }
-})
-
+/* step 2: valid the otp that was generate and generate an jwt (15 minute duration) if token is valid*/
 // check otp validity
 router.post('/auth/validate/otp', async (req, res, next) => {
     try {
-        const { otp } = req.body;
+        const { otp, userid } = req.body;
 
         const result = await validateOTP(otp)
 
+        console.log("this is the result of the otp verificaiton", result)
+
+        // generate a jwt token
+        const resetToken = signJWT(userid, '15m')
+
+        console.log("this is the reset token", resetToken)
+
+        if (!result) {
+            throw new Exception('OTP is invalid', 400)
+        }
+
         res.status(200).json({
-            message: `OTP is valid with id ${result[0].id}`
+            message: `OTP is valid with id ${result[0].id}`,
+            data: resetToken
         })
 
     } catch (error) {
@@ -229,6 +234,28 @@ router.post('/auth/validate/otp', async (req, res, next) => {
         next(error)
     }
 })
+
+// update password
+router.post('/auth/update/password', async (req, res, next) => {
+    try {
+        // the data contains the password and the jwt
+        // the jwt token is used to verify that the OTP was properly authenticated
+        const { data } = req.body;
+
+        // what does this return when the password has been updated
+        await updateUserPasswordService(data)
+
+        res.status(200).json({
+            message: "Password updated successfully"
+        })
+
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+})
+
+
 
 // signout user
 

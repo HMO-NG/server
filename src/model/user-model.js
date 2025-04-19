@@ -116,8 +116,14 @@ export async function updateUserDetails(id, data) {
     }
 }
 
-export async function updateUserPassword(id, data) {
-    return await db('user').where('id', id).update({})
+export async function updateUserPasswordModel(data) {
+
+    // encrypt password
+    const salt = await bcrypt.genSalt(13);
+    data.password = await bcrypt.hash(data.password, salt);
+
+
+    return await db('user').where('id', data.id).update({password: data.password})
 }
 
 // insert into OTP db table when a new OTP is generated.

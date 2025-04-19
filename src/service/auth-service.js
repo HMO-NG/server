@@ -1,6 +1,6 @@
 import {
     createUser, getUserByEmail, getUserByPhoneNumber,
-    updateUserDetails, createOTP, getValidOTP, updateOTPToInvalid
+    updateUserDetails, createOTP, getValidOTP, updateOTPToInvalid, updateUserPasswordModel
 } from "../model/user-model.js"
 import { getNhiaEnrolleeAndUserDetailsModel, checkIfNhiaIdIsLinked } from "../model/enrollee-model.js"
 import bcrypt from 'bcrypt'
@@ -12,6 +12,10 @@ import { email } from "../util/email.js";
 import NhiaBookAppointment from "../util/email-template/nhia-book-appointment.js"
 import { generateUniqueOtp } from "../util/otp.js"
 import { OTPEmailTemplate } from "../util/email-template/otp_email_template.js"
+import { config as env } from 'dotenv'
+import { signJWT, verifyJWT } from '../util/jwt.js'
+
+
 
 // import vine, { errors } from "@vinejs/vine"
 // import transporter from "../../util/email.js"
@@ -149,12 +153,14 @@ export async function forgetPassword(data) {
         throw new AuthServiceExpection("User email doesn't exist, kindly register or contact clientexperience@hcihealthcare.ng", 409)
     }
 
+    // generate a unique OTP
     const otp = await generateUniqueOtp(6)
 
     // store otp on db
-    createOTP({ user_id: data.userid, otp_code: otp, purpose: "forget password", delivery_method: "email" })
+    await createOTP({ user_id: data.userid, otp_code: otp, purpose: "forget password", delivery_method: "email" })
 
-    // send email
+    // send email to the user with the OTP code
+    // TODO: uncomment when ready for production.
     // email(OTPEmailTemplate({ companyname: "HCI Healthcare LTD", otp: otp }), data.email, "Forget Password OTP")
 
 }
@@ -174,10 +180,45 @@ export async function validateOTP(otp) {
         throw new AuthServiceExpection("OTP not valid, either it's been used or has expired", 404)
     }
 
-    // when OTP has been validated, invalid it later.
+    // when OTP has been validated (used), make it invalid (cannot be used again) later.
     await updateOTPToInvalid(otp)
 
     return isOTPValid;
+}
+
+export async function updateUserPasswordService(data) {
+
+    const jwtSecret = process.env.JWT_TOKEN_SECRET
+
+    if(!jwtSecret) {
+        throw new AuthServiceExpection('JWT token secret not set, check process.env.JWT_TOKEN_SECRET', 400)
+    }
+
+    const isJwtValid = await verifyJWT(data.jwt, jwtSecret)
+    console.log('what is the jwt token secret', jwtSecret)
+
+    if (password !== confirmPassword) {
+        throw new AuthServiceExpection("Password do not match", 409)
+    }
+
+    if (password.length < 6 || confirmPassword < 6) {
+        throw new AuthServiceExpection("Password must be at least 6 characters long", 409)
+    }
+
+    if (typeof password !== 'string') {
+        throw new AuthServiceExpection("password is either empty or undefined", 409)
+    }
+
+    if (!data.jwt) {
+        throw new AuthServiceExpection('JWT token not set', 400)
+    }
+
+    if(!isJwtValid) {
+        throw new AuthServiceExpection('JWT token not valid', 400)
+    }
+
+    return await updateUserPasswordModel(data)
+
 }
 
 export class AuthServiceExpection extends Exception {
