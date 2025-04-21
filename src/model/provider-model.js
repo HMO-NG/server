@@ -206,12 +206,10 @@ export async function getProviderServiceTariffByIdModel(id) {
     'provider_service_tariff.item_name',
     'provider_service_tariff.item_price',
     'provider_service_tariff.provider_id',
-    // 'provider_service_tariff.insurance_plan_type',
     'provider_service_tariff.hcpcs_code',
     'provider_service_tariff.is_surgical',
     'provider_service_tariff.patient_type',
     'provider_service_tariff.category',
-    // 'provider_service_tariff.created_by',
     db.raw(`"provider"."name" as "provider_name"`),
     db.raw(`"health_plan_category"."name" as "insurance_plan_type"`),
     db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "created_by"`)
