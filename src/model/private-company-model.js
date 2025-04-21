@@ -15,7 +15,8 @@ export async function createPrivateCompanyModel(data) {
         primary_contact_phonenumber: data.primary_contact_phonenumber,
         enrolled_by: data.user_id
     }
-    return await db("client").insert(createPrivateCompany);
+    
+    return await db("client").insert(createPrivateCompany).returning('*');
 }
 
 export async function getAllPrivateCompany() {
