@@ -4,7 +4,7 @@ import {
   getAllProviderForPrivatesService,
   createPrivateEnrolleeService,getPrivateEnrolleeByIdService,updatePrivateEnrolleeByIdAndCreateProfileService,createPrivateAccount,
   createPrivateEnrolleeDependantsService,getAllPrivateEnrolleeService,
-  getPrivateEnrolleeByClientIdService,onboardSinglePrivateEnrolleeService
+  getPrivateEnrolleeByClientIdService,onboardSinglePrivateEnrolleeService,
 } from '../service/private-enrollees-service.js';
 
 import generatePassword from '../util/generate-enrollee-password.js';
@@ -25,6 +25,9 @@ router.post('/privates/enrollee/company-masterlist',async (req,res,next)=>{
 
     let response = await createPrivateEnrolleeService(data,company_info.company_id,enrolled_by)
     let link;
+    if (response == 'enrollee already exists!'){
+              throw new Exception("enrollee email already in use!", 422)
+       }
     if (data.beneficiary_type=="individual"){
       link = `http://localhost:5174/${response[0].id}/${company_info.company_name}/${enrolled_by}/false/null/mainform`;
     }
@@ -35,7 +38,7 @@ router.post('/privates/enrollee/company-masterlist',async (req,res,next)=>{
     let subject = `Self enrollement portal ${company_info.company_name} enrollee`;
 
 
-    email(mainBody,data.email,subject)
+   email(mainBody,data.email,subject)
    console.log(mainBody,data.email,subject)
     res.status(200).json({
       message:'successfully sent onboarding mail',
@@ -50,24 +53,25 @@ router.post('/privates/enrollee/company-masterlist',async (req,res,next)=>{
 
 });
 
-//this is to onboard individual enrolee from the CRM 
+//this is to onboard individual enrolee from the CRM
 router.post('/privates/enrollee/onboarding',async (req,res,next)=>{
   try{
     const data= req.body;
     let fname=data.first_name;
     let lname=data.last_name;
     let generated_password= generatePassword(`${fname} ${lname}`)
+    data.is_active=true
     const user_data={
       email: data.email,
       first_name: data.first_name,
       last_name: data.last_name,
       phone_number: data.phone_number,
       password:generated_password,
-       role:"private",
-       type:"enrollee",
+       role:"enrollee",
+       type:"private",
 
     }
-    const create_acc =await createPrivateAccount(user_data,next)
+    const create_acc =await createPrivateAccount(user_data)
     const response = await onboardSinglePrivateEnrolleeService(data,create_acc.id)
 
     let mainBody=`welcome to hci healthcare ${data.first_name}, these are your login details email: ${data.email} password: ${generated_password}`;
@@ -79,7 +83,13 @@ router.post('/privates/enrollee/onboarding',async (req,res,next)=>{
    if(response && create_acc){
     res.status(200).json({
       message:"successfully added enrollee information and created profile",
-      data:response
+      data:{
+        enrollee_id:response[0].id,
+        beneficiary_type:response[0].beneficiary_type,
+        family_size:response[0].family_size,
+        linked_to_user:response[0].linked_to_user
+
+      }
     })
   }
   }catch(error){
@@ -152,8 +162,8 @@ try{
     last_name: data.last_name,
     phone_number: data.phone_number,
     password:generated_password,
-     role:"private",
-     type:"enrollee",
+    role:"enrollee",
+    type:"private",
 
   }
   const create_acc =await createPrivateAccount(user_data,next)
@@ -189,9 +199,12 @@ router.post('/privates/enrollee/dependent/:id', async (req, res, next) => {
         phone_number: data.phone_number,
         password:generated_password,
          role:"dependent",
-         type:"enrollee",
+         type:"private",
 
       }
+      let family_size = data.family_size;
+      let new_size =Number(family_size) + 1
+      data.family_size=new_size
       const create_acc =await createPrivateAccount(user_data,next)
       const response = await createPrivateEnrolleeDependantsService(data,id,create_acc.id)
       let mainBody=`welcome to hci healthcare ${data.first_name}, you have been registered as a dependant these are your login details email: ${data.email} password: ${generated_password}`;
@@ -204,6 +217,9 @@ router.post('/privates/enrollee/dependent/:id', async (req, res, next) => {
       if (response && create_acc) {
           res.status(200).json({
               message: "successfully created beneficiaries",
+              data:{
+                new_family_size:new_size
+              }
           })
       }
 
