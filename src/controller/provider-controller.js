@@ -2,7 +2,9 @@ import express, { json } from 'express'
 import {
     createProvider, editProviderActivationState, editProviderById, getAllProvider, getProviderById,
     createNHIAProviderService,
-    getNHIAProviderByHCPIDService
+    getNHIAProviderByHCPIDService,CreateProviderServiceTariffService,getProviderServiceTariffByIdService,
+    getAllProviderServiceTariffService,getSingleProviderServiceTariffByIdService,CreateProviderDrugTariffService,
+    getProviderDrugTariffByIdService,getAllProviderDrugTariffService,getSingleProviderDrugTariffByIdService,
 } from '../service/provider-service.js';
 import Exception from '../util/exception.js';
 import { auth, verifyUserToken, verifyPermission } from '../middleware/auth-middleware.js';
@@ -20,6 +22,9 @@ router.post('/provider/create', auth, async (req, res, next) => {
         const data = req.body
 
         let result = await createProvider(data)
+        if (result == 'provider already exists!'){
+          throw new Exception("provider already exists", 422)
+        }
 
         if (!result) {
             throw new Exception("encountered an issue while creating provider", 400)
@@ -172,4 +177,198 @@ router.post('/provider/nhia/get', auth, async (req, res, next) => {
         next(error)
     }
 })
+
+// Create Provider Servie tariff
+router.post('/provider/service/tariff/create', auth, async (req, res, next) => {
+
+  try {
+
+      const data = req.body
+
+      let result = await CreateProviderServiceTariffService(data)
+      if (result == 'provider service tariff already exists!'){
+        throw new Exception("provider service tariff already exists!", 422)
+      }
+
+      if (!result) {
+          throw new Exception("encountered an issue while creating provide Servie tariff", 400)
+      }
+
+      res.status(200).json({
+          message: "Tariff created successfully",
+          // data: result.id
+      })
+  } catch (error) {
+      console.log(error.status)
+      next(error)
+
+  }
+});
+router.get('/provider/service/tariff/get/:id', async (req, res, next) => {
+
+    try {
+      const {id} =req.params
+        let result = await getProviderServiceTariffByIdService(id)
+        let tariff_count=  parseInt(result.count[0].count)
+         if (!result) {
+                    throw new Exception("encountered an issue", 400)
+          }
+
+        if (result) {
+            res.status(200).json({
+                message: "List of all tariffs under this provider",
+                data:result.result,
+                count:tariff_count
+            })
+        }
+
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+
+});
+router.get('/provider/service/tariff/getall', async (req, res, next) => {
+
+  try {
+
+      let result = await getAllProviderServiceTariffService()
+       if (!result) {
+                  throw new Exception("encountered an issue", 400)
+        }
+
+      if (result) {
+          res.status(200).json({
+              message: "List of all service tariffs",
+              data:result
+          })
+      }
+
+  } catch (error) {
+      console.log(error)
+      next(error)
+  }
+
+});
+//This is to get single PROVIDER SERVICE TARIFF'S by tariff ID
+router.get('/provider/service/tariff/:id', async (req, res, next) => {
+
+  try {
+    const {id} =req.params
+      let result = await getSingleProviderServiceTariffByIdService(id)
+       if (!result) {
+                  throw new Exception("encountered an issue", 400)
+        }
+
+      if (result) {
+          res.status(200).json({
+              message: `successfully gotten ${result[0].item_name}`,
+              data:result[0]
+          })
+      }
+
+  } catch (error) {
+      console.log(error)
+      next(error)
+  }
+
+});
+
+// Create Provider drug tariff
+router.post('/provider/drug/tariff/create', auth, async (req, res, next) => {
+
+  try {
+
+      const data = req.body
+
+      let result = await CreateProviderDrugTariffService(data)
+      if (result == 'provider drug tariff already exists!'){
+        throw new Exception("provider drug tariff already exists!", 422)
+      }
+
+      if (!result) {
+          throw new Exception("encountered an issue while creating provide drug tariff", 400)
+      }
+
+      res.status(200).json({
+          message: "Tariff created successfully",
+      })
+  } catch (error) {
+      console.log(error.status)
+      next(error)
+
+  }
+});
+
+router.get('/provider/drug/tariff/get/:id', async (req, res, next) => {
+
+  try {
+    const {id} =req.params
+      let result = await getProviderDrugTariffByIdService(id)
+      let tariff_count=  parseInt(result.count[0].count)
+       if (!result) {
+                  throw new Exception("encountered an issue", 400)
+        }
+
+      if (result) {
+          res.status(200).json({
+              message: "List of all drug tariffs under this provider",
+              data:result.result,
+              count:tariff_count
+          })
+      }
+
+  } catch (error) {
+      console.log(error)
+      next(error)
+  }
+
+});
+router.get('/provider/drug/tariff/getall', async (req, res, next) => {
+
+  try {
+
+      let result = await getAllProviderDrugTariffService()
+       if (!result) {
+                  throw new Exception("encountered an issue", 400)
+        }
+
+      if (result) {
+          res.status(200).json({
+              message: "List of all drug tariffs",
+              data:result
+          })
+      }
+
+  } catch (error) {
+      console.log(error)
+      next(error)
+  }
+
+});
+
+router.get('/provider/drug/tariff/:id', async (req, res, next) => {
+
+  try {
+    const {id} =req.params
+      let result = await getSingleProviderDrugTariffByIdService(id)
+       if (!result) {
+                  throw new Exception("encountered an issue", 400)
+        }
+
+      if (result) {
+          res.status(200).json({
+              message: `successfully gotten ${result[0].item_name}`,
+              data:result[0]
+          })
+      }
+
+  } catch (error) {
+      console.log(error)
+      next(error)
+  }
+
+});
+
+
 export default router;
