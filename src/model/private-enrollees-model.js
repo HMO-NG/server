@@ -1,11 +1,12 @@
 import knex from "knex";
 import { v4 as uuidv4 } from 'uuid'
 import config from '../knexfile.js'
+import { DoesDataExist } from "../util/reusable.js";
 let db = knex(config[process.env.NODE_ENV || 'development']);
 
 
 export async function createPrivateEnrolleeModel(data,company_id,enrolled_by) {
-
+try{
     const createPrivateEnrollee = {
         id: uuidv4(),
         first_name:data.first_name,
@@ -27,7 +28,13 @@ export async function createPrivateEnrolleeModel(data,company_id,enrolled_by) {
         provider_id:data.provider_id,
         enrolled_by:enrolled_by
     }
-    return await db("enrollee").insert(createPrivateEnrollee).returning('id');
+    if (await DoesDataExist('enrollee','email',data.email)) {
+        return `enrollee already exists!`;
+    }else{
+    return await db("enrollee").insert(createPrivateEnrollee).returning('id');}
+  } catch (error) {
+    console.log(error)
+}
 }
 export async function getAllProviderNameAndIdModel() {
     try {
@@ -120,6 +127,7 @@ export async function createPrivateEnrolleeDependantsModel(data,beneficiary_of,p
       is_active:data.is_active,
       linked_to_user:profile_id
   }
+  await db('enrollee').where('id', beneficiary_of).update({family_size:data.family_size})
   return await db("beneficiary").insert(createDependants)
 }
 
@@ -240,5 +248,5 @@ export async function onboardSinglePrivateEnrolleeModel(data,profile_id) {
       linked_to_user:profile_id,
       enrolled_by:data.enrolled_by
   }
-  return await db("enrollee").insert(createPrivateEnrollee)
+  return await db("enrollee").insert(createPrivateEnrollee).returning(["id", "beneficiary_type", "family_size","linked_to_user"]);
 }
