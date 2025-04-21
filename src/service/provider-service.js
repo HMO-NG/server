@@ -5,7 +5,15 @@ import {
     editProviderByIdModel,
     editProviderActivationStateModel,
     createNHIAProviderModel,
-    getAllNhisProviderModel
+    getAllNhisProviderModel,
+    CreateProviderServiceTariffModel,
+    getProviderServiceTariffByIdModel,
+    getAllProviderServiceTariffModel,
+    getSingleProviderServiceTariffByIdModel,
+    CreateProviderDrugTariffModel,
+    getProviderDrugTariffByIdModel,
+    getAllProviderDrugTariffModel,
+    getSingleProviderDrugTariffByIdModel,
 } from "../model/provider-model.js";
 import { NigerianState } from "../util/nigerian-states.js";
 import { generateUniqueProviderCode } from "../util/provider-code.js";
@@ -97,8 +105,60 @@ export async function getNHIAProviderByHCPIDService(id) {
         return await getAllNhisProviderModel(id)
 }
 
+export async function CreateProviderServiceTariffService(data) {
+
+  if (!data) {
+      throw new ProviderServiceExpection("provider service tariff is empty", 400)
+  }
+
+  const result = await CreateProviderServiceTariffModel(data)
+
+  if (!result) {
+      throw new ProviderServiceExpection("failed to create tariff", 500)
+  }
+
+  return result
+}
+export async function getProviderServiceTariffByIdService(id) {
+
+  return await getProviderServiceTariffByIdModel(id)
+}
+export async function getAllProviderServiceTariffService() {
+
+  return await getAllProviderServiceTariffModel()
+}
+export async function getSingleProviderServiceTariffByIdService(id) {
+
+  return await getSingleProviderServiceTariffByIdModel(id)
+}
 
 
+export async function CreateProviderDrugTariffService(data) {
+
+  if (!data) {
+      throw new ProviderServiceExpection("provider drug tariff is empty", 400)
+  }
+
+  const result = await CreateProviderDrugTariffModel(data)
+
+  if (!result) {
+      throw new ProviderServiceExpection("failed to create tariff", 500)
+  }
+
+  return result
+}
+export async function getProviderDrugTariffByIdService(id) {
+
+  return await getProviderDrugTariffByIdModel(id)
+}
+export async function getAllProviderDrugTariffService() {
+
+  return await getAllProviderDrugTariffModel()
+}
+export async function getSingleProviderDrugTariffByIdService(id) {
+
+  return await getSingleProviderDrugTariffByIdModel(id)
+}
 
 
 export class ProviderServiceExpection extends Exception {
