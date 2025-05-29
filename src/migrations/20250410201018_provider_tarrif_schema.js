@@ -3,27 +3,27 @@
  * @returns { Promise<void> }
  */
 export async function up (knex) {
-  return knex.schema.createTable('provider_service_tariff', table =>{
+  return knex.schema.createTable('provider_tariff', table =>{
     table.string('id').primary();
     table.string('item_name').notNullable();
     table.decimal('item_price').notNullable();
     table.string('description')
     table.string('provider_id').notNullable();
-    table.string('insurance_plan_type')
+    table.string('insurance_plan_id').nullable();
 
-    table.string('hcpcs_code');
     table.boolean('is_active').defaultTo(true)
-
+    table.enum('tariff_type', ['procedure', 'medication','consultation','unknown']).defaultTo('unknown')
 
     table.boolean('is_surgical').defaultTo(false);
-    table.enum('patient_type', ['inpatient', 'outpatient']);
+    table.string('hcpcs_code');
+    table.enum('patient_type', ['inpatient', 'outpatient','both']);
+
     table.string('category');
 
     table.timestamp('active_date').defaultTo(knex.fn.now());
     table.timestamp('end_date').nullable();
 
-    table.timestamp('created_at').notNullable().defaultTo(knex.fn.now())
-    table.timestamp('updated_at').defaultTo(knex.fn.now());
+    table.timestamps(true, true); // Adds created_at and updated_at
     table.timestamp('date_deactivated');
     table.string('created_by').notNullable();
 
@@ -36,5 +36,5 @@ export async function up (knex) {
  * @returns { Promise<void> }
  */
 export async function down(knex) {
-  await knex.schema.dropTable('provider_service_tariff');
+  await knex.schema.dropTable('provider_tariff');
 }
