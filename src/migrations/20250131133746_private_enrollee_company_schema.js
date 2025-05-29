@@ -13,7 +13,8 @@ export async function up (knex) {
     table.string('primary_contact_phonenumber').notNullable();
     table.string('enrolled_by').notNullable(); // created by
 
-    table.decimal('number_of_enrollees').notNullable();
+    table.integer('number_of_enrollees').notNullable();
+    table.integer('number_of_registered_enrollees').nullable();
     table.date('payment_start_date').notNullable();
     table.date('payment_end_date').notNullable();
     table.enum('payment_type',['weekly','monthly','quaterly','yearly','bi-annually','capitation']).defaultTo('monthly');
