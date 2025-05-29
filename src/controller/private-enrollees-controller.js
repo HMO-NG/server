@@ -2,7 +2,7 @@ import express, { json } from 'express'
 import { auth ,verifyUserToken, verifyPermission } from '../middleware/auth-middleware.js';
 import {
   getAllProviderForPrivatesService,
-  createPrivateEnrolleeService,getPrivateEnrolleeByIdService,updatePrivateEnrolleeByIdAndCreateProfileService,createPrivateAccount,
+  createPrivateEnrolleeService,getPrivateEnrolleeByIdService,updatePrivateEnrolleeByIdService,createPrivateAccount,
   createPrivateEnrolleeDependantsService,getAllPrivateEnrolleeService,
   getPrivateEnrolleeByClientIdService,onboardSinglePrivateEnrolleeService,
 } from '../service/private-enrollees-service.js';
@@ -38,7 +38,7 @@ router.post('/privates/enrollee/company-masterlist',async (req,res,next)=>{
     let subject = `Self enrollement portal ${company_info.company_name} enrollee`;
 
 
-   email(mainBody,data.email,subject)
+  //  email(mainBody,data.email,subject)
    console.log(mainBody,data.email,subject)
     res.status(200).json({
       message:'successfully sent onboarding mail',
@@ -78,7 +78,7 @@ router.post('/privates/enrollee/onboarding',async (req,res,next)=>{
     let subject = `Hci login details`;
 
 
-    email(mainBody,data.email,subject)
+    // email(mainBody,data.email,subject)
    console.log(mainBody,data.email,subject)
    if(response && create_acc){
     res.status(200).json({
@@ -167,12 +167,13 @@ try{
 
   }
   const create_acc =await createPrivateAccount(user_data,next)
-  const result = await updatePrivateEnrolleeByIdAndCreateProfileService(id, data,create_acc.id)
+  data.linked_to_user=create_acc.id
+  const result = await updatePrivateEnrolleeByIdService(id,data)
   let mainBody=`welcome to hci healthcare ${data.first_name}, these are your login details email: ${data.email} password: ${generated_password}`;
   let subject = `Hci login details`;
 
 
-  email(mainBody,data.email,subject)
+  // email(mainBody,data.email,subject)
   if(result && create_acc){
     res.status(200).json({
       message:"successfully added enrollee information and created profile",
@@ -190,6 +191,7 @@ router.post('/privates/enrollee/dependent/:id', async (req, res, next) => {
       const data= req.body
       let fname=data.first_name;
       let lname=data.last_name;
+
       let generated_password= generatePassword(`${fname} ${lname}`)
       data.is_active=true
       const user_data={
@@ -209,7 +211,7 @@ router.post('/privates/enrollee/dependent/:id', async (req, res, next) => {
       const response = await createPrivateEnrolleeDependantsService(data,id,create_acc.id)
       let mainBody=`welcome to hci healthcare ${data.first_name}, you have been registered as a dependant these are your login details email: ${data.email} password: ${generated_password}`;
       let subject = `Hci login details`;
-      email(mainBody,data.email,subject)
+      // email(mainBody,data.email,subject)
        if (!response) {
                   throw new Exception("encountered an issue", 400)
         }
@@ -271,5 +273,22 @@ router.get('/privates/enrollee/get/by/client/:id', async (req, res, next) => {
   }
   });
 
+router.put('/privates/enrollee/edit/:id', async (req, res, next) => {
+try{
+  const data = req.body
+  const {id} = req.params
+
+  const result = await updatePrivateEnrolleeByIdService(id,data)
+
+  if(result){
+    res.status(200).json({
+      message:"successfully edited enrollee information",
+    })
+  }
+}catch(error){
+  console.error(error)
+  next(error)
+}
+});
 
 export default router;

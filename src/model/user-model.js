@@ -43,8 +43,24 @@ export async function createUser(userDetails, referralCode) {
 }
 
 // get user by email
+// export async function getUserByEmail(userEmail) {
+//     return await db('user').select().where('email', userEmail);
+// }
 export async function getUserByEmail(userEmail) {
-    return await db('user').select().where('email', userEmail);
+  const user = await db('user')
+    .where('email', userEmail)
+
+  const client = await db('client')
+    .where('primary_contact_email', userEmail)
+    .first();
+    let newd = user
+    if (client){
+    newd[0].client_id =client.id
+    }
+    console.log(newd)
+
+  return newd
+
 }
 
 // get user by phone number (since phone numbers are meant to be unique)

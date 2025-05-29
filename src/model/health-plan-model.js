@@ -362,3 +362,7 @@ export async function changeHealthPlanStatusModel(id, data){
 }
 return await db('health_plan').where('id', id).update(disableHealthPlan)
 }
+
+export async function getHealthPlanIdByNameModel(plan_name) {
+    return await db("health_plan").select('health_plan.id').where('plan_name', plan_name)
+}
