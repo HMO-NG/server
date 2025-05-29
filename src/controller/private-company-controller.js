@@ -34,7 +34,7 @@ router.post('/privates/company/create', async (req, res, next) => {
         let subject = `Hci login details`;
 
 
-        email(mainBody,data.email,subject)
+        // email(mainBody,data.email,subject)
         console.log(mainBody,data.primary_contact_email,subject)
 
         if (!result) {

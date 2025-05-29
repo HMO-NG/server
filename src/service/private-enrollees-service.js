@@ -1,8 +1,8 @@
 import Exception from "../util/exception.js";
 import {
 getAllProviderNameAndIdModel,
-createPrivateEnrolleeModel,getPrivateEnrolleeByIdModel,updatePrivateEnrolleeByIdAndCreateProfileModel,
-createPrivateEnrolleeDependantsModel,getAllPrivateEnrolleeModel, getPrivateEnrolleeByClientIdModel,onboardSinglePrivateEnrolleeModel
+createPrivateEnrolleeModel,getPrivateEnrolleeByIdModel,updatePrivateEnrolleeByIdModel,
+createPrivateEnrolleeDependantsModel,getAllPrivateEnrolleeModel, getPrivateEnrolleeByClientIdModel,onboardSinglePrivateEnrolleeModel,
 } from '../model/private-enrollees-model.js';
 import {
   createUser, getUserByEmail, getUserByPhoneNumber,
@@ -40,9 +40,9 @@ export async function getPrivateEnrolleeByIdService(id) {
 
 }
 
-export async function  updatePrivateEnrolleeByIdAndCreateProfileService(id,data,profile_id){
+export async function  updatePrivateEnrolleeByIdService(id,data){
   try {
-    return await  updatePrivateEnrolleeByIdAndCreateProfileModel(id,data,profile_id)
+    return await  updatePrivateEnrolleeByIdModel(id,data)
 } catch (error) {
     return error
 }
