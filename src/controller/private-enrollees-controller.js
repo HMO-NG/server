@@ -9,7 +9,6 @@ import {
 
 import generatePassword from '../util/generate-enrollee-password.js';
 import Exception from '../util/exception.js';
-import uploadImage from '../util/upload_image.js';
 import { email } from '../util/email.js';
 import bodyParser from 'body-parser';
 const router = express.Router()
