@@ -34,22 +34,22 @@ const config = {
         // TODO THERE IS A BUG THAT OCCURS WHEN A SECOND
         // .ENV FILE IS USED SO I HAD TO USE THE STRING
 
-        // client: process.env.DEV_DB_CLIENT,
-        // connection: {
-        //     host: process.env.DEV_DB_HOST,
-        //     port: process.env.DEV_DB_PORT,
-        //     user: process.env.DEV_DB_USER,
-        //     password: process.env.DEV_DB_PASSWORD,
-        //     database: process.env.DEV_DB_NAME,
-        // },
-        client: "pg",
+        client: process.env.DB_CLIENT,
         connection: {
-            host: "127.0.0.1",
-            port: 5432,
-            user: "postgres",
-            password: "test@123",
-            database: 'hmo',
+            host: process.env.DB_HOST,
+            port: process.env.DB_PORT,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME,
         },
+        // client: "pg",
+        // connection: {
+        //     host: "127.0.0.1",
+        //     port: 5432,
+        //     user: "postgres",
+        //     password: "test@123",
+        //     database: 'hmo',
+        // },
         pool: {
             min: 2,
             max: 10
