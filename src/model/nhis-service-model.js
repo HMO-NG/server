@@ -1,6 +1,7 @@
 import knex from "knex";
 import { v4 as uuidv4 } from 'uuid'
 import config from '../knexfile.js'
+import {getHealthPlanIdByNameModel} from "../model/health-plan-model.js";
 let db = knex(config[process.env.NODE_ENV || 'development']);
 
 // create nhia service tarrif (procudure and investigation)
@@ -8,7 +9,7 @@ export async function createNhisServiceTarrifModel(data) {
 
     const createNhiaService = {
         id: uuidv4(),
-        name: data.name,
+        name: data.name || data.description,
         tarrif_type: data.tarrif_type,
         service_type: data.service_type,
         nhia_code: data.nhia_code,
@@ -89,7 +90,8 @@ export async function createNhisDrugTarrifModel(data) {
 
     const createNhiaDrugService = {
         id: uuidv4(),
-        name_of_drug: data.name_of_drug,
+        // name_of_drug: data.name_of_drug,
+        name_of_drug: data.description || data.name_of_drug,
         dosage_form: data.dosage_form,
         nhia_code: data.nhia_code,
         strength: data.strength,

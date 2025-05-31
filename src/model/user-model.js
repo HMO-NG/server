@@ -43,8 +43,24 @@ export async function createUser(userDetails, referralCode) {
 }
 
 // get user by email
+// export async function getUserByEmail(userEmail) {
+//     return await db('user').select().where('email', userEmail);
+// }
 export async function getUserByEmail(userEmail) {
-    return await db('user').select().where('email', userEmail);
+  const user = await db('user')
+    .where('email', userEmail)
+
+  const client = await db('client')
+    .where('primary_contact_email', userEmail)
+    .first();
+    let newd = user
+    if (client){
+    newd[0].client_id =client.id
+    }
+    console.log(newd)
+
+  return newd
+
 }
 
 // get user by phone number (since phone numbers are meant to be unique)
@@ -114,59 +130,4 @@ export async function updateUserDetails(id, data) {
         return await db('user').where('id', id).update(updatedInformation)
 
     }
-}
-
-export async function updateUserPasswordModel(data) {
-
-    // encrypt password
-    const salt = await bcrypt.genSalt(13);
-    data.password = await bcrypt.hash(data.password, salt);
-
-
-    return await db('user').where('id', data.id).update({password: data.password})
-}
-
-// insert into OTP db table when a new OTP is generated.
-export async function createOTP(data) {
-
-    const content = {
-        id: uuidv4(),
-        user_id: data.user_id,
-        otp_code: data.otp_code,
-        purpose: data.purpose,
-        delivery_method: data.delivery_method,
-    }
-
-    return await db('otp').insert(content)
-}
-
-// get otp that matched the parameters.
-export async function getOTP(otpCode) {
-
-    const isItResult = await db('otp').select().where("otp_code", otpCode)
-
-    console.log("what is returned from the otp table", isItResult);
-
-    return isItResult;
-}
-
-// a VALID otp is one that is:
-// status is active
-// hasn't expired
-// hasn't been used (is null)
-// this returns an array []
-export async function getValidOTP(otp) {
-    return await db('otp')
-        .select()
-        .where({
-            otp_code: otp,
-            status: 'ACTIVE',
-            used_at: null  // Checks for NULL values
-        })
-        .where('expires_at', '>', new Date());
-}
-
-// update otp
-export async function updateOTPToInvalid(otp) {
-    return await db('otp').where({ otp_code: otp }).update({ status: 'USED', used_at: new Date() })
 }

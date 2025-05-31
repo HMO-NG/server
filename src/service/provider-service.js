@@ -6,14 +6,17 @@ import {
     editProviderActivationStateModel,
     createNHIAProviderModel,
     getAllNhisProviderModel,
-    CreateProviderServiceTariffModel,
-    getProviderServiceTariffByIdModel,
-    getAllProviderServiceTariffModel,
-    getSingleProviderServiceTariffByIdModel,
-    CreateProviderDrugTariffModel,
-    getProviderDrugTariffByIdModel,
-    getAllProviderDrugTariffModel,
-    getSingleProviderDrugTariffByIdModel,
+    CreateProviderTariffModel,
+    getProviderTariffByIdModel,
+    getAllProviderTariffModel,
+    getSingleProviderTariffByIdModel,
+    CreatePreAuthorizationModel,
+    getAllPreAuthorizationModel,
+    getPreAuthorizationByProviderIdModel,
+    getSinglePreAuthorizationByIdModel,
+    updatePreAuthorizationByIdModel,
+    UpdateProviderTariffModel,
+    getPATariffAndDiagnosisByCodeModel,
 } from "../model/provider-model.js";
 import { NigerianState } from "../util/nigerian-states.js";
 import { generateUniqueProviderCode } from "../util/provider-code.js";
@@ -105,13 +108,13 @@ export async function getNHIAProviderByHCPIDService(id) {
         return await getAllNhisProviderModel(id)
 }
 
-export async function CreateProviderServiceTariffService(data) {
+export async function CreateProviderTariffService(data) {
 
   if (!data) {
       throw new ProviderServiceExpection("provider service tariff is empty", 400)
   }
 
-  const result = await CreateProviderServiceTariffModel(data)
+  const result = await CreateProviderTariffModel(data)
 
   if (!result) {
       throw new ProviderServiceExpection("failed to create tariff", 500)
@@ -119,27 +122,26 @@ export async function CreateProviderServiceTariffService(data) {
 
   return result
 }
-export async function getProviderServiceTariffByIdService(id) {
+export async function getProviderTariffByIdService(id) {
 
-  return await getProviderServiceTariffByIdModel(id)
+  return await getProviderTariffByIdModel(id)
 }
-export async function getAllProviderServiceTariffService() {
+export async function getAllProviderTariffService() {
 
-  return await getAllProviderServiceTariffModel()
+  return await getAllProviderTariffModel()
 }
-export async function getSingleProviderServiceTariffByIdService(id) {
+export async function getSingleProviderTariffByIdService(id) {
 
-  return await getSingleProviderServiceTariffByIdModel(id)
+  return await getSingleProviderTariffByIdModel(id)
 }
 
-
-export async function CreateProviderDrugTariffService(data) {
+export async function UpdateProviderTariffService(id,data) {
 
   if (!data) {
-      throw new ProviderServiceExpection("provider drug tariff is empty", 400)
+      throw new ProviderServiceExpection("provider service tariff is empty", 400)
   }
 
-  const result = await CreateProviderDrugTariffModel(data)
+  const result = await UpdateProviderTariffModel(id,data)
 
   if (!result) {
       throw new ProviderServiceExpection("failed to create tariff", 500)
@@ -147,19 +149,42 @@ export async function CreateProviderDrugTariffService(data) {
 
   return result
 }
-export async function getProviderDrugTariffByIdService(id) {
 
-  return await getProviderDrugTariffByIdModel(id)
+export async function CreatePreAuthorizationService(data) {
+
+  if (!data) {
+      throw new ProviderServiceExpection("PA is empty", 400)
+  }
+
+  const result = await CreatePreAuthorizationModel(data)
+
+  if (!result) {
+      throw new ProviderServiceExpection("failed to create PA", 500)
+  }
+
+  return result
 }
-export async function getAllProviderDrugTariffService() {
 
-  return await getAllProviderDrugTariffModel()
+export async function getAllPreAuthorizationService() {
+
+  return await getAllPreAuthorizationModel()
 }
-export async function getSingleProviderDrugTariffByIdService(id) {
+export async function getPreAuthorizationByProviderIdService(id) {
 
-  return await getSingleProviderDrugTariffByIdModel(id)
+  return await getPreAuthorizationByProviderIdModel(id)
+}
+export async function getSinglePreAuthorizationByIdService(id) {
+
+  return await getSinglePreAuthorizationByIdModel(id)
+}
+export async function updatePreAuthorizationByIdService(id, data) {
+  return await updatePreAuthorizationByIdModel(id,data)
 }
 
+export async function getPATariffAndDiagnosisByCodeService(PA_code) {
+
+  return await getPATariffAndDiagnosisByCodeModel(PA_code)
+}
 
 export class ProviderServiceExpection extends Exception {
     constructor(message, status) {
