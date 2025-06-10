@@ -9,7 +9,7 @@ export async function up (knex) {
     table.decimal('item_price').notNullable();
     table.string('description')
     table.string('provider_id').notNullable();
-    table.string('insurance_plan_id').nullable();
+    table.boolean('available_to_all_plans').defaultTo(false);
 
     table.boolean('is_active').defaultTo(true)
     table.enum('tariff_type', ['procedure', 'medication','consultation','unknown']).defaultTo('unknown')
@@ -17,6 +17,7 @@ export async function up (knex) {
     table.boolean('is_surgical').defaultTo(false);
     table.string('hcpcs_code');
     table.enum('patient_type', ['inpatient', 'outpatient','both']);
+    table.enum('service_type', ['primary', 'secondary','tertiary']);
 
     table.string('category');
 
