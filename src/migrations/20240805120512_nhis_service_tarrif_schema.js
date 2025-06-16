@@ -7,7 +7,7 @@ export async function up(knex) {
         table.string('id').primary();
         table.string('name').notNullable();
         table.string('tarrif_type', 36);
-        table.string('service_type', 36);
+        table.enum('service_type', ['primary', 'secondary','tertiary']).defaultTo('primary');
         table.string('nhia_code', 30);
         table.string('category');
         table.string('sub_category');

@@ -17,7 +17,7 @@ export async function up (knex) {
     table.boolean('is_surgical').defaultTo(false);
     table.string('hcpcs_code');
     table.enum('patient_type', ['inpatient', 'outpatient','both']);
-    table.enum('service_type', ['primary', 'secondary','tertiary']);
+    table.enum('service_type', ['primary', 'secondary','tertiary']).defaultTo('primary');
 
     table.string('category');
 
