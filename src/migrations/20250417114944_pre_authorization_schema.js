@@ -11,6 +11,7 @@ export async function up (knex) {
     table.string('provider_id').notNullable();
     table.string('enrollee_id').notNullable();
     table.string('pa_code').nullable();
+    table.boolean('is_claimed').defaultTo(false); // Indicates if this pre-authorization has been claimed
     table.enum('status', ['pending', 'approved', 'denied','partially approved']).defaultTo('pending');
     table.jsonb('selected_tariffs').defaultTo('[]');//{"id":"t267gd","quantity":2,"status":"denied,"comment":"deneid for inconsistenies"}
     table.jsonb('related_documents').defaultTo('[]');// eg[{ "url": "https://res.cloudinary.com/.../image1.jpg"},{ "url": "https://res.cloudinary.com/.../thumb1.jpg" },{ "url": "https://res.cloudinary.com/.../image2.jpg"}]
