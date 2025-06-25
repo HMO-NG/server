@@ -10,6 +10,7 @@ export async function addDocumentsModel(data) {
     id:uuidv4(),
     name:data.name,
     url:data.url,
+    doc_type:data.doc_type,
     user_type:data.user_type,
     user_id:data.user_id,
     created_by:data.created_by,
@@ -18,6 +19,14 @@ export async function addDocumentsModel(data) {
 
 
   return await db('documents').insert(createdoc)
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+export async function getDocumentsModel(id) {
+  try {
+    return await db('documents').select('*').where({ 'id': id }).first();
   } catch (error) {
     console.error(error);
     throw error;
