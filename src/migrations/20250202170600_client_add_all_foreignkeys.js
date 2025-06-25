@@ -5,6 +5,7 @@
 export async function up(knex) {
   await knex.schema.table('client', table => {
     table.foreign('enrolled_by').references('user.id').onDelete('CASCADE');
+    table.foreign('linked_to_user').references('user.id').onDelete('CASCADE');
 
   });
 }
@@ -15,6 +16,7 @@ export async function up(knex) {
 */
 export async function down(knex) {
   await knex.schema.table('client',table =>{
-      table.dropForeign('enrolled_by')
+      table.dropForeign('enrolled_by');
+      table.dropForeign('linked_to_user');
   });
 }
