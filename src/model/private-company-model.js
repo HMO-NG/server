@@ -9,7 +9,7 @@ export async function createPrivateCompanyModel(data) {
         id: uuidv4(),
         company_name: data.company_name,
         business_type: data.business_type,
-        company_heaadquaters: data.company_heaadquaters,
+        company_headquarters: data.company_headquaters,
         primary_contact_position: data.primary_contact_position,
         primary_contact_email: data.primary_contact_email,
         primary_contact_phonenumber: data.primary_contact_phonenumber,
@@ -18,10 +18,10 @@ export async function createPrivateCompanyModel(data) {
         payment_start_date: data.payment_start_date,
         payment_end_date: data.payment_end_date,
         payment_type: data.payment_type,
+        linked_to_user: data.linked_to_user,
         enrolled_by: data.user_id
     }
 
-    // return await db("client").insert(createPrivateCompany).returning('*');
     const new_client= await db("client").insert(createPrivateCompany).returning('*');
      await Promise.all(
     data.health_plan_id.map((planId) => {
@@ -42,7 +42,7 @@ export async function getAllPrivateCompany() {
                 'client.id',
                 'client.company_name',
                 'client.business_type',
-                'client.company_heaadquaters',
+                'client.company_headquarters',
                 'client.primary_contact_position',
                 'client.primary_contact_email',
                 'client.primary_contact_phonenumber',
@@ -94,3 +94,54 @@ export async function updateClientModel(data,id) {
   return await db("client").where('id',id).update(updateClient);
 }
 
+export async function getPrivateCompanyByIdModel(id) {
+    try {
+       let client = await db('client')
+            .select(
+                'client.id',
+                'client.company_name',
+                'client.business_type',
+                'client.company_headquarters',
+                'client.primary_contact_position',
+                'client.primary_contact_email',
+                'client.primary_contact_phonenumber',
+                'client.number_of_enrollees',
+                'client.is_active',
+                db.raw(`"user"."id" as "user_id"`),
+                db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "enrolled_by"`),
+                'client.linked_to_user',
+            ).where('client.id',id)
+            .innerJoin('user', 'user.id', '=', 'client.enrolled_by').first();
+             if (!client) {
+            throw new Error('Client not found');
+        }
+        console.log(client)
+
+
+           const documents = await db('documents')
+                 .select(
+                     'documents.id',
+                     'documents.name',
+                     'documents.url',
+                     'documents.doc_type',
+                     'documents.created_at',
+                     db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "created_by"`)
+                 )
+                 .where('documents.user_id', client.linked_to_user)
+                 .leftJoin('user', 'user.id', '=', 'documents.created_by')
+                 .orderBy('documents.created_at', 'desc');
+
+            const countResult = await db('enrollee')
+            .where('enrollee.company_id', id)
+            .count()
+            .first();
+
+             return {
+            ...client,
+            documents,
+            enrollee_count: parseInt(countResult?.count || '0', 10),
+        };
+    } catch (error) {
+        console.log(error)
+    }
+}

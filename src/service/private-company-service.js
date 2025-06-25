@@ -1,7 +1,10 @@
 import Exception from "../util/exception.js";
 import {
   createPrivateCompanyModel,
-  getAllPrivateCompany,changePrivateCompanyStatusModel,updateClientModel,
+  getAllPrivateCompany,
+  changePrivateCompanyStatusModel,
+  updateClientModel,
+  getPrivateCompanyByIdModel,
 } from '../model/private-company-model.js';
 import {
 getPrivateEnrolleeByIdModel
@@ -47,7 +50,19 @@ export async function changePrivateCompanyStatusService(data,id) {
 
 
     };
-  updateClientModel
+ export async function getPrivateCompanyByIdService(id) {
+
+try{
+   if (!id) {
+        throw new PrivateExpection("Company ID cannot be empty", 400)
+    }
+  return await getPrivateCompanyByIdModel(id)
+}catch{error}{
+  return error
+}
+
+
+};
 
 class PrivateExpection extends Exception {
     constructor(message, status) {
