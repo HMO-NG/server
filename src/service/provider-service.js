@@ -17,6 +17,7 @@ import {
     updatePreAuthorizationByIdModel,
     UpdateProviderTariffModel,
     getPATariffAndDiagnosisByCodeModel,
+    updatePreAuthorizationByPACodeModel,
 } from "../model/provider-model.js";
 import { NigerianState } from "../util/nigerian-states.js";
 import { generateUniqueProviderCode } from "../util/provider-code.js";
@@ -184,6 +185,10 @@ export async function updatePreAuthorizationByIdService(id, data) {
 export async function getPATariffAndDiagnosisByCodeService(PA_code) {
 
   return await getPATariffAndDiagnosisByCodeModel(PA_code)
+}
+
+export async function updatePreAuthorizationByPACodeService(PA_code, data) {
+  return await updatePreAuthorizationByPACodeModel(PA_code,data)
 }
 
 export class ProviderServiceExpection extends Exception {
