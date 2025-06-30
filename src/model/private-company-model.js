@@ -109,7 +109,7 @@ export async function getPrivateCompanyByIdModel(id) {
                 'client.is_active',
                 db.raw(`"user"."id" as "user_id"`),
                 db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "enrolled_by"`),
-                'client.linked_to_user',
+                db.raw(`"client"."linked_to_user" as "profile_id"`),
             ).where('client.id',id)
             .innerJoin('user', 'user.id', '=', 'client.enrolled_by').first();
              if (!client) {
@@ -127,7 +127,7 @@ export async function getPrivateCompanyByIdModel(id) {
                      'documents.created_at',
                      db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "created_by"`)
                  )
-                 .where('documents.user_id', client.linked_to_user)
+                 .where('documents.user_id', client.profile_id)
                  .leftJoin('user', 'user.id', '=', 'documents.created_by')
                  .orderBy('documents.created_at', 'desc');
 
@@ -139,7 +139,7 @@ export async function getPrivateCompanyByIdModel(id) {
              return {
             ...client,
             documents,
-            enrollee_count: parseInt(countResult?.count || '0', 10),
+            count: parseInt(countResult?.count || '0', 10),
         };
     } catch (error) {
         console.log(error)
