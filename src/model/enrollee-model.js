@@ -5,21 +5,35 @@ let db = knex(config[process.env.NODE_ENV || 'development']);
 
 // create nhia enrollee
 export async function createNhisEnrolleeModel(data) {
+  console.log('data',data)
+
+  const trimWhiteSpaceInSex = data.sex.toLowerCase().trim();
+  const trimWhiteSpaceInPolicy_id = data.policy_id.toLowerCase().trim();
+  const trimWhiteSpaceInRelationship = data.relationship.toLowerCase().trim();
+  const trimWhiteSpaceInSurname = data.surname.toLowerCase().trim();
+  const trimWhiteSpaceInOtherNames = data.other_names.toLowerCase().trim();
+  const trimWhiteSpaceInProviderName = data.provider_name.toLowerCase().trim();
+  // PROVIDER ADDRESS FROM NHIA IS EMPTY
+  //const trimWhiteSpaceInProviderAddress = data.provider_Address.toLowerCase().trim();
+  const trimWhiteSpaceInDob = data.dob.trim();
+
 
   const createNhiaEntrollee = {
     id: uuidv4(),
-    policy_id: data.policy_id,
-    relationship: data.relationship,
-    surname: data.surname,
-    other_names: data.other_names,
-    dob: data.dob,
-    sex: data.sex,
+    policy_id: trimWhiteSpaceInPolicy_id,
+    relationship: trimWhiteSpaceInRelationship,
+    surname: trimWhiteSpaceInSurname,
+    other_names: trimWhiteSpaceInOtherNames,
+    dob: trimWhiteSpaceInDob,
+    sex: trimWhiteSpaceInSex,
     company_id: data.company_id,
     provider_id: data.provider_id,
-    provider_name: data.provider_name,
+    provider_name: trimWhiteSpaceInProviderName,
     provider_Address: data.provider_Address,
     created_by: data.user_id
   }
+
+  
   return await db("nhis_enrollee").insert(createNhiaEntrollee);
 }
 
@@ -150,3 +164,5 @@ export async function checkIfNhiaIdIsLinked(data) {
 
   return await db('nhis_enrollee').select('linked_to_user').where('linked_to_user', data.userid)
 }
+
+
