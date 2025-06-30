@@ -16,6 +16,8 @@ export async function createNhisEnrolleeModel(data) {
   // PROVIDER ADDRESS FROM NHIA IS EMPTY
   //const trimWhiteSpaceInProviderAddress = data.provider_Address.toLowerCase().trim();
   const trimWhiteSpaceInDob = data.dob.trim();
+  const [day, month, year] = trimWhiteSpaceInDob.split('/');
+  const date = new Date(`${year}-${month}-${day}`);
 
 
   const createNhiaEntrollee = {
@@ -24,7 +26,7 @@ export async function createNhisEnrolleeModel(data) {
     relationship: trimWhiteSpaceInRelationship,
     surname: trimWhiteSpaceInSurname,
     other_names: trimWhiteSpaceInOtherNames,
-    dob: trimWhiteSpaceInDob,
+    dob: date,
     sex: trimWhiteSpaceInSex,
     company_id: data.company_id,
     provider_id: data.provider_id,
@@ -33,7 +35,7 @@ export async function createNhisEnrolleeModel(data) {
     created_by: data.user_id
   }
 
-  
+
   return await db("nhis_enrollee").insert(createNhiaEntrollee);
 }
 
