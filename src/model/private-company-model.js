@@ -9,7 +9,7 @@ export async function createPrivateCompanyModel(data) {
         id: uuidv4(),
         company_name: data.company_name,
         business_type: data.business_type,
-        company_headquarters: data.company_headquaters,
+        company_headquarters: data.company_headquarters,
         primary_contact_position: data.primary_contact_position,
         primary_contact_email: data.primary_contact_email,
         primary_contact_phonenumber: data.primary_contact_phonenumber,
@@ -23,6 +23,8 @@ export async function createPrivateCompanyModel(data) {
     }
 
     const new_client= await db("client").insert(createPrivateCompany).returning('*');
+
+    //TO SAVE THE ARRAY OF PLAN ID's
      await Promise.all(
     data.health_plan_id.map((planId) => {
       return db("client_linked_health_plans").insert({
@@ -49,22 +51,51 @@ export async function getAllPrivateCompany() {
                 'client.number_of_enrollees',
                 'client.is_active',
                 db.raw(`"user"."id" as "user_id"`),
-                db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "enrolled_by"`)
+                db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "enrolled_by"`),
+                db.raw(`"client"."linked_to_user" as "profile_id"`),
+                db.raw(`COALESCE(json_agg(
+                    DISTINCT jsonb_build_object(
+                      'id', health_plan.id,
+                      'plan_name', health_plan.plan_name
+                    )
+                  ) FILTER (WHERE health_plan.id IS NOT NULL), '[]') as linked_plans`),
             )
+            .leftJoin('client_linked_health_plans', 'client_linked_health_plans.client_id', '=', 'client.id')
+            .leftJoin('health_plan', 'health_plan.id', '=', 'client_linked_health_plans.health_plan_id')
             .innerJoin('user', 'user.id', '=', 'client.enrolled_by')
             .orderBy("client.company_name", `asc`)
+            .groupBy(
+              'client.id',
+              'user.id',
+              'user.first_name',
+              'user.last_name'
+            )
 
             const enrichedResult =await Promise.all(
-             result.map(async(enr) => {
+             result.map(async(client) => {
 
               const countResult = await db('enrollee')
-               .where('enrollee.company_id', enr.id)
+               .where('enrollee.company_id', client.id)
                .count();
 
+               // GET DOCUMENTS ATTACHED TO THE CLIENT
+              const documents = await db('documents')
+                 .select(
+                     'documents.id',
+                     'documents.name',
+                     'documents.url',
+                     'documents.doc_type',
+                     'documents.created_at',
+                     db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "created_by"`)
+                 )
+                 .where('documents.user_id', client.profile_id)
+                 .leftJoin('user', 'user.id', '=', 'documents.created_by')
+                 .orderBy('documents.created_at', 'desc');
+
                return {
-                 ...enr,
+                 ...client,
+                 documents,
                  count: parseInt(countResult[0].count, 10) ,// convert from string to number
-                 number_of_enrollees: parseInt(enr.number_of_enrollees),
                };
              }))
 
@@ -110,14 +141,27 @@ export async function getPrivateCompanyByIdModel(id) {
                 db.raw(`"user"."id" as "user_id"`),
                 db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "enrolled_by"`),
                 db.raw(`"client"."linked_to_user" as "profile_id"`),
+                db.raw(`COALESCE(json_agg(
+                    DISTINCT jsonb_build_object(
+                      'id', health_plan.id,
+                      'plan_name', health_plan.plan_name
+                    )
+                  ) FILTER (WHERE health_plan.id IS NOT NULL), '[]') as linked_plans`),
             ).where('client.id',id)
-            .innerJoin('user', 'user.id', '=', 'client.enrolled_by').first();
+             .leftJoin('client_linked_health_plans', 'client_linked_health_plans.client_id', '=', 'client.id')
+             .leftJoin('health_plan', 'health_plan.id', '=', 'client_linked_health_plans.health_plan_id')
+             .innerJoin('user', 'user.id', '=', 'client.enrolled_by')
+             .groupBy(
+              'client.id',
+              'user.id',
+              'user.first_name',
+              'user.last_name'
+            ).first();
              if (!client) {
             throw new Error('Client not found');
         }
-        console.log(client)
 
-
+          // GET DOCUMENTS ATTACHED TO THE CLIENT
            const documents = await db('documents')
                  .select(
                      'documents.id',
