@@ -12,7 +12,13 @@ export async function createNhisEnrolleeService(data) {
         throw new EnrolleeExpection("NHIA enrollee details can not be empty", 400)
     }
 
-    return await createNhisEnrolleeModel(data)
+
+    const result = await createNhisEnrolleeModel(data)
+    if (result == 'NHIA Enrollee Already Exists !'){
+      throw new EnrolleeExpection('NHIA Enrollee Already Exists !', 409)
+    }else{
+      return result
+    }
 
 };
 

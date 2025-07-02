@@ -5,7 +5,6 @@ let db = knex(config[process.env.NODE_ENV || 'development']);
 
 // create nhia enrollee
 export async function createNhisEnrolleeModel(data) {
-  console.log('data',data)
 
   const trimWhiteSpaceInSex = data.sex.toLowerCase().trim();
   const trimWhiteSpaceInPolicy_id = data.policy_id.toLowerCase().trim();
@@ -18,6 +17,11 @@ export async function createNhisEnrolleeModel(data) {
   const trimWhiteSpaceInDob = data.dob.trim();
   const [day, month, year] = trimWhiteSpaceInDob.split('/');
   const date = new Date(`${year}-${month}-${day}`);
+
+  const doesPolicyIdAndDobExist = await db('nhis_enrollee')
+                                  .where('policy_id',trimWhiteSpaceInPolicy_id)
+                                  .andWhere('dob',date).select('id')
+                                  .first();
 
 
   const createNhiaEntrollee = {
@@ -36,7 +40,13 @@ export async function createNhisEnrolleeModel(data) {
   }
 
 
-  return await db("nhis_enrollee").insert(createNhiaEntrollee);
+  if (doesPolicyIdAndDobExist){
+      return 'NHIA Enrollee Already Exists !'
+  }else {
+     return await db("nhis_enrollee").insert(createNhiaEntrollee);
+
+  }
+
 }
 
 //get all nhis enrollee and can search
