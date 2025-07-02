@@ -21,11 +21,11 @@ router.post('/provider/create', auth, async (req, res, next) => {
 
     try {
 
-        const data = req.body
+        const data = req.bodyR
 
         let result = await createProvider(data)
         if (result == 'provider already exists!'){
-          throw new Exception("provider already exists", 422)
+          throw new Exception("provider already exists", 409)
         }
 
         if (!result) {
