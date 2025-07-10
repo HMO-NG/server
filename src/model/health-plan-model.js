@@ -368,3 +368,19 @@ return await db('health_plan').where('id', id).update(disableHealthPlan)
 export async function getHealthPlanIdByNameModel(plan_name) {
     return await db("health_plan").select('health_plan.id').where('plan_name', plan_name)
 }
+
+export async function updateHealthPlanCategoryModel(id,data){
+  try{
+    const category_data={
+      name:data.name,
+      is_active:data.is_active,
+      description:data.description,
+      band:data.band,
+    }
+   return await db("health_plan_category").where('id',id).update(category_data)
+
+
+  }catch(error){
+      console.error(error)
+  }
+}
