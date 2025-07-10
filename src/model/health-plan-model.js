@@ -126,6 +126,7 @@ export async function getAndSearchHealthPlanCategoryModel(data) {
                 .select(
                     'health_plan_category.id',
                     'health_plan_category.name',
+                    'health_plan_category.description',
                     'health_plan_category.is_active',
                     'health_plan_category.health_plan_code',
                     'health_plan_category.band',
@@ -149,6 +150,7 @@ export async function getAndSearchHealthPlanCategoryModel(data) {
                 .select(
                     'health_plan_category.id',
                     'health_plan_category.name',
+                    'health_plan_category.description',
                     'health_plan_category.is_active',
                     'health_plan_category.health_plan_code',
                     'health_plan_category.band',
