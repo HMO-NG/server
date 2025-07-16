@@ -7,6 +7,7 @@ export async function up (knex) {
     table.string('id').primary();
     table.string('client_id').notNullable();
     table.string('health_plan_id').notNullable();
+    table.unique(['client_id', 'health_plan_id']);
 
     table.timestamps(true, true); // Adds created_at and updated_at
 
