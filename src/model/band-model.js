@@ -40,6 +40,7 @@ export async function getBandByIdModel(id) {
         'bands.name',
         'bands.description',
         'bands.is_active',
+        'bands.created_at',
         db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "created_by"`)
       ).where('bands.id', id)
        .innerJoin('user', 'user.id', '=', 'bands.created_by')
@@ -55,6 +56,7 @@ export async function getAllBandsdModel() {
         'bands.name',
         'bands.description',
         'bands.is_active',
+        'bands.created_at',
         db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "created_by"`)
 
       ).innerJoin('user', 'user.id', '=', 'bands.created_by')
