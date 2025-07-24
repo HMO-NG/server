@@ -29,7 +29,7 @@ export async function createHealthPlanCategoryService(data) {
     // generate code
     const code = await generateUniqueHealthPlanCategoryCode(5)
 
-    const removeWhiteSpaceFromBandName = data.band.replace(/\s+/g, '')
+    const removeWhiteSpaceFromBandName = data.band_name.replace(/\s+/g, '')
 
     data.health_plan_code = `${removeWhiteSpaceFromBandName}/${code}`;
 
