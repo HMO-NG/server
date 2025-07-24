@@ -9,7 +9,6 @@ export async function up(knex) {
         table.boolean('is_active').defaultTo(1);
         table.string('health_plan_code', 64);
         table.text('description');
-        table.string('band',64);
         table.string('created_by').notNullable();
         table.timestamp('created_at').notNullable().defaultTo(knex.fn.now())
     })
