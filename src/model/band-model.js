@@ -41,9 +41,24 @@ export async function getBandByIdModel(id) {
         'bands.description',
         'bands.is_active',
         'bands.created_at',
-        db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "created_by"`)
+        db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "created_by"`),
+        db.raw(`COALESCE(json_agg(
+              DISTINCT jsonb_build_object(
+                'id',health_plan_category.id,
+                'name', health_plan_category.name
+              )
+          ) FILTER (WHERE health_plan_category.id IS NOT NULL), '[]') as linked_categories`),
+        db.raw(`COALESCE(json_agg(
+              DISTINCT jsonb_build_object(
+                'id',provider.id,
+                'name', provider.name
+              )
+          ) FILTER (WHERE provider.id IS NOT NULL), '[]') as linked_providers`)
       ).where('bands.id', id)
        .innerJoin('user', 'user.id', '=', 'bands.created_by')
+       .leftJoin('health_plan_category', 'health_plan_category.band_id', '=', 'bands.id')
+       .leftJoin('provider', 'provider.band_id', '=', 'bands.id')
+        .groupBy('bands.id', 'user.first_name', 'user.last_name',)
        .first()
   } catch (error) {
       console.error(error)
