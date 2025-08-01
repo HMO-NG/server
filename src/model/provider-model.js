@@ -19,13 +19,21 @@ export async function createProviderModel(providerDetails) {
             state: providerDetails.state,
             medical_director_name: providerDetails.medical_director_name,
             medical_director_phone_no: providerDetails.medical_director_phone_no,
-            created_by: providerDetails.user_id
+            created_by: providerDetails.user_id,
         }
 
         if (await DoesDataExist('provider','name',providerDetails.name)) {
           return 'provider already exists!';
         }else{
-          await db("provider").insert(data);
+          const new_provider =await db("provider").insert(data).returning('*');
+               await Promise.all(
+              providerDetails.band_id.map((bandId) => {
+                return db("provider_linked_bands").insert({
+                  id: uuidv4(),
+                  provider_id: new_provider[0].id,
+                  band_id: bandId,
+              });
+              }))
 
           return data
         }
