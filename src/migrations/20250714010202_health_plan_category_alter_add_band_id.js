@@ -3,8 +3,8 @@
  * @returns { Promise<void> }
  */
 export async function up(knex) {
-    await knex.schema.alterTable('health_plan_category', table => {
-           table.string('band_id').unsigned().references('id').inTable('bands').onDelete('SET NULL');
+    await knex.schema.alterTable('health_plan', table => {
+           table.string('band_id').references('id').inTable('bands').onDelete('CASCADE');
 
     });
 }
@@ -14,7 +14,7 @@ export async function up(knex) {
  * @returns { Promise<void> }
  */
 export async function down(knex) {
-    return knex.schema.alterTable('health_plan_category', (table) => {
+    return knex.schema.alterTable('health_plan', (table) => {
         table.dropColumn('band_id')
     });
 }
