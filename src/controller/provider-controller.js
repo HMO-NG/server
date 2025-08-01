@@ -21,7 +21,7 @@ router.post('/provider/create', auth, async (req, res, next) => {
 
     try {
 
-        const data = req.bodyR
+        const data = req.body;
 
         let result = await createProvider(data)
         if (result == 'provider already exists!'){
