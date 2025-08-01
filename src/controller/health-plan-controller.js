@@ -15,7 +15,8 @@ import {
   updateAttachedBenefitService,
   deleteAttachedBenefitService,
   updateHealthPlanService,
-  changeHealthPlanStatusService
+  changeHealthPlanStatusService,
+  updateHealthPlanCategoryService
 } from '../service/health-plan-service.js';
 import Exception from "../util/exception.js";
 
@@ -380,5 +381,26 @@ router.put('/healthplan/change-status/:id', auth, async (req, res, next) => {
     }
 
 });
+router.patch('/healthplan/category/update/:id',auth,async(req,res,next)=>{
+  try{
+    const data=req.body;
+    const {id} =req.params;
+
+    const response=updateHealthPlanCategoryService(id,data);
+
+    if (response){
+      res.status(200).json({
+        message:'health plan category has been updated sucessfully'
+      })
+    }
+
+
+  }catch (error) {
+         console.log(error)
+         next(error)
+
+  }
+
+})
 
 export default router;

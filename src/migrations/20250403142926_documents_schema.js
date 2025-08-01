@@ -7,6 +7,7 @@ export async function up (knex) {
     table.string('id').primary();
     table.string('name').notNullable();
     table.string('url').notNullable();
+    table.string('doc_type').notNullable(); // e.g., 'pdf', 'image', 'text'
     table.string('user_type').notNullable();
     table.string('user_id').notNullable();
     table.string('created_by').notNullable();

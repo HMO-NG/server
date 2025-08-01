@@ -14,6 +14,7 @@ export async function up(knex) {
         table.boolean('disabled_plan').defaultTo(0);
         table.timestamp('created_at').notNullable().defaultTo(knex.fn.now())
         table.string('plan_category', 36).notNullable();
+        table.boolean('available_to_all_providers').defaultTo(false)
         table.string('created_by', 36).notNullable();
     })
 }

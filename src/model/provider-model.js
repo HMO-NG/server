@@ -176,24 +176,40 @@ export async function getAllNhisProviderModel(data) {
 }
 //Create PROVIDER TARIFF
 export async function CreateProviderTariffModel(data) {
+  try{
   const tariff={
     id:uuidv4(),
     item_name:data.item_name,
     item_price:data.item_price,
     provider_id:data.provider_id,
-    insurance_plan_id:data.insurance_plan_id,
     hcpcs_code:data.hcpcs_code,
     tariff_type:data.tariff_type,
     is_surgical:data.is_surgical,
     patient_type:data.patient_type,
     category:data.category,
+    available_to_all_plans:data.available_to_all_plans,
+    service_type:data.service_type,
     created_by:data.created_by
   }
 
   if (await DoesDataExist('provider_tariff','item_name',data.item_name)) {
     return 'provider tariff already exists!';
   }else{
-    return await db('provider_tariff').insert(tariff)
+    const new_tariff= await db('provider_tariff').insert(tariff).returning('id');
+    if (data.insurance_plan_id && data.available_to_all_plans === false) {
+        await Promise.all(
+            data.insurance_plan_id.map((planId) => {
+              return db("tariff_linked_health_plans").insert({
+                id: uuidv4(),
+                tariff_id: new_tariff[0].id,
+                health_plan_id: planId,
+            });
+        }))
+    }
+        return new_tariff
+  }
+   }catch(error){
+    console.error("Error updating provider tariff:", error);
   }
 
 
@@ -213,13 +229,27 @@ export async function getProviderTariffByIdModel(id) {
     'provider_tariff.patient_type',
     'provider_tariff.category',
     db.raw(`"provider"."name" as "provider_name"`),
-    db.raw(`"health_plan"."plan_name" as "insurance_plan_id"`),
-    db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "created_by"`)
+    db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "created_by"`),
+    'provider_tariff.service_type',
+    db.raw(`COALESCE(json_agg(
+      DISTINCT jsonb_build_object(
+        'id', health_plan.id,
+        'plan_name', health_plan.plan_name
+      )
+    ) FILTER (WHERE health_plan.id IS NOT NULL), '[]') as linked_plans`),
+     'provider_tariff.available_to_all_plans',
 
 ).where('provider_tariff.provider_id',id)
-.innerJoin('user', 'user.id', '=', 'provider_tariff.created_by')
-.leftJoin("provider","provider.id", '=' , "provider_tariff.provider_id")
-.leftJoin("health_plan","health_plan.id", '=' , "provider_tariff.insurance_plan_id")
+  .innerJoin('user', 'user.id', '=', 'provider_tariff.created_by')
+  .leftJoin("provider","provider.id", '=' , "provider_tariff.provider_id")
+  .leftJoin('tariff_linked_health_plans', 'tariff_linked_health_plans.tariff_id', '=', 'provider_tariff.id')
+  .leftJoin('health_plan', 'health_plan.id', '=', 'tariff_linked_health_plans.health_plan_id')
+  .groupBy(
+      'provider_tariff.id',
+      'provider.name',
+      'user.first_name',
+      'user.last_name'
+    );
 let count =await db('provider_tariff').where('provider_tariff.provider_id',id).count()
 
   return {result,count}
@@ -241,14 +271,29 @@ export async function getAllProviderTariffModel() {
       'provider_tariff.patient_type',
       'provider_tariff.category',
       db.raw(`"provider"."name" as "provider_name"`),
-      db.raw(`"health_plan"."plan_name" as "insurance_plan_id"`),
-      db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "created_by"`)
+      db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "created_by"`),
+      'provider_tariff.service_type',
+      db.raw(`COALESCE(json_agg(
+      DISTINCT jsonb_build_object(
+        'id', health_plan.id,
+        'plan_name', health_plan.plan_name
+      )
+    ) FILTER (WHERE health_plan.id IS NOT NULL), '[]') as linked_plans`),
+     'provider_tariff.available_to_all_plans',
 
   )
   .innerJoin('user', 'user.id', '=', 'provider_tariff.created_by')
   .leftJoin("provider","provider.id", '=' , "provider_tariff.provider_id")
-  .innerJoin("health_plan","health_plan.id", '=' , "provider_tariff.insurance_plan_id")
-return result
+  .leftJoin('tariff_linked_health_plans', 'tariff_linked_health_plans.tariff_id', '=', 'provider_tariff.id')
+  .leftJoin('health_plan', 'health_plan.id', '=', 'tariff_linked_health_plans.health_plan_id')
+  .groupBy(
+      'provider_tariff.id',
+      'provider.name',
+      'user.first_name',
+      'user.last_name'
+    );
+
+ return result
 
   } catch (error) {
     console.error("Error fetching tariff", error);
@@ -269,13 +314,28 @@ export async function getSingleProviderTariffByIdModel(id) {
     'provider_tariff.patient_type',
     'provider_tariff.category',
     db.raw(`"provider"."name" as "provider_name"`),
-    db.raw(`"health_plan"."plan_name" as "insurance_plan_id"`),
-    db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "created_by"`)
+    db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "created_by"`),
+    'provider_tariff.service_type',
+    db.raw(`COALESCE(json_agg(
+      DISTINCT jsonb_build_object(
+        'id', health_plan.id,
+        'plan_name', health_plan.plan_name
+      )
+    ) FILTER (WHERE health_plan.id IS NOT NULL), '[]') as linked_plans`),
+    'provider_tariff.available_to_all_plans',
+
 
 ).where('provider_tariff.id',id)
-.innerJoin('user', 'user.id', '=', 'provider_tariff.created_by')
-.leftJoin("provider","provider.id", '=' , "provider_tariff.provider_id")
-.innerJoin("health_plan","health_plan.id", '=' , "provider_tariff.insurance_plan_id")
+  .innerJoin('user', 'user.id', '=', 'provider_tariff.created_by')
+  .leftJoin("provider","provider.id", '=' , "provider_tariff.provider_id")
+  .leftJoin('tariff_linked_health_plans', 'tariff_linked_health_plans.tariff_id', '=', 'provider_tariff.id')
+  .leftJoin('health_plan', 'health_plan.id', '=', 'tariff_linked_health_plans.health_plan_id')
+  .groupBy(
+      'provider_tariff.id',
+      'provider.name',
+      'user.first_name',
+      'user.last_name'
+    );
   return result
   } catch (error) {
     console.error("Error fetching private service tariff by ID:", error);
@@ -289,11 +349,13 @@ export async function UpdateProviderTariffModel(id,data) {
     item_name:data.item_name,
     item_price:data.item_price,
     provider_id:data.provider_id,
-    insurance_plan_id:data.insurance_plan,
+    // insurance_plan_id:data.insurance_plan,
     hcpcs_code:data.hcpcs_code,
     tariff_type:data.tariff_type,
     is_surgical:data.is_surgical,
     patient_type:data.patient_type,
+    available_to_all_plans:data.available_to_all_plans,
+    service_type:data.service_type,
     category:data.category,
   }
   return await db('provider_tariff').where('id', id).update(tariff)
@@ -328,14 +390,16 @@ export async function getAllPreAuthorizationModel() {
     'pre_authorization.diagnosis',
     'pre_authorization.pa_code',
     'pre_authorization.enrollee_id',
-    db.raw(`"enrollee"."health_plan_id" as "enrolee_plan"`),
-    db.raw(`"health_plan"."plan_name" as "enrolee_plan_name"`),
+    db.raw(`"enrollee"."health_plan_id" as "enrollee_plan"`),
+    db.raw(`"health_plan"."plan_name" as "enrollee_plan_name"`),
     db.raw(`concat("enrollee"."first_name" , \' \', "enrollee"."middle_name", \' \', "enrollee"."last_name") as "enrollee_name"`),
     'pre_authorization.selected_tariffs',
     'pre_authorization.status',
     db.raw(`"provider"."name" as "provider_name"`),
     db.raw(`"provider"."code" as "provider_code"`),
+    'pre_authorization.provider_id',
     'pre_authorization.provider_comment',
+    'pre_authorization.is_claimed',
     db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "created_by"`),
     'pre_authorization.created_at',
 
@@ -370,6 +434,7 @@ export async function getPreAuthorizationByProviderIdModel(id) {
     db.raw(`"provider"."name" as "provider_name"`),
     db.raw(`"provider"."code" as "provider_code"`),
     'pre_authorization.provider_comment',
+    'pre_authorization.is_claimed',
     db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "created_by"`),
     'pre_authorization.created_at',
 
@@ -397,14 +462,16 @@ export async function getSinglePreAuthorizationByIdModel(id) {
     'pre_authorization.diagnosis',
     'pre_authorization.pa_code',
     'pre_authorization.enrollee_id',
-    db.raw(`"enrollee"."health_plan_id" as "enrolee_plan"`),
-    db.raw(`"health_plan"."plan_name" as "enrolee_plan_name"`),
+    db.raw(`"enrollee"."health_plan_id" as "enrollee_plan"`),
+    db.raw(`"health_plan"."plan_name" as "enrollee_plan_name"`),
     db.raw(`concat("enrollee"."first_name" , \' \', "enrollee"."middle_name", \' \', "enrollee"."last_name") as "enrollee_name"`),
     'pre_authorization.selected_tariffs',
     'pre_authorization.status',
     db.raw(`"provider"."name" as "provider_name"`),
     db.raw(`"provider"."code" as "provider_code"`),
+    'pre_authorization.provider_id',
     'pre_authorization.provider_comment',
+    'pre_authorization.is_claimed',
     db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "created_by"`),
     'pre_authorization.created_at',
 
@@ -414,7 +481,7 @@ export async function getSinglePreAuthorizationByIdModel(id) {
 .leftJoin('health_plan', 'enrollee.health_plan_id', '=', 'health_plan.id')
 .leftJoin("provider","provider.id", '=' , "pre_authorization.provider_id")
 
-  return result
+  return result[0]
   } catch (error) {
     console.error("Error fetching Pre Authorization", error);
     throw error;
@@ -479,4 +546,21 @@ export async function getPATariffAndDiagnosisByCodeModel(PA_code) {
     console.error("Error fetching pre_authorization", error);
     throw error;
   }
+}
+
+export async function updatePreAuthorizationByPACodeModel(PA_code,data) {
+  const updatedData = {
+    requested_total_price:data.requested_total_price,
+    approved_price:data.approved_price,
+    diagnosis:data.diagnosis,
+    pa_code:data.pa_code,
+    selected_tariffs:data.selected_tariffs,
+    status:data.status,
+    provider_comment:data.provider_comment,
+    approved_date:data.approved_date,
+    denial_reason:data.denial_reason,
+    is_claimed:data.is_claimed,
+  }
+
+  return await db('pre_authorization').where('pa_code', PA_code).update(updatedData)
 }

@@ -6,21 +6,47 @@ let db = knex(config[process.env.NODE_ENV || 'development']);
 // create nhia enrollee
 export async function createNhisEnrolleeModel(data) {
 
+  const trimWhiteSpaceInSex = data.sex.toLowerCase().trim();
+  const trimWhiteSpaceInPolicy_id = data.policy_id.toLowerCase().trim();
+  const trimWhiteSpaceInRelationship = data.relationship.toLowerCase().trim();
+  const trimWhiteSpaceInSurname = data.surname.toLowerCase().trim();
+  const trimWhiteSpaceInOtherNames = data.other_names.toLowerCase().trim();
+  const trimWhiteSpaceInProviderName = data.provider_name.toLowerCase().trim();
+  // PROVIDER ADDRESS FROM NHIA IS EMPTY
+  //const trimWhiteSpaceInProviderAddress = data.provider_Address.toLowerCase().trim();
+  const trimWhiteSpaceInDob = data.dob.trim();
+  const [day, month, year] = trimWhiteSpaceInDob.split('/');
+  const date = new Date(`${year}-${month}-${day}`);
+
+  const doesPolicyIdAndDobExist = await db('nhis_enrollee')
+                                  .where('policy_id',trimWhiteSpaceInPolicy_id)
+                                  .andWhere('dob',date).select('id')
+                                  .first();
+
+
   const createNhiaEntrollee = {
     id: uuidv4(),
-    policy_id: data.policy_id,
-    relationship: data.relationship,
-    surname: data.surname,
-    other_names: data.other_names,
-    dob: data.dob,
-    sex: data.sex,
+    policy_id: trimWhiteSpaceInPolicy_id,
+    relationship: trimWhiteSpaceInRelationship,
+    surname: trimWhiteSpaceInSurname,
+    other_names: trimWhiteSpaceInOtherNames,
+    dob: date,
+    sex: trimWhiteSpaceInSex,
     company_id: data.company_id,
     provider_id: data.provider_id,
-    provider_name: data.provider_name,
+    provider_name: trimWhiteSpaceInProviderName,
     provider_Address: data.provider_Address,
     created_by: data.user_id
   }
-  return await db("nhis_enrollee").insert(createNhiaEntrollee);
+
+
+  if (doesPolicyIdAndDobExist){
+      return 'NHIA Enrollee Already Exists !'
+  }else {
+     return await db("nhis_enrollee").insert(createNhiaEntrollee);
+
+  }
+
 }
 
 //get all nhis enrollee and can search
@@ -150,3 +176,5 @@ export async function checkIfNhiaIdIsLinked(data) {
 
   return await db('nhis_enrollee').select('linked_to_user').where('linked_to_user', data.userid)
 }
+
+

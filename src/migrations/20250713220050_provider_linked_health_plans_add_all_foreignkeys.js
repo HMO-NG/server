@@ -3,9 +3,9 @@
  * @returns { Promise<void> }
  */
 export async function up(knex) {
-  await knex.schema.table('provider_tariff', table => {
+  await knex.schema.table('provider_linked_health_plans', table => {
     table.foreign('provider_id').references('provider.id').onDelete('CASCADE');
-    table.foreign('created_by').references('user.id').onDelete('CASCADE');
+    table.foreign('health_plan_id').references('health_plan.id').onDelete('CASCADE');
 
   });
 }
@@ -15,9 +15,9 @@ export async function up(knex) {
 * @returns { Promise<void> }
 */
 export async function down(knex) {
-  await knex.schema.table('provider_tariff',table =>{
+  await knex.schema.table('provider_linked_health_plans',table =>{
       table.dropForeign('provider_id');
-      table.dropForeign('created_by');
+      table.dropForeign('health_plan_id');
+
   });
 }
-

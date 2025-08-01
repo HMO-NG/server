@@ -9,8 +9,9 @@ import privateCompany from './controller/private-company-controller.js';
 import privateEnrollees from './controller/private-enrollees-controller.js';
 import docs from './controller/document-controller.js'
 import privateClaims from './controller/private-claims-controller.js';
+import bands from './controller/band-controller.js';
 
-const router = [provider, auth, healthPlan, nhisService, nhisEnrollee, getHealthCheck, forms,privateCompany,privateEnrollees,docs,privateClaims];
+const router = [provider, auth, healthPlan, nhisService, nhisEnrollee, getHealthCheck, forms,privateCompany,privateEnrollees,docs,privateClaims,bands];
 
 export default router;
 

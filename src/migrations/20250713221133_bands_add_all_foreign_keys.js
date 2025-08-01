@@ -3,9 +3,8 @@
  * @returns { Promise<void> }
  */
 export async function up(knex) {
-  await knex.schema.table('documents', table => {
-    table.foreign('user_id').references('user.id').onDelete('CASCADE');
-
+  await knex.schema.table('bands', table => {
+    table.foreign('created_by').references('user.id').onDelete('CASCADE');
   });
 }
 
@@ -14,7 +13,7 @@ export async function up(knex) {
 * @returns { Promise<void> }
 */
 export async function down(knex) {
-  await knex.schema.table('documents',table =>{
-      table.dropForeign('user_id')
+  await knex.schema.table('bands',table =>{
+      table.dropForeign('created_by');
   });
 }

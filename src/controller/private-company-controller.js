@@ -2,7 +2,10 @@ import express, { json } from 'express'
 import { auth ,verifyUserToken, verifyPermission } from '../middleware/auth-middleware.js';
 import {
   createPrivateCompanyService,
-  getAllPrivateCompanyService,changePrivateCompanyStatusService,updateClientService,
+  getAllPrivateCompanyService,
+  changePrivateCompanyStatusService,
+  updateClientService,
+  getPrivateCompanyByIdService,
 } from '../service/private-company-service.js';
 import Exception from '../util/exception.js';
 import generatePassword from '../util/generate-enrollee-password.js';
@@ -28,6 +31,7 @@ router.post('/privates/company/create', async (req, res, next) => {
 
         }
         const create_acc =await createPrivateAccount(user_data,next)
+        data.linked_to_user=create_acc.id;
 
         let result = await createPrivateCompanyService(data)
         let mainBody=`welcome to hci healthcare ${data.company_name}, these are your login details email: ${data.email} password: ${generated_password}`;
@@ -116,6 +120,26 @@ router.put('/privates/company/update/:id', async (req, res, next) => {
       console.log(error)
       next(error)
   }
+});
+
+router.get('/privates/company/get/:id', async (req, res, next) => {
+    try {
+      const {id} =req.params;
+
+        let result = await getPrivateCompanyByIdService(id)
+
+          if (!result) {
+            throw new Exception("encountered an issue", 400)
+        }
+
+        res.status(200).json({
+            message: `sucessfully fetched company details`,
+            data:result
+        })
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
 });
 
 

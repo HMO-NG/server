@@ -6,6 +6,7 @@ import {
     getAllProviderTariffService,getSingleProviderTariffByIdService,
     CreatePreAuthorizationService,getAllPreAuthorizationService,getPreAuthorizationByProviderIdService,
     getSinglePreAuthorizationByIdService,updatePreAuthorizationByIdService,getPATariffAndDiagnosisByCodeService,
+    updatePreAuthorizationByPACodeService,
 } from '../service/provider-service.js';
 import Exception from '../util/exception.js';
 import { auth, verifyUserToken, verifyPermission } from '../middleware/auth-middleware.js';
@@ -20,11 +21,11 @@ router.post('/provider/create', auth, async (req, res, next) => {
 
     try {
 
-        const data = req.body
+        const data = req.bodyR
 
         let result = await createProvider(data)
         if (result == 'provider already exists!'){
-          throw new Exception("provider already exists", 422)
+          throw new Exception("provider already exists", 409)
         }
 
         if (!result) {
@@ -311,7 +312,30 @@ router.get('/preauthorization/getall', async (req, res, next) => {
       if (result) {
           res.status(200).json({
               message: "List of all preauthorization requests",
-              data:result
+              data : result.map(PA=> ({
+                        id: PA.id,
+                        diagnosis: PA.diagnosis,
+                        selected_tariffs: PA.selected_tariffs,
+                        approved_price: PA.approved_price,
+                        requested_total_price: PA.requested_total_price,
+                        provider_comment: PA.provider_comment,
+                        pa_code: PA.pa_code,
+                        status: PA.status,
+                        is_claimed: PA.is_claimed,
+                        created_at: PA.created_at,
+                        created_by: PA.created_by,
+                        enrollee: {
+                          id: PA.enrollee_id,
+                          name: PA.enrollee_name,
+                          plan_name: PA.enrollee_plan_name,
+                        },
+
+                         provider: {
+                          id: PA.provider_id,
+                          name: PA.provider_name,
+                          code: PA.provider_code,
+                        },
+              }))
           })
       }
 
@@ -354,14 +378,37 @@ router.get('/preauthorization/:id', async (req, res, next) => {
        if (!result) {
                   throw new Exception("encountered an issue", 400)
         }
-        const date = new Date(result[0].created_at);
+        const date = new Date(result.created_at);
         const formattedDate = date.toLocaleDateString();
-        result[0].created_at = formattedDate;
+        result.created_at = formattedDate;
 
       if (result) {
           res.status(200).json({
               message: `successfully gotten PA Request`,
-              data:result[0]
+              data:{
+                id:result.id,
+                diagnosis:result.diagnosis,
+                selected_tariffs:result.selected_tariffs,
+                approved_price:result.approved_price,
+                requested_total_price:result.requested_total_price,
+                provider_comment: result.provider_comment,
+                pa_code: result.pa_code,
+                status: result.status,
+                created_at: result.created_at,
+                created_by: result.created_by,
+                enrollee: {
+                          id: result.enrollee_id,
+                          name: result.enrollee_name,
+                          plan_name: result.enrollee_plan_name,
+                        },
+
+                 provider: {
+                          id: result.provider_id,
+                          name: result.provider_name,
+                          code: result.provider_code,
+                        },
+
+              }
           })
       }
 
@@ -413,6 +460,7 @@ router.get('/preauthorization/get/pa/code/:PA_code', async (req, res, next) => {
                 selected_tariffs:result.selected_tariffs,
                 approved_price:result.approved_price,
                 requested_total_price:result.requested_total_price,
+                is_claimed: result.is_claimed,
                 created_at: result.created_at,
                 created_by: result.created_by,
                 enrollee: {
@@ -435,6 +483,29 @@ router.get('/preauthorization/get/pa/code/:PA_code', async (req, res, next) => {
       next(error)
   }
 
+});
+
+//UPDATE PRE AUTHORIZATION BY PA CODE
+router.put('/preauthorization/update/code/:PA_code', auth, async (req, res, next) => {
+
+  try {
+      const {PA_code} =req.params;
+      const data = req.body;
+
+      let result = await updatePreAuthorizationByPACodeService(PA_code,data)
+
+      if (!result) {
+          throw new Exception("encountered an issue while updating pre authoriation", 400)
+      }
+
+      res.status(200).json({
+          message: "Pre Authorization updated successfully",
+      })
+  } catch (error) {
+      console.log(error.status)
+      next(error)
+
+  }
 });
 
 export default router;

@@ -3,11 +3,11 @@
  * @returns { Promise<void> }
  */
 export async function up (knex) {
-  return knex.schema.createTable('client_linked_health_plans', table =>{
+  return knex.schema.createTable('provider_linked_health_plans', table =>{
     table.string('id').primary();
-    table.string('client_id').notNullable();
+    table.string('provider_id').notNullable();
     table.string('health_plan_id').notNullable();
-    table.unique(['client_id', 'health_plan_id']);
+    table.unique(['provider_id', 'health_plan_id']);
 
     table.timestamps(true, true); // Adds created_at and updated_at
 
@@ -20,5 +20,5 @@ export async function up (knex) {
  * @returns { Promise<void> }
  */
 export async function down(knex) {
-  await knex.schema.dropTable('client_linked_health_plans');
+  await knex.schema.dropTable('provider_linked_health_plans');
 }

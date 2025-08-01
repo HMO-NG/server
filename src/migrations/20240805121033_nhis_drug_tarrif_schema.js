@@ -6,6 +6,7 @@ export async function up(knex) {
     return knex.schema.createTable('nhis_drug_tarrif', table => {
         table.string('id').primary();
         table.string('name_of_drug',500).notNullable();
+        table.enum('service_type', ['primary', 'secondary','tertiary']).defaultTo('primary');
         table.string('dosage_form', 300);
         table.string('strength', 400);
         table.string('nhia_code', 30);

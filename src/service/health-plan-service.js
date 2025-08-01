@@ -13,7 +13,8 @@ import {
     updateAttachBenefitModel,
     deleteAttachBenefitModel,
     updateHealthPlanModel,
-    changeHealthPlanStatusModel
+    changeHealthPlanStatusModel,
+    updateHealthPlanCategoryModel,
 
 } from "../model/health-plan-model.js";
 import Exception from "../util/exception.js";
@@ -28,7 +29,7 @@ export async function createHealthPlanCategoryService(data) {
     // generate code
     const code = await generateUniqueHealthPlanCategoryCode(5)
 
-    const removeWhiteSpaceFromBandName = data.band.replace(/\s+/g, '')
+    const removeWhiteSpaceFromBandName = data.band_name.replace(/\s+/g, '')
 
     data.health_plan_code = `${removeWhiteSpaceFromBandName}/${code}`;
 
@@ -173,6 +174,17 @@ if (!data) {
     throw new HealthPlanServiceExpection("health plan data to be updated can not be empty", 404)
 }
   return changeHealthPlanStatusModel(id,data)
+}
+
+export async function updateHealthPlanCategoryService(id,data) {
+    if (!id) {
+        throw new HealthPlanServiceExpection("health plan Category ID can not be empty", 404)
+    }
+
+    if (!data) {
+        throw new HealthPlanServiceExpection("health plan Category data to be updated can not be empty", 404)
+    }
+    return updateHealthPlanCategoryModel(id,data)
 }
 
 class HealthPlanServiceExpection extends Exception {
