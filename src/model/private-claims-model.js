@@ -10,15 +10,9 @@ export async function CreatePrivateClaimModel(data) {
     claim_type: data.claim_type, // e.g., 'outpatient', 'inpatient'
     diagnosis: data.diagnosis,
     encounter_date: data.encounter_date,
-
     admitted_date: data.admitted_date,
     discharged_date: data.discharged_date,
-
-
-
     claimed_services: data.selected_tariffs ,
-    // date_submitted: new Date(),
-
     enrollee_id: data.enrollee_id,
     provider_id: data.provider_id,
     pre_auth_id: data.pre_auth_id || null,
@@ -120,12 +114,10 @@ export async function updateClaimByIdModel(id,data) {
     requested_total_price:data.requested_total_price,
     approved_amount:data.approved_amount,
     diagnosis:data.diagnosis,
-    // pa_code:data.pa_code,
     claimed_services:data.claimed_services,
     status:data.status,
     review_comment:data.provider_comment,
     approved_date:data.approved_date,
-    // denial_reason:data.denial_reason,
   }
 
   return await db('claims').where('id', id).update(updatedData)
