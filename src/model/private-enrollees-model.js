@@ -42,9 +42,18 @@ export async function getAllProviderNameAndIdModel() {
 
        let result = await db('provider')
             .select(
-                'provider.id',
-                'provider.name',
+                db.raw(`"provider"."id" as "value"`),
+                db.raw(`"provider"."name" as "label"`),
+                db.raw(`COALESCE(json_agg(
+                           DISTINCT jsonb_build_object(
+                             'id', bands.id,
+                             'band_name', bands.name
+                           )
+                    ) FILTER (WHERE bands.id IS NOT NULL), '[]') as linked_bands`),
             )
+            .leftJoin('provider_linked_bands', 'provider_linked_bands.provider_id', '=', "provider.id")
+            .leftJoin('bands', 'bands.id', '=', "provider_linked_bands.band_id")
+            .groupBy('provider.id', 'provider.name', )
             return result;
     } catch (error) {
         console.log(error)
@@ -97,7 +106,6 @@ export async function getPrivateEnrolleeByIdModel(id) {
          'enrollee_medical_data.past_surgeries',
          'enrollee_medical_data.family_medical_history'
   ).where('enrollee_medical_data.enrollee_id', id).first()
-  // const enrollee={enrollee_data}
   if (medical_data) {
   enrollee_data.medical_data=medical_data}
 
@@ -144,7 +152,6 @@ export async function updatePrivateEnrolleeByIdModel(id,data) {
     family_medical_history:data.family_medical_history
  }
 
-  // return await db('enrollee').where('id', id).update(updatePrivateEnrollee)
   const update_enrollee = await db('enrollee').where('id', id).update(updatePrivateEnrollee)
   const update_medical_data = await db('enrollee_medical_data').where('enrollee_id', id).update(updateMedicalData)
   if (update_enrollee && update_medical_data) {
@@ -159,31 +166,6 @@ export async function updatePrivateEnrolleeByIdModel(id,data) {
 
 export async function createPrivateEnrolleeDependantsModel(data,beneficiary_of,profile_id) {
 
-  // const createDependants = {
-  //     id: uuidv4(),
-  //     first_name:data.first_name,
-  //     last_name:data.last_name,
-  //     middle_name:data.middle_name,
-  //     email:data.email,
-  //     phone_number:data.phone_number,
-  //     passport_url:data.passport_url,
-  //     sex:data.sex,
-  //     dob:data.dob,
-  //     state:data.state,
-  //     city:data.city,
-  //     address:data.address,
-
-  //     blood_group:data.blood_group,
-  //     genotype:data.genotype,
-  //     disabilities:data.disabilities,
-  //     allergies:data.allergies,
-  //     pre_existing_conditions:data.pre_existing_conditions,
-  //     past_surgeries:data.past_surgeries,
-  //     family_medical_history:data.family_medical_history,
-  //     primary_enrollee_id:beneficiary_of,
-  //     is_active:data.is_active,
-  //     linked_to_user:profile_id
-  // }
     const createPrivateEnrollee = {
       id: uuidv4(),
       first_name:data.first_name,
@@ -213,7 +195,7 @@ export async function createPrivateEnrolleeDependantsModel(data,beneficiary_of,p
       enrolled_by:data.enrolled_by
   }
   let createMedical
-  const createEnrollee= await db("enrollee").insert(createPrivateEnrollee).returning(['id']);
+  const createEnrollee= await db("enrollee").insert(createPrivateEnrollee).returning(['id',"linked_to_user"]);
 
   if (createEnrollee){
     createMedical = await db("enrollee_medical_data").insert({
@@ -232,9 +214,7 @@ export async function createPrivateEnrolleeDependantsModel(data,beneficiary_of,p
 }
 
 
- // await db('enrollee').where('id', beneficiary_of).update({family_size:data.family_size})
   if(createEnrollee && createMedical) return createEnrollee
-  // return await db('enrollee').insert(createDependants)
 }
 
 export async function getAllPrivateEnrolleeModel() {
