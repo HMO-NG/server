@@ -71,10 +71,18 @@ export async function getAllProviderModel(data) {
                     'provider.created_at',
                     'provider.modified_at',
                     'provider.modified_at',
+                     db.raw(`COALESCE(json_agg(
+                           DISTINCT jsonb_build_object(
+                             'id', bands.id,
+                             'band_name', bands.name
+                           )
+                    ) FILTER (WHERE bands.id IS NOT NULL), '[]') as linked_bands`),
                     db.raw(`"user"."id" as "user_id"`),
                     db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "entered_by"`)
                 )
                 .innerJoin('user', 'user.id', '=', "provider.created_by")
+                .leftJoin('provider_linked_bands', 'provider_linked_bands.provider_id', '=', "provider.id")
+                .leftJoin('bands', 'bands.id', '=', "provider_linked_bands.band_id")
                 .whereILike('name', `%${data.query}%`)
                 .orWhereILike('state', `%${data.query}%`)
                 .orWhereILike('code', `%${data.query}%`)
@@ -83,6 +91,7 @@ export async function getAllProviderModel(data) {
                 .limit(`${data.pageSize}`)
                 .offset(`${(data.pageIndex - 1) * data.pageSize}`)
                 .orderBy(`${data.sort.key ? data.sort.key : "created_at"}`, `${data.sort.order}`)
+                .groupBy('provider.id', 'user.id','user.first_name', 'user.last_name')
 
 
             total = await db("provider").count()
@@ -103,13 +112,22 @@ export async function getAllProviderModel(data) {
                 'provider.modified_by',
                 'provider.created_at',
                 'provider.modified_at',
+                 db.raw(`COALESCE(json_agg(
+                           DISTINCT jsonb_build_object(
+                             'id', bands.id,
+                             'band_name', bands.name
+                           )
+                ) FILTER (WHERE bands.id IS NOT NULL), '[]') as linked_bands`),
                 db.raw(`"user"."id" as "user_id"`),
                 db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "entered_by"`)
               )
               .innerJoin('user', 'user.id', '=', "provider.created_by")
+              .leftJoin('provider_linked_bands', 'provider_linked_bands.provider_id', '=', "provider.id")
+              .leftJoin('bands', 'bands.id', '=', "provider_linked_bands.band_id")
               .limit(data.pageSize)
               .offset((data.pageIndex - 1) * data.pageSize)
               .orderBy(data.sort.key ? `provider.${data.sort.key}` : 'created_at', data.sort.order)
+              .groupBy('provider.id', 'user.id','user.first_name', 'user.last_name')
 
             total = await db("provider").count()
         }
