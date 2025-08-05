@@ -56,7 +56,8 @@ export async function getAllPrivateCompany() {
                 db.raw(`COALESCE(json_agg(
                     DISTINCT jsonb_build_object(
                       'id', health_plan.id,
-                      'plan_name', health_plan.plan_name
+                      'plan_name', health_plan.plan_name,
+                      'band_id', health_plan.band_id
                     )
                   ) FILTER (WHERE health_plan.id IS NOT NULL), '[]') as linked_plans`),
             )
