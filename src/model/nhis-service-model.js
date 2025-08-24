@@ -190,6 +190,79 @@ export async function createNhiaClaimModel(data) {
     }
 }
 
+export async function getNhiaClaimModel() {
+    try {
+        let result = await db('nhia_claim')
+            .select(
+                'nhia_claim.id',
+                'nhia_claim.nhia_enrollee_name',
+                'nhia_claim.nhia_enrollee_id',
+                'nhia_claim.referring_hcf',
+                'nhia_claim.recieving_hcf',
+                'nhia_claim.referral_code',
+                'nhia_claim.approval_date',
+                'nhia_claim.date_hmo_recieved_claim',
+                'nhia_claim.diagnosis',
+                'nhia_claim.items',
+                db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "created_by"`),
+                'nhia_claim.created_at',
+            )
+            .innerJoin('user', 'user.id', '=', "nhia_claim.created_by")
+            .orderBy('nhia_claim.created_at', 'desc')
+
+            let count = await db('nhia_claim').count();
+
+        return {result,count}
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export async function getNhiaClaimByIDModel(id) {
+    try {
+        let result = await db('nhia_claim')
+            .select(
+                'nhia_claim.id',
+                'nhia_claim.nhia_enrollee_name',
+                'nhia_claim.nhia_enrollee_id',
+                'nhia_claim.referring_hcf',
+                'nhia_claim.recieving_hcf',
+                'nhia_claim.referral_code',
+                'nhia_claim.approval_date',
+                'nhia_claim.date_hmo_recieved_claim',
+                'nhia_claim.diagnosis',
+                'nhia_claim.items',
+                db.raw(`concat("user"."first_name", \' \', "user"."last_name") as "created_by"`),
+                'nhia_claim.created_at',
+            ).where('nhia_claim.id',id)
+            .innerJoin('user', 'user.id', '=', "nhia_claim.created_by")
+            .orderBy('nhia_claim.created_at', 'desc').first()
+
+        return result
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export async function updateNhiaClaimModel(id,data){
+  try{
+    const claimData={
+        referral_code: data.referral_code,
+        approval_date: data.approval_date,
+        diagnosis: data.diagnosis,
+        items: JSON.stringify(data.items),
+        status: data.status,
+        requested_amount: data.requested_amount,
+        approved_amount: data.approved_amount,
+        comment: data.comment,
+    }
+    return await db('nhia_claim').update(claimData).where('id', id)
+
+  }catch(error){
+    console.error(error)
+  }
+
+}
 
 // export async function getHealthPlanCodeModel(code) {
 //     return await db("health_plan").where('health_plan_code', code)
