@@ -18,10 +18,26 @@ export async function createNhisEnrolleeModel(data) {
   const [day, month, year] = trimWhiteSpaceInDob.split('/');
   const date = new Date(`${year}-${month}-${day}`);
 
-  const doesPolicyIdAndDobExist = await db('nhis_enrollee')
+  const doesEnrolleePolicyIdAndDobExist = async (value)=>{
+    //IF date is valid
+    if (value instanceof Date && !isNaN(value.getTime()) == true){
+        const doesPolicyIdAndDobExist = await db('nhis_enrollee')
                                   .where('policy_id',trimWhiteSpaceInPolicy_id)
                                   .andWhere('dob',date).select('id')
                                   .first();
+        if (doesPolicyIdAndDobExist){
+          // already exists
+          return true
+        }else {
+          // does not exist
+           return false
+        }
+    }
+    else{
+      return 'Invalid Date';
+    }
+  }
+
 
 
   const createNhiaEntrollee = {
@@ -39,11 +55,21 @@ export async function createNhisEnrolleeModel(data) {
     created_by: data.user_id
   }
 
-
-  if (doesPolicyIdAndDobExist){
+  const doesEnrolleeExist = await doesEnrolleePolicyIdAndDobExist(date);
+  if (doesEnrolleeExist==true){
       return 'NHIA Enrollee Already Exists !'
-  }else {
-     return await db("nhis_enrollee").insert(createNhiaEntrollee);
+  }
+  else if (doesEnrolleeExist== 'Invalid Date'){
+      return 'invalid date !'
+  }
+  else {
+      try{
+         await db("nhis_enrollee").insert(createNhiaEntrollee);
+         return 'success'
+      }catch(error){
+         console.log(error)
+         return 'error'
+      }
 
   }
 
@@ -177,4 +203,21 @@ export async function checkIfNhiaIdIsLinked(data) {
   return await db('nhis_enrollee').select('linked_to_user').where('linked_to_user', data.userid)
 }
 
-
+// For failed Enrollee Uploads
+export async function createFailedNhisEnrolleeUploadModel(data) {
+    const createFailedNhiaEntrollee = {
+    id: uuidv4(),
+    policy_id: data.policy_id,
+    relationship: data.relationship,
+    surname: data.surname,
+    other_names: data.other_names,
+    dob: data.dob,
+    sex: data.sex,
+    company_id: data.company_id,
+    provider_id: data.provider_id,
+    provider_name: data.provider_name,
+    provider_Address: data.provider_Address,
+    reason_for_failure: data.reason_for_failure
+  }
+  return await db("failed_nhis_enrollee").insert(createFailedNhiaEntrollee);
+}
