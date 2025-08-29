@@ -4,11 +4,17 @@ import {
     createNhisEnrolleeService,
     getAndSearchNhisEnrolleeService,
     bindUserToNhiaEnrolleeService,
-    getNhiaEnrolleeAndUserDetailsService
+    getNhiaEnrolleeAndUserDetailsService,
+    uploadNhisEnrolleeService,
 } from '../service/enrollee-service.js';
 import Exception from '../util/exception.js';
+import multer from 'multer';
+import ExcelJS from "exceljs";
+import { Readable } from "stream"
 
 const router = express.Router()
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 router.post('/nhia/enrollee/create', auth, async (req, res, next) => {
     try {
@@ -28,6 +34,87 @@ router.post('/nhia/enrollee/create', auth, async (req, res, next) => {
     } catch (error) {
         console.log(error)
         next(error)
+    }
+});
+
+router.post('/nhis/enrollee/upload',upload.single('file'), auth, async (req, res, next) => {
+
+    try {
+
+        const data = req.body
+        const file = req.file;
+        let isHeader = true;
+        let result
+        
+        //To handle rich text cells and extract plain text
+        function getCellValue(cell) {
+             if (!cell) return null;
+
+             if (typeof cell === "object" && cell.richText) {
+               return cell.richText.map(rt => rt.text).join(""); // combine all fragments
+             }
+
+             return String(cell).trim();
+        }
+
+        if (!file) {
+                    throw new Exception("No file uploaded", 400);
+         }
+
+
+         const stream = new Readable();
+         stream.push(file.buffer);
+         stream.push(null);
+
+
+        const workbook = new ExcelJS.stream.xlsx.WorkbookReader(stream);
+              for await (const worksheet of workbook) {
+                for await (const row of worksheet) {
+                   if (!row || !row.values || row.values.length === 0) continue;
+
+                  const rowData = row.values.slice(1);
+                   // ExcelJS rows start at index 1, so row.values[0] is usually null
+                  console.log(row.values);
+                  if (isHeader) {
+                    console.log("Headers:", rowData);
+                    isHeader = false; // skip headers next iteration
+                    continue;
+                  }
+                   console.log("Row Data:", rowData);
+                       const enrollee = {
+                          provider_id: getCellValue(rowData[0]),
+                          provider_name: getCellValue(rowData[1]),
+                          surname: getCellValue(rowData[2]),
+                          other_names: getCellValue(rowData[3]),
+                          relationship: getCellValue(rowData[4]),
+                          policy_id: getCellValue(rowData[5]),
+                          sex: getCellValue(rowData[6]),
+                          dob: getCellValue(rowData[7]),
+                          company_id: rowData[8],
+                          provider_Address: getCellValue(rowData[9]),
+                          user_id: getCellValue(rowData[10]),
+                          linked_to_user: getCellValue(rowData[11]),
+                      };
+
+
+                   console.log("Mapped Row:", enrollee);
+
+                  result=await uploadNhisEnrolleeService(enrollee)
+                }
+              }
+
+        if (!result) {
+            throw new Exception("encountered an issue while creating nhis service", 400)
+        }
+
+        res.status(200).json({
+            message: `${data.name} created successfully`,
+            code: data.code
+        })
+    } catch (error) {
+        console.log(error)
+        next(error)
+
     }
 });
 
