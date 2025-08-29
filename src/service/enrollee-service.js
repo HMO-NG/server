@@ -2,7 +2,8 @@ import {
     getAllAndSearchNhisEnrolleeModel,
     createNhisEnrolleeModel,
     bindUserToNhiaEnrolleeModel,
-    getNhiaEnrolleeAndUserDetailsModel
+    getNhiaEnrolleeAndUserDetailsModel,
+    createFailedNhisEnrolleeUploadModel,
 } from "../model/enrollee-model.js";
 import Exception from "../util/exception.js";
 
@@ -15,7 +16,29 @@ export async function createNhisEnrolleeService(data) {
 
     const result = await createNhisEnrolleeModel(data)
     if (result == 'NHIA Enrollee Already Exists !'){
-      throw new EnrolleeExpection('NHIA Enrollee Already Exists !', 409)
+            throw new EnrolleeExpection('NHIA Enrollee Already Exists !', 409)
+    }else{
+      return result
+    }
+
+};
+
+export async function uploadNhisEnrolleeService(data) {
+
+    if (!data) {
+        throw new EnrolleeExpection("NHIA enrollee details can not be empty", 400)
+    }
+
+
+    const result = await createNhisEnrolleeModel(data)
+    if (result == 'NHIA Enrollee Already Exists !'){
+      createFailedNhisEnrolleeUploadModel({...data,reason_for_failure:'already exists'})
+    }
+    else if (result == 'invalid date !'){
+      createFailedNhisEnrolleeUploadModel({...data,reason_for_failure:'invalid date'})
+    }else if (result == 'error'){
+      createFailedNhisEnrolleeUploadModel({...data,reason_for_failure:'error inserting to db'})
+      console.log('error occured while inserting data to db')
     }else{
       return result
     }
