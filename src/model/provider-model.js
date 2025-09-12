@@ -221,18 +221,26 @@ export async function CreateProviderTariffModel(data) {
   if (await DoesDataExist('provider_tariff','item_name',data.item_name)) {
     return 'provider tariff already exists!';
   }else{
-    const new_tariff= await db('provider_tariff').insert(tariff).returning('id');
-    if (data.insurance_plan_id && data.available_to_all_plans === false) {
-        await Promise.all(
-            data.insurance_plan_id.map((planId) => {
-              return db("tariff_linked_health_plans").insert({
-                id: uuidv4(),
-                tariff_id: new_tariff[0].id,
-                health_plan_id: planId,
-            });
-        }))
+    try{
+         const new_tariff= await db('provider_tariff').insert(tariff).returning('id');
+
+         //save linked health plans if available (array of health plan ids)
+         if (data.insurance_plan_id && data.available_to_all_plans === false) {
+             await Promise.all(
+                 data.insurance_plan_id.map((planId) => {
+                   return db("tariff_linked_health_plans").insert({
+                     id: uuidv4(),
+                     tariff_id: new_tariff[0].id,
+                     health_plan_id: planId,
+                 });
+             }))
+         }
+
+         return new_tariff,'success'
+    }catch(error){
+          console.error("Error creating provider tariff:", error);
+          return 'error'
     }
-        return new_tariff
   }
    }catch(error){
     console.error("Error updating provider tariff:", error);
