@@ -18,6 +18,7 @@ import {
     UpdateProviderTariffModel,
     getPATariffAndDiagnosisByCodeModel,
     updatePreAuthorizationByPACodeModel,
+    CreateFailedProviderTariffUploadModel,
 } from "../model/provider-model.js";
 import { NigerianState } from "../util/nigerian-states.js";
 import { generateUniqueProviderCode } from "../util/provider-code.js";
@@ -123,6 +124,25 @@ export async function CreateProviderTariffService(data) {
 
   return result
 }
+
+export async function ProviderTariffBulkUploadService(data) {
+
+  if (!data) {
+      throw new ProviderServiceExpection("provider tariff file is empty", 400)
+  }
+
+  const result = await CreateProviderTariffModel(data)
+
+  if(result === 'provider tariff already exists!'){
+    CreateFailedProviderTariffUploadModel({...data,reason_for_failure:'already exists'})
+  }else if(result === 'error'){
+    CreateFailedProviderTariffUploadModel({...data,reason_for_failure:'error inserting to db'})
+  }else if (result == 'success'){
+      return result
+    }
+
+}
+
 export async function getProviderTariffByIdService(id) {
 
   return await getProviderTariffByIdModel(id)

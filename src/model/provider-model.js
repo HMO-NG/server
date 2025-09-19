@@ -236,7 +236,7 @@ export async function CreateProviderTariffModel(data) {
              }))
          }
 
-         return new_tariff,'success'
+         return 'success'
     }catch(error){
           console.error("Error creating provider tariff:", error);
           return 'error'
@@ -597,4 +597,18 @@ export async function updatePreAuthorizationByPACodeModel(PA_code,data) {
   }
 
   return await db('pre_authorization').where('pa_code', PA_code).update(updatedData)
+}
+
+export async function CreateFailedProviderTariffUploadModel(data) {
+  const failedUpload={
+    id:uuidv4(),
+    reason_for_failure:data.reason_for_failure,
+    item_name:data.item_name,
+    item_price:data.item_price,
+    description:data.description,
+    provider_id:data.provider_id,
+    tariff_type:data.tariff_type,
+  }
+    return await db('failed_provider_tariff').insert(failedUpload)
+
 }

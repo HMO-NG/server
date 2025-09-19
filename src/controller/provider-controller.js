@@ -1,17 +1,34 @@
 import express, { json } from 'express'
 import {
-    createProvider, editProviderActivationState, editProviderById, getAllProvider, getProviderById,
+    createProvider,
+    editProviderActivationState,
+    editProviderById,
+    getAllProvider,
+    getProviderById,
     createNHIAProviderService,
-    getNHIAProviderByHCPIDService,CreateProviderTariffService,getProviderTariffByIdService,
-    getAllProviderTariffService,getSingleProviderTariffByIdService,
-    CreatePreAuthorizationService,getAllPreAuthorizationService,getPreAuthorizationByProviderIdService,
-    getSinglePreAuthorizationByIdService,updatePreAuthorizationByIdService,getPATariffAndDiagnosisByCodeService,
+    getNHIAProviderByHCPIDService,
+    CreateProviderTariffService,
+    getProviderTariffByIdService,
+    getAllProviderTariffService,
+    getSingleProviderTariffByIdService,
+    CreatePreAuthorizationService,
+    getAllPreAuthorizationService,
+    getPreAuthorizationByProviderIdService,
+    getSinglePreAuthorizationByIdService,
+    updatePreAuthorizationByIdService,
+    getPATariffAndDiagnosisByCodeService,
     updatePreAuthorizationByPACodeService,
+    ProviderTariffBulkUploadService,
 } from '../service/provider-service.js';
 import Exception from '../util/exception.js';
 import { auth, verifyUserToken, verifyPermission } from '../middleware/auth-middleware.js';
+import multer from 'multer';
+import ExcelJS from "exceljs";
+import { Readable } from "stream"
 
 const router = express.Router()
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 // TODO rate limiter
 // TODO roles and permission
@@ -198,7 +215,6 @@ router.post('/provider/tariff/create', auth, async (req, res, next) => {
 
       res.status(200).json({
           message: "Tariff created successfully",
-          // data: result.id
       })
   } catch (error) {
       console.log(error.status)
@@ -506,6 +522,69 @@ router.put('/preauthorization/update/code/:PA_code', auth, async (req, res, next
       next(error)
 
   }
+});
+
+router.put('/provider/tarriff/bulk/upload/:provider_id',upload.single('file'), auth, async (req, res, next) => {
+    try {
+        const {provider_id} = req.params;
+        const file = req.file;
+        let isHeader = true;
+        let result
+
+        if (!file) {
+            throw new Exception("No file uploaded", 400);
+        }
+
+        //To handle rich text cells and extract plain text
+        function getCellValue(cell) {
+             if (!cell) return null;
+
+             if (typeof cell === "object" && cell.richText) {
+               return cell.richText.map(rt => rt.text).join(""); // combine all fragments
+             }
+
+             return String(cell).trim();
+        }
+
+      const stream = new Readable();
+      stream.push(file.buffer);
+      stream.push(null);
+
+      // Stream read with ExcelJS
+      const workbook = new ExcelJS.stream.xlsx.WorkbookReader(stream);
+      for await (const worksheet of workbook) {
+        for await (const row of worksheet) {
+          if (!row || !row.values || row.values.length === 0) continue;
+
+          const rowData = row.values.slice(1);
+                   // ExcelJS rows start at index 1, so row.values[0] is usually null
+                  if (isHeader) {
+                    console.log("Headers:", rowData);
+                    isHeader = false; // skip headers next iteration
+                    continue;
+                  }
+
+            const tariff = {
+                     item_name: getCellValue(rowData[0]),
+                     item_price: getCellValue(rowData[1]),
+                     description: getCellValue(rowData[2]),
+                     tariff_type: getCellValue(rowData[3]),
+                     created_by: getCellValue(rowData[4]),
+                     provider_id: provider_id,
+            };
+
+          result=await ProviderTariffBulkUploadService(tariff);
+        }
+      }
+
+
+        res.status(200).json({
+            message: "Provider tariffs uploaded successfully"
+        });
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
 });
 
 export default router;
