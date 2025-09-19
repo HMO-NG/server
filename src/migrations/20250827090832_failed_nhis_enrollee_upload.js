@@ -17,6 +17,7 @@ export async function up(knex) {
         table.string('provider_id');
         table.string('provider_name');
         table.string('provider_Address');
+        table.string('created_by');
 
     })
 }
