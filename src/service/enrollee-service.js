@@ -39,7 +39,7 @@ export async function uploadNhisEnrolleeService(data) {
     }else if (result == 'error'){
       createFailedNhisEnrolleeUploadModel({...data,reason_for_failure:'error inserting to db'})
       console.log('error occured while inserting data to db')
-    }else{
+    }else if (result == 'success'){
       return result
     }
 

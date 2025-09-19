@@ -48,7 +48,6 @@ router.post('/docs/upload/raw' ,upload.single('file'),auth,async (req,res,next)=
 
     const fileExtension = originalName.split('.').pop().toLowerCase();
 
-    console.log('narr', originalName)
     const save_toCloudinary = await cloudinary.uploader.upload(`data:${file.mimetype};base64,${file.buffer.toString('base64')}`, {
         resource_type: 'raw',
         upload_preset: 'hciimage',

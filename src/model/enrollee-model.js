@@ -217,7 +217,8 @@ export async function createFailedNhisEnrolleeUploadModel(data) {
     provider_id: data.provider_id,
     provider_name: data.provider_name,
     provider_Address: data.provider_Address,
-    reason_for_failure: data.reason_for_failure
+    reason_for_failure: data.reason_for_failure,
+    created_by: data.created_by
   }
   return await db("failed_nhis_enrollee").insert(createFailedNhiaEntrollee);
 }

@@ -45,7 +45,7 @@ router.post('/nhis/enrollee/upload',upload.single('file'), auth, async (req, res
         const file = req.file;
         let isHeader = true;
         let result
-        
+
         //To handle rich text cells and extract plain text
         function getCellValue(cell) {
              if (!cell) return null;
@@ -109,7 +109,6 @@ router.post('/nhis/enrollee/upload',upload.single('file'), auth, async (req, res
 
         res.status(200).json({
             message: `${data.name} created successfully`,
-            code: data.code
         })
     } catch (error) {
         console.log(error)
